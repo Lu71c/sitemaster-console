@@ -23,6 +23,13 @@
             margin: 0;
             padding: 16px;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex: 1;
         }
 
         .header {
@@ -108,75 +115,122 @@
             color: #f87171;
             border: 1px solid #ef4444;
         }
+
+        /* Footer Branding */
+        .footer {
+            margin-top: 30px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+            font-size: 12px;
+            color: var(--hint-color);
+        }
+
+        .footer a {
+            color: var(--button-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2 id="welcome-title">Console Gestione Sito</h2>
-        <p id="user-info">Invia una modifica visiva o un aggiornamento testo.</p>
+    <div class="container">
+        <div class="header">
+            <h2 id="welcome-title">Console Gestione Sito</h2>
+            <p id="user-info">Invia un aggiornamento o una modifica visiva al tuo sito.</p>
+        </div>
+
+        <form id="update-form">
+            <!-- 1. Selezione Pagina -->
+            <div class="form-group">
+                <label for="target_page">Pagina da modificare</label>
+                <select id="target_page" name="target_page" required>
+                    <option value="index.html">Home Page</option>
+                    <option value="chi-siamo.html">Chi Siamo</option>
+                    <option value="contatti.html">Contatti</option>
+                </select>
+            </div>
+
+            <!-- 2. Tipo di Operazione -->
+            <div class="form-group">
+                <label for="action_type">Tipo di operazione</label>
+                <select id="action_type" name="action_type" required>
+                    <option value="TEXT_PRICE">📝 Modifica Testo o Prezzi</option>
+                    <option value="UPDATE_PHOTO">📸 Carica o Sostituisci Foto</option>
+                    <option value="ADD_REPLACE_ITEM">➕ Sostituisci o Aggiungi Elemento</option>
+                    <option value="THEME_COLOR">🎨 Cambia Colori o Stile Grafico</option>
+                    <option value="FREE_PROMPT">💬 Modifica Aperta / Testo Libero</option>
+                </select>
+            </div>
+
+            <!-- 3. Descrizione Modifica -->
+            <div class="form-group">
+                <label for="instruction">Descrizione della modifica</label>
+                <textarea id="instruction" name="instruction" placeholder="Es: Cambia il colore dei bottoni in rosso scuro oppure aggiorna l'orario di apertura..." required></textarea>
+            </div>
+
+            <!-- 4. Immagine (Opzionale) -->
+            <div class="form-group">
+                <label for="image_file">Carica Immagine (Opzionale)</label>
+                <input type="file" id="image_file" name="image_file" accept="image/*">
+            </div>
+
+            <button type="submit" class="btn-submit" id="submit-btn">🚀 Applica Modifica</button>
+        </form>
+
+        <div id="status-msg"></div>
     </div>
 
-    <form id="update-form">
-        <!-- 1. Selezione Pagina -->
-        <div class="form-group">
-            <label for="target_page">Pagina da modificare</label>
-            <select id="target_page" name="target_page" required>
-                <option value="index.html">Home Page</option>
-                <option value="menu.html">Menu / Listino Servizi</option>
-                <option value="chi-siamo.html">Chi Siamo</option>
-                <option value="contatti.html">Contatti</option>
-            </select>
-        </div>
-
-        <!-- 2. Tipo di Modifica -->
-        <div class="form-group">
-            <label for="action_type">Tipo di operazione</label>
-            <select id="action_type" name="action_type" required>
-                <option value="TEXT_PRICE">📝 Modifica Testo o Prezzo</option>
-                <option value="UPDATE_PHOTO">📸 Sostituisci / Aggiungi Foto</option>
-                <option value="ADD_ITEM">➕ Aggiungi Nuovo Elemento</option>
-                <option value="NOTICE">💬 Inserisci Avviso / Comunicazione</option>
-            </select>
-        </div>
-
-        <!-- 3. Dettaglio Istruzione -->
-        <div class="form-group">
-            <label for="instruction">Descrizione della modifica</label>
-            <textarea id="instruction" name="instruction" placeholder="Es: Cambia il costo della Pizza Margherita da 7€ a 8€..." required></textarea>
-        </div>
-
-        <!-- 4. Immagine (Opzionale) -->
-        <div class="form-group">
-            <label for="image_file">Carica Immagine (Opzionale)</label>
-            <input type="file" id="image_file" name="image_file" accept="image/*">
-        </div>
-
-        <button type="submit" class="btn-submit" id="submit-btn">🚀 Applica Modifica</button>
-    </form>
-
-    <div id="status-msg"></div>
+    <!-- Footer Branding -->
+    <div class="footer">
+        Sviluppato da <a href="#" onclick="openExternalLink('https://www.deorbisproject.com/aziende')">The Orbis Project</a>
+    </div>
 
     <script>
         // Inizializzazione SDK Telegram
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Espande la Mini App a schermo intero
+        tg.ready();
+        tg.expand();
 
         const user = tg.initDataUnsafe?.user;
         if (user) {
             document.getElementById('welcome-title').innerText = `Ciao ${user.first_name} 👋`;
         }
 
+        // Apertura sicura link esterni fuori dalla Mini App
+        function openExternalLink(url) {
+            if (tg && tg.openLink) {
+                tg.openLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        // Gestione Notifiche e Chiarimenti tramite Pop-Up Nativo Telegram
+        function notifyUser(title, message, isSuccess = true) {
+            if (tg && tg.showPopup) {
+                tg.showPopup({
+                    title: title,
+                    message: message,
+                    buttons: [{ type: 'ok', text: 'Capito' }]
+                });
+            } else {
+                const statusMsg = document.getElementById('status-msg');
+                statusMsg.className = isSuccess ? "status-success" : "status-error";
+                statusMsg.innerText = `${title}: ${message}`;
+                statusMsg.style.display = "block";
+            }
+        }
+
         const form = document.getElementById('update-form');
         const submitBtn = document.getElementById('submit-btn');
-        const statusMsg = document.getElementById('status-msg');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             submitBtn.disabled = true;
             submitBtn.innerText = "⏳ Elaborazione IA in corso...";
-            statusMsg.style.display = "none";
 
             const formData = new FormData();
             formData.append("telegram_id", user ? user.id : "demo_user");
@@ -190,24 +244,25 @@
             }
 
             try {
-                // Sostituisci con l'URL reale del tuo server Python (es. Ngrok o server cloud)
+                // Sostituisci questo URL con l'endpoint reale del tuo backend Python quando attivo
                 const response = await fetch("https://TUO-BACKEND-PYTHON.com/api/v1/update-site", {
                     method: "POST",
                     body: formData
                 });
 
-                if (response.ok) {
-                    statusMsg.className = "status-success";
-                    statusMsg.innerText = "✅ Modifica applicata con successo sul sito!";
+                const data = await response.json();
+
+                if (response.ok && data.status === "success") {
+                    notifyUser("✅ Modifica Applicata", "Il tuo sito è stato aggiornato con successo!", true);
                     form.reset();
+                } else if (data.status === "clarification_needed") {
+                    notifyUser("⚠️ Chiarimento Richiesto", data.message || "Specifica meglio la modifica da applicare.", false);
                 } else {
-                    throw new Error("Errore durante l'aggiornamento.");
+                    throw new Error(data.message || "Errore durante l'aggiornamento.");
                 }
             } catch (err) {
-                statusMsg.className = "status-error";
-                statusMsg.innerText = "❌ Richiesta inviata in modalità Demo (Server non collegato).";
+                notifyUser("❌ Modalità Demo", "Richiesta inviata in modalità Demo (Server Python non ancora collegato).", false);
             } finally {
-                statusMsg.style.display = "block";
                 submitBtn.disabled = false;
                 submitBtn.innerText = "🚀 Applica Modifica";
             }
