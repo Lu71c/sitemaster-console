@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SiteMaster Console</title>
+    <title>SiteMaster Console Enterprise</title>
     <!-- SDK Telegram Mini App -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -14,6 +14,8 @@
             --button-color: var(--tg-theme-button-color, #2563eb);
             --button-text-color: var(--tg-theme-button-text-color, #ffffff);
             --secondary-bg: var(--tg-theme-secondary-bg-color, #1e293b);
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
         }
 
         body {
@@ -95,6 +97,72 @@
             cursor: not-allowed;
         }
 
+        /* Box Azioni Post-Modifica (Confirm & Rollback) */
+        #rollback-box {
+            display: none;
+            margin-top: 16px;
+            padding: 14px;
+            border-radius: 8px;
+            background-color: var(--secondary-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .rollback-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #4ade80;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-confirm {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--success-color);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .btn-rollback {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--danger-color);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* Suggerimenti di Chiarimento */
+        #suggestions-box {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .suggestion-btn {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            border: 1px solid var(--button-color);
+            border-radius: 6px;
+            background-color: transparent;
+            color: var(--button-color);
+            font-size: 13px;
+            text-align: left;
+            cursor: pointer;
+        }
+
         #status-msg {
             margin-top: 16px;
             padding: 12px;
@@ -116,7 +184,6 @@
             border: 1px solid #ef4444;
         }
 
-        /* Footer Branding */
         .footer {
             margin-top: 30px;
             padding-top: 16px;
@@ -138,17 +205,15 @@
     <div class="container">
         <div class="header">
             <h2 id="welcome-title">Console Gestione Sito</h2>
-            <p id="user-info">Invia un aggiornamento o una modifica visiva al tuo sito.</p>
+            <p id="user-info">Invia un aggiornamento o una modifica visiva al tuo sito web.</p>
         </div>
 
         <form id="update-form">
-            <!-- 1. Selezione Pagina -->
+            <!-- 1. Selezione Pagina (Popolata Dinamicamente via API) -->
             <div class="form-group">
                 <label for="target_page">Pagina da modificare</label>
                 <select id="target_page" name="target_page" required>
-                    <option value="index.html">Home Page</option>
-                    <option value="chi-siamo.html">Chi Siamo</option>
-                    <option value="contatti.html">Contatti</option>
+                    <option value="index.html">Caricamento pagine in corso...</option>
                 </select>
             </div>
 
@@ -170,7 +235,13 @@
                 <textarea id="instruction" name="instruction" placeholder="Es: Cambia il colore dei bottoni in rosso scuro oppure aggiorna l'orario di apertura..." required></textarea>
             </div>
 
-            <!-- 4. Immagine (Opzionale) -->
+            <!-- 4. Suggerimenti AI per Chiarimenti -->
+            <div id="suggestions-box">
+                <label>Seleziona un'opzione di chiarimento:</label>
+                <div id="suggestions-list"></div>
+            </div>
+
+            <!-- 5. Immagine (Opzionale) -->
             <div class="form-group">
                 <label for="image_file">Carica Immagine (Opzionale)</label>
                 <input type="file" id="image_file" name="image_file" accept="image/*">
@@ -179,26 +250,36 @@
             <button type="submit" class="btn-submit" id="submit-btn">🚀 Applica Modifica</button>
         </form>
 
+        <!-- Box di Collaudo e Rollback -->
+        <div id="rollback-box">
+            <div class="rollback-title">🚀 Modifica applicata! Verifica sul tuo sito in navigazione incognita.</div>
+            <div class="action-btns">
+                <button class="btn-confirm" onclick="confirmModification()">✅ Conferma</button>
+                <button class="btn-rollback" onclick="rollbackModification()">❌ Annulla (Rollback)</button>
+            </div>
+        </div>
+
         <div id="status-msg"></div>
     </div>
 
-    <!-- Footer Branding -->
     <div class="footer">
         Sviluppato da <a href="#" onclick="openExternalLink('https://www.theorbisproject.com/aziende')">The Orbis Project</a>
     </div>
 
     <script>
-        // Inizializzazione SDK Telegram
+        // Inizializzazione SDK Telegram Mini App
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
         const user = tg.initDataUnsafe?.user;
+        const userId = user ? String(user.id) : "demo_user";
+
         if (user) {
             document.getElementById('welcome-title').innerText = `Ciao ${user.first_name} 👋`;
         }
 
-        // URL del Backend Python esposto con Ngrok
+        // URL Ngrok del Backend Python
         const NGROK_BASE_URL = "https://smith-anchor-untoasted.ngrok-free.dev";
 
         function openExternalLink(url) {
@@ -224,17 +305,49 @@
             }
         }
 
+        // Caricamento dinamico della lista file .html dal repository GitHub
+        async function loadRepositoryPages() {
+            const pageSelect = document.getElementById('target_page');
+            try {
+                const response = await fetch(`${NGROK_BASE_URL}/api/v1/get-pages?telegram_id=${userId}`);
+                const data = await response.json();
+
+                if (data.status === "success" && data.pages && data.pages.length > 0) {
+                    pageSelect.innerHTML = "";
+                    data.pages.forEach(page => {
+                        const option = document.createElement('option');
+                        option.value = page;
+                        option.textContent = page === 'index.html' ? 'Home Page (index.html)' : page;
+                        pageSelect.appendChild(option);
+                    });
+                } else {
+                    pageSelect.innerHTML = '<option value="index.html">Home Page (index.html)</option>';
+                }
+            } catch (err) {
+                console.error("Errore recupero pagine:", err);
+                pageSelect.innerHTML = '<option value="index.html">Home Page (index.html)</option>';
+            }
+        }
+
+        // Esegui caricamento pagine all'avvio
+        loadRepositoryPages();
+
         const form = document.getElementById('update-form');
         const submitBtn = document.getElementById('submit-btn');
+        const rollbackBox = document.getElementById('rollback-box');
+        const suggestionsBox = document.getElementById('suggestions-box');
+        const suggestionsList = document.getElementById('suggestions-list');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             submitBtn.disabled = true;
             submitBtn.innerText = "⏳ Elaborazione IA in corso...";
+            rollbackBox.style.display = "none";
+            suggestionsBox.style.display = "none";
 
             const formData = new FormData();
-            formData.append("telegram_id", user ? String(user.id) : "demo_user");
+            formData.append("telegram_id", userId);
             formData.append("target_page", document.getElementById('target_page').value);
             formData.append("action_type", document.getElementById('action_type').value);
             formData.append("instruction", document.getElementById('instruction').value);
@@ -254,9 +367,27 @@
 
                 if (response.ok && data.status === "success") {
                     notifyUser("✅ Modifica Applicata", data.message || "Il tuo sito è stato aggiornato con successo!", true);
+                    rollbackBox.style.display = "block";
                     form.reset();
+                    loadRepositoryPages();
                 } else if (data.status === "clarification_needed") {
-                    notifyUser("⚠️ Chiarimento Richiesto", data.message || "Specifica meglio la modifica da applicare.", false);
+                    notifyUser("⚠️ Chiarimento Richiesto", data.message || "Seleziona uno dei suggerimenti in basso per procedere.", false);
+                    if (data.suggestions && data.suggestions.length > 0) {
+                        suggestionsList.innerHTML = "";
+                        data.suggestions.forEach(sug => {
+                            const btn = document.createElement('button');
+                            btn.className = "suggestion-btn";
+                            btn.type = "button";
+                            btn.innerText = `👉 ${sug}`;
+                            btn.onclick = () => {
+                                document.getElementById('instruction').value = `${document.getElementById('instruction').value} - ${sug}`;
+                                suggestionsBox.style.display = "none";
+                                form.dispatchEvent(new Event('submit'));
+                            };
+                            suggestionsList.appendChild(btn);
+                        });
+                        suggestionsBox.style.display = "block";
+                    }
                 } else {
                     throw new Error(data.message || "Errore durante l'aggiornamento.");
                 }
@@ -267,6 +398,34 @@
                 submitBtn.innerText = "🚀 Applica Modifica";
             }
         });
+
+        // Azione di Conferma
+        async function confirmModification() {
+            const formData = new FormData();
+            formData.append("telegram_id", userId);
+            try {
+                const res = await fetch(`${NGROK_BASE_URL}/api/v1/confirm-modification`, { method: "POST", body: formData });
+                const data = await res.json();
+                notifyUser("✅ Confermata", data.message, true);
+                rollbackBox.style.display = "none";
+            } catch (err) {
+                notifyUser("❌ Errore", "Impossibile confermare la modifica.", false);
+            }
+        }
+
+        // Azione di Rollback
+        async function rollbackModification() {
+            const formData = new FormData();
+            formData.append("telegram_id", userId);
+            try {
+                const res = await fetch(`${NGROK_BASE_URL}/api/v1/rollback`, { method: "POST", body: formData });
+                const data = await res.json();
+                notifyUser("🔄 Ripristino", data.message, true);
+                rollbackBox.style.display = "none";
+            } catch (err) {
+                notifyUser("❌ Errore", "Impossibile ripristinare il sito.", false);
+            }
+        }
     </script>
 </body>
 </html>
