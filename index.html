@@ -198,7 +198,10 @@
             document.getElementById('welcome-title').innerText = `Ciao ${user.first_name} 👋`;
         }
 
-        // Apertura sicura link esterni fuori dalla Mini App
+        // URL del Backend Python esposto con Ngrok
+        // SOSTITUISCI QUESTA VARIABILE CON IL TUO LINK NGROK VERO (es. https://abcd-123.ngrok-free.app)
+        const NGROK_BASE_URL = "https://TUO-INDIRIZZO.ngrok-free.app";
+
         function openExternalLink(url) {
             if (tg && tg.openLink) {
                 tg.openLink(url);
@@ -207,7 +210,6 @@
             }
         }
 
-        // Gestione Notifiche e Chiarimenti tramite Pop-Up Nativo Telegram
         function notifyUser(title, message, isSuccess = true) {
             if (tg && tg.showPopup) {
                 tg.showPopup({
@@ -233,7 +235,7 @@
             submitBtn.innerText = "⏳ Elaborazione IA in corso...";
 
             const formData = new FormData();
-            formData.append("telegram_id", user ? user.id : "demo_user");
+            formData.append("telegram_id", user ? String(user.id) : "demo_user");
             formData.append("target_page", document.getElementById('target_page').value);
             formData.append("action_type", document.getElementById('action_type').value);
             formData.append("instruction", document.getElementById('instruction').value);
@@ -244,8 +246,7 @@
             }
 
             try {
-                // Sostituisci questo URL con l'endpoint reale del tuo backend Python quando attivo
-                const response = await fetch("https://TUO-BACKEND-PYTHON.com/api/v1/update-site", {
+                const response = await fetch(`${NGROK_BASE_URL}/api/v1/update-site`, {
                     method: "POST",
                     body: formData
                 });
@@ -253,7 +254,7 @@
                 const data = await response.json();
 
                 if (response.ok && data.status === "success") {
-                    notifyUser("✅ Modifica Applicata", "Il tuo sito è stato aggiornato con successo!", true);
+                    notifyUser("✅ Modifica Applicata", data.message || "Il tuo sito è stato aggiornato con successo!", true);
                     form.reset();
                 } else if (data.status === "clarification_needed") {
                     notifyUser("⚠️ Chiarimento Richiesto", data.message || "Specifica meglio la modifica da applicare.", false);
@@ -261,7 +262,7 @@
                     throw new Error(data.message || "Errore durante l'aggiornamento.");
                 }
             } catch (err) {
-                notifyUser("❌ Modalità Demo", "Richiesta inviata in modalità Demo (Server Python non ancora collegato).", false);
+                notifyUser("❌ Errore Comunicazione", `Impossibile contattare il server: ${err.message}`, false);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerText = "🚀 Applica Modifica";
