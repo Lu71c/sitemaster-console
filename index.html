@@ -451,7 +451,7 @@
 
         /* FORMATTATORE NOMI PAGINA PULITO (Zero Gergo Tecnico) */
         function formatPageName(filename) {
-            if (!filename || filename === 'AUTO' || filename === 'AUTO_INTELLIGENT') return '✨ Modifica Intelligente';
+            if (!filename || filename === 'AUTO' || filename === 'AUTO_INTELLIGENT' || filename === '✨ Modifica Intelligente') return '✨ Modifica Intelligente';
             if (filename === 'index.html') return 'Home Page';
             
             let name = filename.replace(/\.html$/i, '');
@@ -492,14 +492,15 @@
             document.getElementById('status-msg').style.display = 'none';
         }
 
-        /* Recupero Stato Utente dal Backend */
+        /* Recupero Stato Utente dal Backend con gestione errori tollerante */
         async function fetchUserStatus() {
+            const auditBadge = document.getElementById('badge-audit');
+            const modBadge = document.getElementById('badge-mod-count');
             try {
-                const response = await fetch(`${NGROK_BASE_URL}/api/v1/user-status?telegram_id=${userId}`, { headers: REQ_HEADERS });
+                const response = await fetch(`${NGROK_BASE_URL}/api/v1/user-status?telegram_id=${encodeURIComponent(userId)}`, { headers: REQ_HEADERS });
                 const data = await response.json();
 
                 if (data.status === "success") {
-                    const auditBadge = document.getElementById('badge-audit');
                     if (data.audit_done) {
                         auditBadge.innerText = "🟢 Completato";
                         auditBadge.className = "status-value badge-green";
@@ -507,11 +508,16 @@
                         auditBadge.innerText = "🔴 Da effettuare";
                         auditBadge.className = "status-value badge-red";
                     }
-
-                    document.getElementById('badge-mod-count').innerText = `${data.mod_count} / ${data.mod_limit}`;
+                    modBadge.innerText = `${data.mod_count} / ${data.mod_limit}`;
+                } else {
+                    auditBadge.innerText = "⚠️ Non Autorizzato";
+                    auditBadge.className = "status-value badge-red";
+                    displayStatus(`🛑 ${data.message || "Utente non autorizzato o non trovato."}`, false);
                 }
             } catch (err) {
                 console.error("Errore recupero stato utente:", err);
+                auditBadge.innerText = "❌ Offline";
+                auditBadge.className = "status-value badge-red";
             }
         }
 
@@ -519,7 +525,7 @@
         async function loadRepositoryPages() {
             const pageSelect = document.getElementById('target_page');
             try {
-                const response = await fetch(`${NGROK_BASE_URL}/api/v1/get-pages?telegram_id=${userId}`, { headers: REQ_HEADERS });
+                const response = await fetch(`${NGROK_BASE_URL}/api/v1/get-pages?telegram_id=${encodeURIComponent(userId)}`, { headers: REQ_HEADERS });
                 const data = await response.json();
 
                 if (data.status === "success" && data.pages && data.pages.length > 0) {
@@ -535,6 +541,7 @@
                     pageSelect.innerHTML = '<option value="AUTO" selected>✨ Modifica Intelligente</option><option value="index.html">Home Page</option>';
                 }
             } catch (err) {
+                console.error("Errore recupero pagine:", err);
                 pageSelect.innerHTML = '<option value="AUTO" selected>✨ Modifica Intelligente</option><option value="index.html">Home Page</option>';
             }
         }
@@ -688,6 +695,7 @@
                 const data = await res.json();
                 displayStatus(`🔄 ${data.message}`, true);
                 rollbackBox.style.display = "none";
+                fetchUserStatus();
             } catch (err) {
                 displayStatus("❌ Errore durante il ripristino.", false);
             }
