@@ -169,6 +169,19 @@
             margin-top: 10px;
         }
 
+        .btn-close-section {
+            width: 100%;
+            padding: 10px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.03);
+            color: var(--hint-color);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 14px;
+        }
+
         /* Report Audit Dark Elegante */
         .audit-compact-card {
             background-color: var(--bg-color);
@@ -183,21 +196,27 @@
         .audit-compact-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 4px 0;
+            padding: 6px 0;
         }
 
         .audit-compact-item:last-child { border-bottom: none; }
 
+        .audit-value-white {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
         #audit-detail-box {
             display: none;
             margin-top: 12px;
-            padding: 14px;
+            padding: 16px;
             background-color: var(--bg-color);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             font-size: 13px;
-            line-height: 1.5;
+            line-height: 1.6;
             color: #e2e8f0;
             white-space: pre-wrap;
         }
@@ -281,7 +300,7 @@
         <div class="dashboard-grid">
             <div class="status-box">
                 <div class="status-title">Sito Web</div>
-                <div class="status-value badge-green">🟢 Online</div>
+                <div class="status-value badge-green">🟢 ONLINE</div>
             </div>
             <div class="status-box">
                 <div class="status-title">Check</div>
@@ -316,15 +335,29 @@
             <!-- Box Risultato Audit -->
             <div id="audit-result-container" style="display: none;">
                 <div class="audit-compact-card">
-                    <div class="audit-compact-item"><span>Stato Globale:</span> <strong class="badge-green">🟢 ONLINE</strong></div>
-                    <div class="audit-compact-item"><span>Integrità Codice:</span> <strong class="badge-green">100% 🟢</strong></div>
-                    <div class="audit-compact-item"><span>Prestazioni CDN:</span> <strong>⚡ OTTIMALE</strong></div>
-                    <div class="audit-compact-item"><span>Moduli Interattivi:</span> <strong>✅ OPERATIVI</strong></div>
+                    <div class="audit-compact-item">
+                        <span>Stato Globale:</span> 
+                        <span class="audit-value-white">🟢 ONLINE</span>
+                    </div>
+                    <div class="audit-compact-item">
+                        <span>Integrità Codice:</span> 
+                        <span class="audit-value-white">🟢 100%</span>
+                    </div>
+                    <div class="audit-compact-item">
+                        <span>Prestazioni CDN:</span> 
+                        <span class="audit-value-white">⚡ OTTIMALE</span>
+                    </div>
+                    <div class="audit-compact-item">
+                        <span>Moduli Interattivi:</span> 
+                        <span class="audit-value-white">✅ OPERATIVI</span>
+                    </div>
                 </div>
 
                 <button type="button" class="btn-secondary" onclick="toggleAuditDetail()" id="toggle-detail-btn">📄 Mostra Report Dettagliato</button>
                 <div id="audit-detail-box"></div>
             </div>
+
+            <button type="button" class="btn-close-section" onclick="closeAllSections()">✖️ Torna al Menu Principale</button>
         </div>
 
         <!-- 3B. Sezione Form Modifica Sito -->
@@ -334,7 +367,7 @@
                 <div class="form-group">
                     <label for="target_page">Pagina da modificare</label>
                     <select id="target_page" name="target_page" required>
-                        <option value="index.html">Caricamento pagine in corso...</option>
+                        <option value="AUTO" selected>✨ Modifica Intelligente</option>
                     </select>
                 </div>
 
@@ -342,11 +375,11 @@
                 <div class="form-group">
                     <label for="action_type">Tipo di operazione</label>
                     <select id="action_type" name="action_type" required>
+                        <option value="FREE_PROMPT" selected>💬 Modifica Aperta / Testo Libero</option>
                         <option value="TEXT_PRICE">📝 Modifica Testo o Prezzi</option>
                         <option value="UPDATE_PHOTO">📸 Carica o Sostituisci Foto</option>
                         <option value="ADD_REPLACE_ITEM">➕ Sostituisci o Aggiungi Elemento</option>
                         <option value="THEME_COLOR">🎨 Cambia Colori o Stile Grafico</option>
-                        <option value="FREE_PROMPT">💬 Modifica Aperta / Testo Libero</option>
                     </select>
                 </div>
 
@@ -370,6 +403,8 @@
 
                 <button type="submit" class="btn-submit" id="submit-btn">🚀 Applica Modifica</button>
             </form>
+
+            <button type="button" class="btn-close-section" onclick="closeAllSections()">✖️ Torna al Menu Principale</button>
         </div>
 
         <!-- Box Collaudo e Rollback -->
@@ -415,7 +450,8 @@
 
         /* FORMATTATORE NOMI PAGINA PULITO (Zero Gergo Tecnico) */
         function formatPageName(filename) {
-            if (!filename || filename === 'index.html') return 'Home Page';
+            if (!filename || filename === 'AUTO' || filename === 'AUTO_INTELLIGENT') return '✨ Modifica Intelligente';
+            if (filename === 'index.html') return 'Home Page';
             
             let name = filename.replace(/\.html$/i, '');
             name = name.replace(/[-_]+/g, ' ').trim();
@@ -424,6 +460,15 @@
                 if (word.length === 0) return '';
                 return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
             }).join(' ');
+        }
+
+        /* Chiudi tutte le schede e torna alla Home Neutra */
+        function closeAllSections() {
+            document.getElementById('section-audit').style.display = 'none';
+            document.getElementById('section-edit').style.display = 'none';
+            document.getElementById('card-btn-audit').classList.remove('active');
+            document.getElementById('card-btn-edit').classList.remove('active');
+            document.getElementById('status-msg').style.display = 'none';
         }
 
         /* Navigazione Hub con Apertura/Chiusura a Fisarmonica (Home Neutra) */
@@ -436,10 +481,7 @@
             // Se la scheda è già aperta -> Chiudila per tornare alla vista neutra
             if ((section === 'audit' && auditSec.style.display === 'block') ||
                 (section === 'edit' && editSec.style.display === 'block')) {
-                auditSec.style.display = 'none';
-                editSec.style.display = 'none';
-                auditCard.classList.remove('active');
-                editCard.classList.remove('active');
+                closeAllSections();
                 return;
             }
 
@@ -488,13 +530,14 @@
                         const option = document.createElement('option');
                         option.value = page;
                         option.textContent = formatPageName(page);
+                        if (page === 'AUTO') option.selected = true;
                         pageSelect.appendChild(option);
                     });
                 } else {
-                    pageSelect.innerHTML = '<option value="index.html">Home Page</option>';
+                    pageSelect.innerHTML = '<option value="AUTO" selected>✨ Modifica Intelligente</option><option value="index.html">Home Page</option>';
                 }
             } catch (err) {
-                pageSelect.innerHTML = '<option value="index.html">Home Page</option>';
+                pageSelect.innerHTML = '<option value="AUTO" selected>✨ Modifica Intelligente</option><option value="index.html">Home Page</option>';
             }
         }
 
