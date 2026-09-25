@@ -436,6 +436,7 @@
         }
 
         const NGROK_BASE_URL = "https://smith-anchor-untoasted.ngrok-free.dev";
+        const REQ_HEADERS = { "ngrok-skip-browser-warning": "true" };
 
         function openExternalLink(url) {
             if (tg && tg.openLink) { tg.openLink(url); } else { window.open(url, '_blank'); }
@@ -462,7 +463,6 @@
             }).join(' ');
         }
 
-        /* Chiudi tutte le schede e torna alla Home Neutra */
         function closeAllSections() {
             document.getElementById('section-audit').style.display = 'none';
             document.getElementById('section-edit').style.display = 'none';
@@ -471,14 +471,12 @@
             document.getElementById('status-msg').style.display = 'none';
         }
 
-        /* Navigazione Hub con Apertura/Chiusura a Fisarmonica (Home Neutra) */
         function openSection(section) {
             const auditSec = document.getElementById('section-audit');
             const editSec = document.getElementById('section-edit');
             const auditCard = document.getElementById('card-btn-audit');
             const editCard = document.getElementById('card-btn-edit');
 
-            // Se la scheda è già aperta -> Chiudila per tornare alla vista neutra
             if ((section === 'audit' && auditSec.style.display === 'block') ||
                 (section === 'edit' && editSec.style.display === 'block')) {
                 closeAllSections();
@@ -497,7 +495,7 @@
         /* Recupero Stato Utente dal Backend */
         async function fetchUserStatus() {
             try {
-                const response = await fetch(`${NGROK_BASE_URL}/api/v1/user-status?telegram_id=${userId}`);
+                const response = await fetch(`${NGROK_BASE_URL}/api/v1/user-status?telegram_id=${userId}`, { headers: REQ_HEADERS });
                 const data = await response.json();
 
                 if (data.status === "success") {
@@ -521,7 +519,7 @@
         async function loadRepositoryPages() {
             const pageSelect = document.getElementById('target_page');
             try {
-                const response = await fetch(`${NGROK_BASE_URL}/api/v1/get-pages?telegram_id=${userId}`);
+                const response = await fetch(`${NGROK_BASE_URL}/api/v1/get-pages?telegram_id=${userId}`, { headers: REQ_HEADERS });
                 const data = await response.json();
 
                 if (data.status === "success" && data.pages && data.pages.length > 0) {
@@ -560,6 +558,7 @@
             try {
                 const response = await fetch(`${NGROK_BASE_URL}/api/v1/run-audit`, {
                     method: "POST",
+                    headers: REQ_HEADERS,
                     body: formData
                 });
 
@@ -567,7 +566,7 @@
                 if (response.ok && data.status === "success") {
                     resultContainer.style.display = "block";
                     detailBox.innerText = data.details;
-                    fetchUserStatus(); // aggiorna il badge in "Completato"
+                    fetchUserStatus();
                 } else {
                     displayStatus(`⚠️ ${data.message}`, false);
                 }
@@ -619,6 +618,7 @@
             try {
                 const response = await fetch(`${NGROK_BASE_URL}/api/v1/update-site`, {
                     method: "POST",
+                    headers: REQ_HEADERS,
                     body: formData
                 });
 
@@ -663,7 +663,11 @@
             const formData = new FormData();
             formData.append("telegram_id", userId);
             try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/confirm-modification`, { method: "POST", body: formData });
+                const res = await fetch(`${NGROK_BASE_URL}/api/v1/confirm-modification`, { 
+                    method: "POST", 
+                    headers: REQ_HEADERS, 
+                    body: formData 
+                });
                 const data = await res.json();
                 displayStatus(`✅ ${data.message}`, true);
                 rollbackBox.style.display = "none";
@@ -676,7 +680,11 @@
             const formData = new FormData();
             formData.append("telegram_id", userId);
             try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/rollback`, { method: "POST", body: formData });
+                const res = await fetch(`${NGROK_BASE_URL}/api/v1/rollback`, { 
+                    method: "POST", 
+                    headers: REQ_HEADERS, 
+                    body: formData 
+                });
                 const data = await res.json();
                 displayStatus(`🔄 ${data.message}`, true);
                 rollbackBox.style.display = "none";
