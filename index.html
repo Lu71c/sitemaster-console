@@ -2,15 +2,15 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SiteMaster Console v4.0 — The Orbis Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteMaster Console v4.1 — The Orbis Project</title>
     <!-- Google Identity Services SDK (OpenID Zero-Retention) -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --bg-deep: #070a13;
             --surface-glass: rgba(15, 23, 42, 0.76);
-            --surface-glass-strong: rgba(15, 23, 42, 0.92);
+            --surface-glass-strong: rgba(15, 23, 42, 0.95);
             --surface-glass-border: rgba(255, 255, 255, 0.10);
             --surface-hover: rgba(30, 41, 59, 0.85);
             --primary-blue: #2563eb;
@@ -231,7 +231,7 @@
         .header-right-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
 
@@ -260,7 +260,7 @@
             box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
         }
 
-        .btn-logout {
+        .btn-header-icon {
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.12);
             color: var(--text-muted);
@@ -268,6 +268,12 @@
             padding: 6px 9px;
             font-size: 12px;
             cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-header-icon:hover {
+            color: var(--primary-glow);
+            border-color: rgba(56, 189, 248, 0.4);
         }
 
         .btn-logout:hover {
@@ -394,6 +400,57 @@
             background: linear-gradient(90deg, var(--primary-blue), var(--primary-glow));
             border-radius: 10px;
             transition: width 0.4s ease;
+        }
+
+        /* Mini Audit Log Ultime Modifiche */
+        .mini-log-toggle {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .mini-log-toggle:hover { color: var(--primary-glow); }
+
+        .mini-log-list {
+            display: none;
+            margin-top: 8px;
+            flex-direction: column;
+            gap: 5px;
+            max-height: 145px;
+            overflow-y: auto;
+        }
+
+        .mini-log-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .mini-log-desc {
+            color: #e2e8f0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .mini-log-time {
+            color: var(--text-hint);
+            font-size: 10px;
+            flex-shrink: 0;
         }
 
         /* Hub a 4 Card */
@@ -525,7 +582,7 @@
             letter-spacing: 0.2px;
         }
 
-        select, textarea, input[type="text"], input[type="number"], input[type="date"] {
+        select, textarea, input[type="text"], input[type="number"], input[type="date"], input[type="search"] {
             width: 100%;
             padding: 11px 13px;
             border-radius: 10px;
@@ -663,6 +720,35 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        /* Anteprima Immagine Prodotto Esistente */
+        .existing-img-preview {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .existing-img-preview img {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: rgba(0, 0, 0, 0.4);
+            flex-shrink: 0;
+        }
+
+        .existing-img-meta {
+            flex: 1;
+            min-width: 0;
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.35;
         }
 
         /* Pulsanti d'Azione */
@@ -808,6 +894,13 @@
         }
 
         /* Modulo 3: Analytics Card Styling */
+        .analytics-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
         .analytics-metrics-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -909,6 +1002,10 @@
         .store-toolbar {
             display: flex;
             gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .store-search-row {
             margin-bottom: 12px;
         }
 
@@ -1029,6 +1126,54 @@
         .notif-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
         .notif-error { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.35); }
 
+        /* Modale Custom Glassmorphism (Alert / Confirm / Passkey Manager) */
+        .glass-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(3, 6, 14, 0.78);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+
+        .glass-modal-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--surface-glass-strong);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+        }
+
+        .glass-modal-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .glass-modal-body {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.45;
+            margin-bottom: 16px;
+            white-space: pre-wrap;
+        }
+
+        .glass-modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
         /* Footer Istituzionale */
         .app-footer {
             margin-top: auto;
@@ -1056,7 +1201,7 @@
         <div id="auth-screen">
             <div class="auth-card">
                 <div class="auth-logo-row">
-                    <h1>SiteMaster Console v4.0</h1>
+                    <h1>SiteMaster Console v4.1</h1>
                     <p>The Orbis Project — Accesso Autonomo Zero-Telegram</p>
                 </div>
 
@@ -1106,7 +1251,8 @@
                 </div>
                 <div class="header-right-actions">
                     <div id="tier-badge" class="tier-badge base">PIANO BASE</div>
-                    <button type="button" class="btn-logout" title="Disconnetti" onclick="logoutSession()">🚪</button>
+                    <button type="button" class="btn-header-icon" title="Gestione Passkey e Dispositivi" onclick="openPasskeyManagerModal()">🔑</button>
+                    <button type="button" class="btn-header-icon btn-logout" title="Disconnetti" onclick="logoutSession()">🚪</button>
                 </div>
             </header>
 
@@ -1116,7 +1262,7 @@
                 <select id="site-switcher" onchange="onSwitchSite(this.value)"></select>
             </div>
 
-            <!-- Banner Registrazione Passkey Biometrica -->
+            <!-- Banner Registrazione Passkey Obbligatoria -->
             <div class="passkey-setup-banner" id="passkey-setup-banner">
                 <h4>🔐 Proteggi il tuo Sito con Passkey Biometrica</h4>
                 <p>Attiva FaceID, TouchID o PIN dispositivo per abilitare le modifiche su GitHub con doppio mandato crittografico.</p>
@@ -1150,6 +1296,12 @@
                         <div id="progress-bar-fill" class="progress-bar-fill"></div>
                     </div>
                 </div>
+                <!-- Mini Audit Log Ultime Modifiche -->
+                <div class="mini-log-toggle" onclick="toggleMiniAuditLog()">
+                    <span>🕒 Registro Ultime Operazioni</span>
+                    <span id="mini-log-arrow">▼ Mostra</span>
+                </div>
+                <div class="mini-log-list" id="mini-log-list"></div>
             </div>
 
             <!-- Hub 4 Colonne Principali -->
@@ -1257,11 +1409,11 @@
 
                     <!-- Upload Immagine Opzionale -->
                     <div class="form-row">
-                        <label>Immagine da inserire (Opzionale — Conversione WebP automatica)</label>
+                        <label>Immagine da inserire (Opzionale — Max 12 MB, conversione WebP)</label>
                         <div class="file-upload-btn">
                             <span>📁 Scegli foto da ottimizzare...</span>
                             <span id="chosen-file-label" class="file-upload-name"></span>
-                            <input type="file" id="image_input" accept="image/*" onchange="updateFileName(this)">
+                            <input type="file" id="image_input" accept="image/*" onchange="handleFileSelection(this, 'chosen-file-label')">
                         </div>
                     </div>
 
@@ -1281,13 +1433,22 @@
                 <p class="drawer-sub">Metriche anonime di navigazione e clic pulsanti a zero cookie e zero IP (GDPR-Free).</p>
 
                 <div id="analytics-unlocked-content" style="display: none;">
+                    <div class="analytics-toolbar">
+                        <select id="analytics-period-select" onchange="loadAnalytics()" style="flex: 1;">
+                            <option value="today">📅 Oggi</option>
+                            <option value="7d">📆 Ultimi 7 giorni</option>
+                            <option value="30d" selected>🗓️ Ultimi 30 giorni</option>
+                        </select>
+                        <button type="button" class="small-icon-btn" id="btn-refresh-analytics" onclick="loadAnalytics()" style="padding: 10px 12px;">🔄 Aggiorna</button>
+                    </div>
+
                     <div class="analytics-metrics-grid">
                         <div class="analytics-stat-box">
                             <div class="tele-label">Visite Oggi</div>
                             <div class="analytics-stat-num" id="stat-views-today">0</div>
                         </div>
                         <div class="analytics-stat-box">
-                            <div class="tele-label">Visite Mese</div>
+                            <div class="tele-label" id="stat-views-period-label">Visite Mese</div>
                             <div class="analytics-stat-num" id="stat-views-month">0</div>
                         </div>
                     </div>
@@ -1323,6 +1484,13 @@
                     </p>
                 </div>
 
+                <div id="analytics-error-content" style="display: none; text-align: center; padding: 18px 8px;">
+                    <div style="font-size: 28px; margin-bottom: 8px;">⚠️</div>
+                    <h4 style="font-size: 14px; margin-bottom: 4px;">Errore di Connessione Metriche</h4>
+                    <p id="analytics-error-msg" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;"></p>
+                    <button type="button" class="btn-secondary-glass" style="width: auto; padding: 8px 16px;" onclick="loadAnalytics()">🔄 Riprova</button>
+                </div>
+
                 <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
             </div>
 
@@ -1352,6 +1520,10 @@
                             </button>
                         </div>
 
+                        <div class="store-search-row">
+                            <input type="search" id="store-search-input" placeholder="🔍 Cerca articolo per nome, ID o descrizione..." oninput="renderFilteredStoreItems()">
+                        </div>
+
                         <!-- Form Crea / Modifica Articolo -->
                         <div class="store-editor-card" id="store-item-editor">
                             <div class="drawer-title" id="store-editor-heading" style="font-size: 13px; margin-bottom: 10px;">➕ Nuovo Articolo</div>
@@ -1364,17 +1536,17 @@
                                 <div class="form-grid-2">
                                     <div>
                                         <label for="st_price">Prezzo Listino (€) *</label>
-                                        <input type="number" step="0.01" id="st_price" required placeholder="99.00">
+                                        <input type="number" step="0.01" min="0" id="st_price" required placeholder="99.00">
                                     </div>
                                     <div>
                                         <label for="st_discount_price">Prezzo Scontato (€)</label>
-                                        <input type="number" step="0.01" id="st_discount_price" placeholder="Vuoto = nessuno">
+                                        <input type="number" step="0.01" min="0" id="st_discount_price" placeholder="Vuoto = nessuno">
                                     </div>
                                 </div>
                                 <div class="form-grid-2">
                                     <div>
                                         <label for="st_stock_qty">Quantità Magazzino</label>
-                                        <input type="number" id="st_stock_qty" placeholder="Vuoto = illimitata">
+                                        <input type="number" min="0" id="st_stock_qty" placeholder="Vuoto = illimitata">
                                     </div>
                                     <div>
                                         <label for="st_in_stock">Stato Disponibilità</label>
@@ -1401,11 +1573,11 @@
                                 <div class="form-grid-2">
                                     <div>
                                         <label for="st_page">Pagina Destinazione</label>
-                                        <input type="text" id="st_page" value="index.html" placeholder="index.html">
+                                        <select id="st_page" onchange="onStoreFormPageChange()"></select>
                                     </div>
                                     <div>
                                         <label for="st_section">Sezione Store ID</label>
-                                        <input type="text" id="st_section" value="default" placeholder="default">
+                                        <select id="st_section"></select>
                                     </div>
                                 </div>
                                 <div class="form-row">
@@ -1420,11 +1592,24 @@
                                     <input type="text" id="st_description" placeholder="Caratteristiche principali...">
                                 </div>
                                 <div class="form-row">
-                                    <label>Foto Prodotto (WebP automatico)</label>
+                                    <label>Foto Prodotto (Max 12 MB — WebP automatico)</label>
+
+                                    <!-- Anteprima Immagine Esistente in Modifica -->
+                                    <div class="existing-img-preview" id="st-existing-image-box">
+                                        <img id="st-existing-image-thumb" src="" alt="Anteprima prodotto">
+                                        <div class="existing-img-meta">
+                                            <div style="color:#e2e8f0; font-weight:600;">Immagine attuale online</div>
+                                            <div>Lascia vuoto per mantenerla, oppure caricane una nuova.</div>
+                                            <label style="display:inline-flex; align-items:center; gap:5px; margin-top:4px; font-size:11px; color:#fb7185; cursor:pointer;">
+                                                <input type="checkbox" id="st_remove_image"> Rimuovi immagine attuale
+                                            </label>
+                                        </div>
+                                    </div>
+
                                     <div class="file-upload-btn">
                                         <span>📸 Carica immagine prodotto...</span>
                                         <span id="st-chosen-file-label" class="file-upload-name"></span>
-                                        <input type="file" id="st_image" accept="image/*" onchange="updateStoreFileName(this)">
+                                        <input type="file" id="st_image" accept="image/*" onchange="handleFileSelection(this, 'st-chosen-file-label')">
                                     </div>
                                 </div>
                                 <div class="action-split">
@@ -1441,6 +1626,10 @@
 
                     <!-- TAB 4B: STATISTICHE DEDICATE AI SINGOLI PRODOTTI -->
                     <div id="store-view-stats" style="display: none;">
+                        <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+                            <button type="button" class="small-icon-btn" onclick="loadStoreCatalog()">🔄 Aggiorna Metriche</button>
+                        </div>
+
                         <div class="inventory-kpi-grid">
                             <div class="analytics-stat-box">
                                 <div class="tele-label">Totale</div>
@@ -1504,6 +1693,13 @@
                     </p>
                 </div>
 
+                <div id="store-error-content" style="display: none; text-align: center; padding: 18px 8px;">
+                    <div style="font-size: 28px; margin-bottom: 8px;">⚠️</div>
+                    <h4 style="font-size: 14px; margin-bottom: 4px;">Errore Caricamento Catalogo</h4>
+                    <p id="store-error-msg" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;"></p>
+                    <button type="button" class="btn-secondary-glass" style="width: auto; padding: 8px 16px;" onclick="loadStoreCatalog()">🔄 Riprova</button>
+                </div>
+
                 <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
             </div>
 
@@ -1513,7 +1709,7 @@
             <div id="rollback-box">
                 <div class="rollback-title">🚀 Modifica Pubblicata con Successo!</div>
                 <div class="rollback-desc">Verifica subito il risultato online. Se non convalidi, il sistema ripristina in automatico dopo 30 minuti.</div>
-                <a href="#" id="site-preview-btn" class="site-preview-link" target="_blank">🌐 Apri il tuo sito (Bypass Cache)</a>
+                <a href="#" id="site-preview-btn" class="site-preview-link" target="_blank" rel="noopener">🌐 Apri il tuo sito (Bypass Cache)</a>
                 <div class="action-split">
                     <button type="button" class="btn-action-confirm" onclick="triggerConfirm()">✅ Convalida</button>
                     <button type="button" class="btn-action-rollback" onclick="triggerRollback()">❌ Rollback (5s)</button>
@@ -1526,19 +1722,32 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            Sviluppato con Ingegneria Umanistica da <a href="https://www.theorbisproject.com" target="_blank">The Orbis Project</a> • Roma
+            Sviluppato con Ingegneria Umanistica da <a href="https://www.theorbisproject.com" target="_blank" rel="noopener">The Orbis Project</a> • Roma
         </footer>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- MODALE CUSTOM GLASSMORPHISM (CONFERME, AVVISI & GESTIONE PASSKEY)  -->
+    <!-- ================================================================== -->
+    <div class="glass-modal-overlay" id="glass-modal-overlay">
+        <div class="glass-modal-card">
+            <div class="glass-modal-title" id="glass-modal-title">Conferma Operazione</div>
+            <div class="glass-modal-body" id="glass-modal-body"></div>
+            <div id="glass-modal-extra" style="margin-bottom: 14px; display: none;"></div>
+            <div class="glass-modal-actions" id="glass-modal-actions"></div>
+        </div>
     </div>
 
     <!-- ================================================================== -->
     <!-- SCRIPT CLIENT AUTONOMO (GOOGLE OPENID + WEBAUTHN PASSKEY 2FA)      -->
     <!-- ================================================================== -->
     <script>
-        // Configurazione Backend & Google Client ID
+        // Configurazione Backend & Google Client ID (Configurazione locale/ngrok attuale)
         const API_BASE_URL = "https://smith-anchor-untoasted.ngrok-free.dev";
         const GOOGLE_CLIENT_ID = "469505334527-edukemeurksnpr8959jhng7qfsoc1tn7.apps.googleusercontent.com";
 
         const DEFAULT_HEADERS = { "ngrok-skip-browser-warning": "true" };
+        const MAX_IMAGE_BYTES = 12 * 1024 * 1024; // 12 MB limite client-side
 
         // Stato Globale Sessione
         let sessionToken = localStorage.getItem("orbis_session_token") || "";
@@ -1554,6 +1763,99 @@
         let cachedSectionsData = [];
         let cachedStoreItems = [];
         let cachedStoreLocations = {};
+
+        /* ============================================================== */
+        /* 0. HELPER MODALI, PARSER ERRORI & NORMALIZZAZIONE URL          */
+        /* ============================================================== */
+        function normalizeSiteUrl(domain) {
+            const clean = String(domain || "").trim();
+            if (!clean) return "#";
+            if (/^https?:\/\//i.test(clean)) return clean;
+            return `https://${clean}`;
+        }
+
+        function showGlassModal({ title, message, confirmText = "OK", cancelText = "", isDanger = false, extraHtml = "" }) {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById("glass-modal-overlay");
+                const titleEl = document.getElementById("glass-modal-title");
+                const bodyEl = document.getElementById("glass-modal-body");
+                const extraEl = document.getElementById("glass-modal-extra");
+                const actionsEl = document.getElementById("glass-modal-actions");
+
+                titleEl.textContent = title;
+                bodyEl.textContent = message;
+
+                if (extraHtml) {
+                    extraEl.innerHTML = extraHtml;
+                    extraEl.style.display = "block";
+                } else {
+                    extraEl.innerHTML = "";
+                    extraEl.style.display = "none";
+                }
+
+                actionsEl.innerHTML = "";
+
+                const closeWith = (val) => {
+                    overlay.style.display = "none";
+                    resolve(val);
+                };
+
+                if (cancelText) {
+                    const btnCancel = document.createElement("button");
+                    btnCancel.type = "button";
+                    btnCancel.className = "btn-outline-close";
+                    btnCancel.style.cssText = "margin-top:0; width:auto; padding:10px 16px;";
+                    btnCancel.textContent = cancelText;
+                    btnCancel.onclick = () => closeWith(false);
+                    actionsEl.appendChild(btnCancel);
+                }
+
+                const btnConfirm = document.createElement("button");
+                btnConfirm.type = "button";
+                btnConfirm.className = isDanger ? "btn-action-rollback" : "btn-glow-primary";
+                btnConfirm.style.cssText = "width:auto; padding:10px 18px;";
+                btnConfirm.textContent = confirmText;
+                btnConfirm.onclick = () => closeWith(true);
+                actionsEl.appendChild(btnConfirm);
+
+                overlay.style.display = "flex";
+            });
+        }
+
+        async function parseApiJson(res) {
+            const rawText = await res.text();
+            let data = null;
+            if (rawText) {
+                try {
+                    data = JSON.parse(rawText);
+                } catch (_) {
+                    if (!res.ok) {
+                        throw new Error(`Errore server HTTP ${res.status}: risposta non valida.`);
+                    }
+                    throw new Error("Risposta JSON non valida dal backend.");
+                }
+            } else {
+                data = {};
+            }
+
+            if (!res.ok) {
+                let errMsg = `Errore HTTP ${res.status}`;
+                if (data) {
+                    if (typeof data.message === "string" && data.message) {
+                        errMsg = data.message;
+                    } else if (typeof data.detail === "string" && data.detail) {
+                        errMsg = data.detail;
+                    } else if (Array.isArray(data.detail) && data.detail.length > 0) {
+                        errMsg = data.detail.map(d => d.msg || JSON.stringify(d)).join("; ");
+                    }
+                }
+                const err = new Error(errMsg);
+                err.status = res.status;
+                err.payload = data;
+                throw err;
+            }
+            return data;
+        }
 
         /* ============================================================== */
         /* 1. HELPER BASE64URL & WEBAUTHN PASSKEY                         */
@@ -1578,14 +1880,14 @@
             return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
         }
 
-        async function registerNewPasskey() {
+        async function registerNewPasskey(customLabel = "") {
             if (!window.PublicKeyCredential) {
                 showNotification("❌ Questo browser o dispositivo non supporta le Passkey WebAuthn.", false);
                 return;
             }
             try {
                 const optRes = await apiFetch("/api/v1/auth/passkey/register-options", { method: "POST" });
-                const optData = await optRes.json();
+                const optData = await parseApiJson(optRes);
                 if (optData.status !== "success") {
                     showNotification(`⚠️ ${optData.message || "Errore opzioni Passkey"}`, false);
                     return;
@@ -1606,16 +1908,18 @@
                     }
                 };
 
+                const deviceLabel = customLabel.trim() || `${navigator.platform || "Dispositivo"} (${new Date().toLocaleDateString("it-IT")})`;
+
                 const verRes = await apiFetch("/api/v1/auth/passkey/register-verify", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         challenge_id: optData.challenge_id,
                         credential: serializedCred,
-                        device_name: navigator.platform || "Dispositivo Titolare"
+                        device_name: deviceLabel
                     })
                 });
-                const verData = await verRes.json();
+                const verData = await parseApiJson(verRes);
                 if (verData.status === "success") {
                     if (verData.action_proof) {
                         cachedActionProof = { token: verData.action_proof, expiresAt: Date.now() + 50000 };
@@ -1631,9 +1935,33 @@
             }
         }
 
+        async function openPasskeyManagerModal() {
+            const extraHtml = `
+                <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px; margin-bottom:10px;">
+                    <label for="new-passkey-device-name" style="font-size:11px; color:var(--text-muted);">Etichetta nuovo dispositivo (opzionale)</label>
+                    <input type="text" id="new-passkey-device-name" placeholder="Es: iPhone Titolare / PC Ufficio">
+                </div>
+            `;
+            const confirmed = await showGlassModal({
+                title: "🔑 Gestione Passkey Biometriche",
+                message: "Puoi associare più dispositivi (es. smartphone + computer dell'ufficio) allo stesso account per autorizzare le modifiche con FaceID, TouchID o PIN.",
+                confirmText: "➕ Aggiungi Dispositivo",
+                cancelText: "Chiudi",
+                extraHtml
+            });
+            if (confirmed) {
+                const nameInput = document.getElementById("new-passkey-device-name");
+                const label = nameInput ? nameInput.value : "";
+                await registerNewPasskey(label);
+            }
+        }
+
         async function loginWithPasskey() {
             if (!window.PublicKeyCredential) {
-                alert("Il tuo dispositivo non supporta le Passkey WebAuthn.");
+                await showGlassModal({
+                    title: "❌ Passkey Non Supportata",
+                    message: "Il tuo browser o dispositivo non supporta le Passkey WebAuthn."
+                });
                 return;
             }
             try {
@@ -1642,9 +1970,12 @@
                     headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
                     body: JSON.stringify({ user_id: currentUserId || null })
                 });
-                const optData = await optRes.json();
+                const optData = await parseApiJson(optRes);
                 if (optData.status !== "success") {
-                    alert(optData.message || "Impossibile avviare Passkey.");
+                    await showGlassModal({
+                        title: "⚠️ Errore Passkey",
+                        message: optData.message || "Impossibile avviare Passkey."
+                    });
                     return;
                 }
 
@@ -1678,14 +2009,20 @@
                         credential: serialized
                     })
                 });
-                const verData = await verRes.json();
+                const verData = await parseApiJson(verRes);
                 if (verData.status === "success") {
                     completeAuthSuccess(verData);
                 } else {
-                    alert(verData.message || "Passkey non riconosciuta.");
+                    await showGlassModal({
+                        title: "🛑 Accesso Negato",
+                        message: verData.message || "Passkey non riconosciuta."
+                    });
                 }
             } catch (err) {
-                alert("Verifica Passkey annullata o non riuscita.");
+                await showGlassModal({
+                    title: "⚠️ Verifica Annullata",
+                    message: err.message || "Verifica Passkey annullata o non riuscita."
+                });
             }
         }
 
@@ -1703,7 +2040,7 @@
                 headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
                 body: JSON.stringify({ user_id: currentUserId || null })
             });
-            const optData = await optRes.json();
+            const optData = await parseApiJson(optRes);
             if (optData.status !== "success") {
                 throw new Error(optData.message || "Errore richiesta conferma Passkey.");
             }
@@ -1738,7 +2075,7 @@
                     credential: serialized
                 })
             });
-            const verData = await verRes.json();
+            const verData = await parseApiJson(verRes);
             if (verData.status !== "success" || !verData.action_proof) {
                 throw new Error(verData.message || "Conferma biometrica fallita.");
             }
@@ -1789,35 +2126,51 @@
             const idToken = response.credential;
             const isPairingMode = document.getElementById("auth-panel-pair").style.display === "block";
 
-            if (isPairingMode) {
-                const pairingCode = document.getElementById("pairing_code_input").value.trim();
-                if (!pairingCode) {
-                    alert("Inserisci prima il codice di attivazione usa-e-getta.");
-                    return;
-                }
-                const res = await fetch(`${API_BASE_URL}/api/v1/auth/pair`, {
-                    method: "POST",
-                    headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
-                    body: JSON.stringify({ pairing_code: pairingCode, google_id_token: idToken })
-                });
-                const data = await res.json();
-                if (data.status === "success") {
-                    completeAuthSuccess(data);
+            try {
+                if (isPairingMode) {
+                    const pairingCode = document.getElementById("pairing_code_input").value.trim();
+                    if (!pairingCode) {
+                        await showGlassModal({
+                            title: "🎟️ Codice Mancante",
+                            message: "Inserisci prima il codice di attivazione usa-e-getta."
+                        });
+                        return;
+                    }
+                    const res = await fetch(`${API_BASE_URL}/api/v1/auth/pair`, {
+                        method: "POST",
+                        headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                        body: JSON.stringify({ pairing_code: pairingCode, google_id_token: idToken })
+                    });
+                    const data = await parseApiJson(res);
+                    if (data.status === "success") {
+                        completeAuthSuccess(data);
+                    } else {
+                        await showGlassModal({
+                            title: "🛑 Abbinamento Fallito",
+                            message: data.message || "Abbinamento non riuscito."
+                        });
+                    }
                 } else {
-                    alert(data.message || "Abbinamento non riuscito.");
+                    const res = await fetch(`${API_BASE_URL}/api/v1/auth/google`, {
+                        method: "POST",
+                        headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                        body: JSON.stringify({ google_id_token: idToken })
+                    });
+                    const data = await parseApiJson(res);
+                    if (data.status === "success") {
+                        completeAuthSuccess(data);
+                    } else {
+                        await showGlassModal({
+                            title: "🛑 Accesso Non Riconosciuto",
+                            message: data.message || "Accesso Google non riconosciuto."
+                        });
+                    }
                 }
-            } else {
-                const res = await fetch(`${API_BASE_URL}/api/v1/auth/google`, {
-                    method: "POST",
-                    headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
-                    body: JSON.stringify({ google_id_token: idToken })
+            } catch (err) {
+                await showGlassModal({
+                    title: "❌ Errore Autenticazione",
+                    message: err.message || "Errore di connessione al server."
                 });
-                const data = await res.json();
-                if (data.status === "success") {
-                    completeAuthSuccess(data);
-                } else {
-                    alert(data.message || "Accesso Google non riconosciuto.");
-                }
             }
         }
 
@@ -1870,9 +2223,12 @@
                 let errDetail = "Autorizzazione Passkey negata o scaduta.";
                 try {
                     const errJson = await res.json();
-                    if (errJson.detail) errDetail = errJson.detail;
+                    if (errJson.detail) errDetail = typeof errJson.detail === "string" ? errJson.detail : JSON.stringify(errJson.detail);
+                    else if (errJson.message) errDetail = errJson.message;
                 } catch (_) {}
-                throw new Error(errDetail);
+                const err = new Error(errDetail);
+                err.status = 403;
+                throw err;
             }
             return res;
         }
@@ -1887,15 +2243,17 @@
 
             await loadUserSitesList();
             if (selectedSiteId) {
-                await fetchUserStatus();
-                await loadSiteSections("index.html");
+                await Promise.all([
+                    fetchUserStatus(),
+                    loadSiteSections("index.html")
+                ]);
             }
         }
 
         async function loadUserSitesList() {
             try {
                 const res = await apiFetch("/api/v1/sites");
-                const data = await res.json();
+                const data = await parseApiJson(res);
                 if (data.status === "success") {
                     userSites = data.sites || [];
                     document.getElementById("passkey-setup-banner").style.display = data.requires_passkey_setup ? "block" : "none";
@@ -1933,18 +2291,77 @@
             selectedSiteId = newSiteId;
             localStorage.setItem("orbis_selected_site_id", selectedSiteId);
             closeAllDrawers();
-            await fetchUserStatus();
-            await loadSiteSections("index.html");
+            await Promise.all([
+                fetchUserStatus(),
+                loadSiteSections("index.html")
+            ]);
         }
 
         /* ============================================================== */
-        /* 4. TELEMETRIA, STATO SITO & MODULI                             */
+        /* 4. TELEMETRIA, STATO SITO, MINI AUDIT LOG & ROLLBACK           */
         /* ============================================================== */
+        function activateRollbackBanner(busterParam = "") {
+            const previewBtn = document.getElementById("site-preview-btn");
+            const baseUrl = normalizeSiteUrl(currentDomain);
+            const buster = busterParam || `?v=${Date.now()}`;
+            previewBtn.href = baseUrl !== "#" ? `${baseUrl}${buster}` : "#";
+            document.getElementById("rollback-box").style.display = "block";
+        }
+
+        function appendLocalModLog(actionLabel) {
+            if (!selectedSiteId) return;
+            const key = `orbis_mod_log_${selectedSiteId}`;
+            let logs = [];
+            try {
+                logs = JSON.parse(localStorage.getItem(key) || "[]");
+            } catch (_) { logs = []; }
+
+            const now = new Date();
+            const stamp = now.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit" }) + " " +
+                          now.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
+
+            logs.unshift({ label: actionLabel, time: stamp });
+            logs = logs.slice(0, 15);
+            localStorage.setItem(key, JSON.stringify(logs));
+            renderMiniAuditLog();
+        }
+
+        function renderMiniAuditLog(serverLogs = null) {
+            const container = document.getElementById("mini-log-list");
+            let logs = Array.isArray(serverLogs) && serverLogs.length > 0 ? serverLogs : [];
+
+            if (logs.length === 0 && selectedSiteId) {
+                try {
+                    logs = JSON.parse(localStorage.getItem(`orbis_mod_log_${selectedSiteId}`) || "[]");
+                } catch (_) { logs = []; }
+            }
+
+            if (logs.length === 0) {
+                container.innerHTML = '<div style="font-size:11px; color:var(--text-hint); padding:4px 2px;">Nessuna operazione registrata di recente.</div>';
+                return;
+            }
+
+            container.innerHTML = logs.map(item => `
+                <div class="mini-log-row">
+                    <span class="mini-log-desc">${escapeHtml(item.label || item.description || "Modifica")}</span>
+                    <span class="mini-log-time">${escapeHtml(item.time || item.timestamp || "")}</span>
+                </div>
+            `).join("");
+        }
+
+        function toggleMiniAuditLog() {
+            const list = document.getElementById("mini-log-list");
+            const arrow = document.getElementById("mini-log-arrow");
+            const isOpen = list.style.display === "flex";
+            list.style.display = isOpen ? "none" : "flex";
+            arrow.innerText = isOpen ? "▼ Mostra" : "▲ Nascondi";
+        }
+
         async function fetchUserStatus() {
             if (!selectedSiteId) return;
             try {
                 const res = await apiFetch(`/api/v1/user-status?site_id=${encodeURIComponent(selectedSiteId)}`);
-                const data = await res.json();
+                const data = await parseApiJson(res);
 
                 if (data.status === "success") {
                     document.getElementById("enterprise-name").innerText = data.business_name || "SiteMaster Console";
@@ -1981,13 +2398,13 @@
                     const pct = Math.min(100, Math.round((count / limit) * 100));
                     document.getElementById("progress-bar-fill").style.width = `${pct}%`;
 
+                    renderMiniAuditLog(data.recent_modifications || null);
+
                     document.getElementById("lock-analytics").style.display = data.modules_unlocked?.privacy_analytics ? "none" : "block";
                     document.getElementById("lock-store").style.display = data.modules_unlocked?.store_manager ? "none" : "block";
 
                     if (data.has_pending_rollback) {
-                        const previewBtn = document.getElementById("site-preview-btn");
-                        previewBtn.href = currentDomain ? `${currentDomain}?v=${Date.now()}` : "#";
-                        document.getElementById("rollback-box").style.display = "block";
+                        activateRollbackBanner();
                     } else {
                         document.getElementById("rollback-box").style.display = "none";
                     }
@@ -2048,7 +2465,7 @@
                     method: "POST",
                     body: formData
                 });
-                const data = await res.json();
+                const data = await parseApiJson(res);
 
                 if (data.status === "success") {
                     container.style.display = "block";
@@ -2087,7 +2504,7 @@
             try {
                 const url = `/api/v1/get-sections?site_id=${encodeURIComponent(selectedSiteId)}&target_file=${encodeURIComponent(targetFile)}`;
                 const res = await apiFetch(url);
-                const data = await res.json();
+                const data = await parseApiJson(res);
 
                 if (data.status === "success") {
                     if (Array.isArray(data.files) && data.files.length > 0) {
@@ -2166,9 +2583,28 @@
             return pills.map(p => p.getAttribute("data-val")).join(", ") || "Modifica Aperta";
         }
 
-        function updateFileName(input) {
-            const label = document.getElementById("chosen-file-label");
-            label.innerText = (input.files && input.files[0]) ? `(${input.files[0].name})` : "";
+        function handleFileSelection(input, labelElementId) {
+            const label = document.getElementById(labelElementId);
+            if (!input.files || !input.files[0]) {
+                label.innerText = "";
+                return;
+            }
+            const file = input.files[0];
+            if (!file.type.startsWith("image/")) {
+                input.value = "";
+                label.innerText = "";
+                showNotification("⚠️ Seleziona un file immagine valido (JPG, PNG, WebP).", false);
+                return;
+            }
+            if (file.size > MAX_IMAGE_BYTES) {
+                const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+                input.value = "";
+                label.innerText = "";
+                showNotification(`⚠️ Immagine troppo pesante (${sizeMb} MB). Il limite massimo è 12 MB.`, false);
+                return;
+            }
+            const sizeKb = Math.round(file.size / 1024);
+            label.innerText = `(${file.name} • ${sizeKb} KB)`;
         }
 
         document.getElementById("editor-form").addEventListener("submit", async (e) => {
@@ -2184,10 +2620,13 @@
                 const actionProof = await obtainActionProof();
                 submitBtn.innerHTML = "<span>⏳ Elaborazione Gemini Pro su GitHub...</span>";
 
+                const targetPage = document.getElementById("target_page").value;
+                const targetSection = document.getElementById("target_section").value;
+
                 const formData = new FormData();
                 formData.append("site_id", selectedSiteId);
-                formData.append("target_page", document.getElementById("target_page").value);
-                formData.append("target_section", document.getElementById("target_section").value);
+                formData.append("target_page", targetPage);
+                formData.append("target_section", targetSection);
                 formData.append("action_types", getSelectedActionTypes());
                 formData.append("instruction", document.getElementById("instruction_text").value);
                 if (actionProof) formData.append("action_proof", actionProof);
@@ -2201,20 +2640,20 @@
                     method: "POST",
                     body: formData
                 });
-                const data = await res.json();
+                const data = await parseApiJson(res);
 
-                if (res.ok && data.status === "success") {
+                if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    const previewBtn = document.getElementById("site-preview-btn");
-                    const buster = data.cache_buster_param || `?v=${Date.now()}`;
-                    previewBtn.href = currentDomain ? `${currentDomain}${buster}` : "#";
+                    activateRollbackBanner(data.cache_buster_param);
+                    appendLocalModLog(`✏️ ${targetPage} [${targetSection}]`);
 
-                    rollbackBox.style.display = "block";
                     document.getElementById("instruction_text").value = "";
                     fileInput.value = "";
-                    updateFileName(fileInput);
-                    fetchUserStatus();
-                    loadSiteSections(document.getElementById("target_page").value);
+                    document.getElementById("chosen-file-label").innerText = "";
+                    await Promise.all([
+                        fetchUserStatus(),
+                        loadSiteSections(targetPage)
+                    ]);
                 } else {
                     showNotification(`🛑 ${data.message || "Errore durante l'applicazione."}`, false);
                 }
@@ -2234,8 +2673,9 @@
                     method: "POST",
                     body: formData
                 });
-                const data = await res.json();
+                const data = await parseApiJson(res);
                 showNotification(`✅ ${data.message}`, true);
+                appendLocalModLog("✅ Modifica convalidata");
                 document.getElementById("rollback-box").style.display = "none";
             } catch (err) {
                 showNotification(`❌ ${err.message}`, false);
@@ -2243,6 +2683,15 @@
         }
 
         async function triggerRollback() {
+            const confirmed = await showGlassModal({
+                title: "🔄 Ripristino Versione Precedente",
+                message: "Vuoi annullare l'ultima modifica pubblicata e ripristinare il codice precedente su GitHub?",
+                confirmText: "Sì, Esegui Rollback",
+                cancelText: "Annulla",
+                isDanger: true
+            });
+            if (!confirmed) return;
+
             try {
                 const actionProof = await obtainActionProof();
                 const formData = new FormData();
@@ -2253,12 +2702,15 @@
                     method: "POST",
                     body: formData
                 });
-                const data = await res.json();
+                const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`🔄 ${data.message}`, true);
+                    appendLocalModLog("🔄 Rollback eseguito");
                     document.getElementById("rollback-box").style.display = "none";
-                    fetchUserStatus();
-                    loadSiteSections(document.getElementById("target_page").value);
+                    await Promise.all([
+                        fetchUserStatus(),
+                        loadSiteSections(document.getElementById("target_page").value)
+                    ]);
                 } else {
                     showNotification(`⚠️ ${data.message}`, false);
                 }
@@ -2273,6 +2725,10 @@
         async function loadAnalytics() {
             const unlocked = document.getElementById("analytics-unlocked-content");
             const locked = document.getElementById("analytics-locked-content");
+            const errBox = document.getElementById("analytics-error-content");
+            const refreshBtn = document.getElementById("btn-refresh-analytics");
+
+            errBox.style.display = "none";
 
             if (currentTier !== "pro") {
                 unlocked.style.display = "none";
@@ -2280,13 +2736,22 @@
                 return;
             }
 
+            const period = document.getElementById("analytics-period-select")?.value || "30d";
+            if (refreshBtn) {
+                refreshBtn.disabled = true;
+                refreshBtn.innerText = "⏳";
+            }
+
             try {
-                const res = await apiFetch(`/api/v1/analytics/stats?site_id=${encodeURIComponent(selectedSiteId)}`);
-                const data = await res.json();
+                const res = await apiFetch(`/api/v1/analytics/stats?site_id=${encodeURIComponent(selectedSiteId)}&period=${encodeURIComponent(period)}`);
+                const data = await parseApiJson(res);
 
                 if (data.status === "success") {
                     document.getElementById("stat-views-today").innerText = data.views_today || 0;
-                    document.getElementById("stat-views-month").innerText = data.views_month || 0;
+                    document.getElementById("stat-views-month").innerText = data.views_period ?? data.views_month ?? 0;
+
+                    const periodLabels = { today: "Visite Oggi", "7d": "Visite 7 Giorni", "30d": "Visite Mese" };
+                    document.getElementById("stat-views-period-label").innerText = periodLabels[period] || "Visite Mese";
 
                     renderKeyValueMetricList("analytics-pages-list", data.pages || {}, "Nessuna pagina ancora registrata");
                     renderKeyValueMetricList("analytics-sections-list", data.sections || {}, "Nessuna sezione rilevata (>2s)");
@@ -2312,6 +2777,15 @@
                 }
             } catch (err) {
                 console.error("Errore analytics:", err);
+                unlocked.style.display = "none";
+                locked.style.display = "none";
+                document.getElementById("analytics-error-msg").innerText = err.message || "Impossibile caricare le statistiche.";
+                errBox.style.display = "block";
+            } finally {
+                if (refreshBtn) {
+                    refreshBtn.disabled = false;
+                    refreshBtn.innerText = "🔄 Aggiorna";
+                }
             }
         }
 
@@ -2343,10 +2817,13 @@
         async function loadStoreCatalog() {
             const unlocked = document.getElementById("store-unlocked-content");
             const locked = document.getElementById("store-locked-content");
+            const errBox = document.getElementById("store-error-content");
+
+            errBox.style.display = "none";
 
             try {
                 const res = await apiFetch(`/api/v1/store/catalog?site_id=${encodeURIComponent(selectedSiteId)}`);
-                const data = await res.json();
+                const data = await parseApiJson(res);
 
                 if (data.status === "success") {
                     cachedStoreItems = data.items || [];
@@ -2388,8 +2865,15 @@
                     locked.style.display = "block";
                 }
             } catch (err) {
-                unlocked.style.display = "none";
-                locked.style.display = "block";
+                if (err.status === 403 || (err.payload && err.payload.status === "locked")) {
+                    unlocked.style.display = "none";
+                    locked.style.display = "block";
+                } else {
+                    unlocked.style.display = "none";
+                    locked.style.display = "none";
+                    document.getElementById("store-error-msg").innerText = err.message || "Errore di connessione al catalogo.";
+                    errBox.style.display = "block";
+                }
             }
         }
 
@@ -2424,18 +2908,27 @@
         function renderFilteredStoreItems() {
             const container = document.getElementById("store-items-container");
             const filterVal = document.getElementById("store-location-filter").value;
+            const searchQuery = (document.getElementById("store-search-input")?.value || "").trim().toLowerCase();
 
             let filtered = cachedStoreItems;
             if (filterVal !== "ALL") {
                 const [fPage, fSec] = filterVal.split("::");
-                filtered = cachedStoreItems.filter(it =>
+                filtered = filtered.filter(it =>
                     (it.page || "index.html") === fPage &&
                     (it.section || "default").toLowerCase() === fSec.toLowerCase()
                 );
             }
 
+            if (searchQuery) {
+                filtered = filtered.filter(it =>
+                    (it.name || "").toLowerCase().includes(searchQuery) ||
+                    (it.id || "").toLowerCase().includes(searchQuery) ||
+                    (it.description || "").toLowerCase().includes(searchQuery)
+                );
+            }
+
             if (filtered.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:18px; font-size:12px; color:var(--text-muted);">Nessun prodotto in questa sezione. Premi "➕ Nuovo" per aggiungerlo.</div>';
+                container.innerHTML = '<div style="text-align:center; padding:18px; font-size:12px; color:var(--text-muted);">Nessun prodotto trovato con i filtri attuali.</div>';
                 return;
             }
 
@@ -2443,11 +2936,14 @@
             filtered.forEach(item => {
                 const card = document.createElement("div");
                 card.className = "catalog-item-card";
+                card.dataset.itemId = item.id;
 
                 const badges = [];
                 if (item.priority === "high") badges.push('<span class="mini-badge mb-featured">In Evidenza</span>');
                 if (item.is_new) badges.push('<span class="mini-badge mb-new">Novità</span>');
-                if (item.stock_qty !== null && item.stock_qty > 0) badges.push(`<span class="mini-badge mb-low">Qtà: ${item.stock_qty}</span>`);
+                if (item.stock_qty !== null && item.stock_qty !== undefined && item.stock_qty > 0) {
+                    badges.push(`<span class="mini-badge mb-low">Qtà: ${item.stock_qty}</span>`);
+                }
                 if (item.hidden) badges.push('<span class="mini-badge mb-hidden">Nascosto</span>');
 
                 const priceLabel = item.discount_price
@@ -2461,18 +2957,18 @@
                             <div class="catalog-meta-line">ID: ${escapeHtml(item.id)} • ${priceLabel} • 👆 ${item.clicks || 0} / 🛒 ${item.cart_adds || 0}</div>
                             <div class="store-badges-row">${badges.join("")}</div>
                         </div>
-                        <button type="button" class="small-icon-btn" onclick='openStoreItemForm(${JSON.stringify(item.id)})'>✏️ Modifica</button>
+                        <button type="button" class="small-icon-btn" data-action="edit" data-id="${escapeHtml(item.id)}">✏️ Modifica</button>
                     </div>
                     <div class="catalog-controls-bar">
                         <div style="display:flex; align-items:center; gap:6px;">
-                            <input type="number" step="0.5" class="price-input-small" id="quick-price-${item.id}" value="${item.price}">
-                            <button type="button" class="small-icon-btn" title="Salva Prezzo" onclick="quickSaveStorePrice('${item.id}')">💾 €</button>
+                            <input type="number" step="0.5" min="0" class="price-input-small" value="${item.price}">
+                            <button type="button" class="small-icon-btn" title="Salva Prezzo" data-action="save-price" data-id="${escapeHtml(item.id)}">💾 €</button>
                         </div>
                         <div style="display:flex; align-items:center; gap:6px;">
-                            <button type="button" class="small-icon-btn ${item.in_stock ? "stock-btn-green" : "stock-btn-red"}" onclick="quickToggleStoreStock('${item.id}', ${!item.in_stock})">
+                            <button type="button" class="small-icon-btn ${item.in_stock ? "stock-btn-green" : "stock-btn-red"}" data-action="toggle-stock" data-id="${escapeHtml(item.id)}" data-next-stock="${!item.in_stock}">
                                 ${item.in_stock ? "🟢 Disponibile" : "🔴 Esaurito"}
                             </button>
-                            <button type="button" class="small-icon-btn" style="color:#fb7185;" title="Elimina" onclick="deleteStoreItem('${item.id}')">🗑️</button>
+                            <button type="button" class="small-icon-btn" style="color:#fb7185;" title="Elimina" data-action="delete" data-id="${escapeHtml(item.id)}">🗑️</button>
                         </div>
                     </div>
                 `;
@@ -2480,19 +2976,112 @@
             });
         }
 
+        // Event Delegation sicura per le card del catalogo Store
+        document.getElementById("store-items-container").addEventListener("click", (e) => {
+            const btn = e.target.closest("button[data-action]");
+            if (!btn) return;
+            const action = btn.dataset.action;
+            const itemId = btn.dataset.id;
+
+            if (action === "edit") {
+                openStoreItemForm(itemId);
+            } else if (action === "save-price") {
+                const card = btn.closest(".catalog-item-card");
+                const priceInput = card ? card.querySelector(".price-input-small") : null;
+                if (priceInput) quickSaveStorePrice(itemId, priceInput.value);
+            } else if (action === "toggle-stock") {
+                const nextInStock = btn.dataset.nextStock === "true";
+                quickToggleStoreStock(itemId, nextInStock);
+            } else if (action === "delete") {
+                deleteStoreItem(itemId);
+            }
+        });
+
+        /* Selettori guidati Pagina & Sezione Store nel form prodotto */
+        function populateStoreLocationSelects(targetPage = "index.html", targetSection = "default") {
+            const pageSelect = document.getElementById("st_page");
+            const pages = Object.keys(cachedStoreLocations);
+            if (!pages.includes("index.html") && pages.length === 0) pages.push("index.html");
+            if (targetPage && !pages.includes(targetPage)) pages.push(targetPage);
+
+            pageSelect.innerHTML = "";
+            pages.forEach(p => {
+                const opt = document.createElement("option");
+                opt.value = p;
+                opt.textContent = `📄 ${p}`;
+                if (p === targetPage) opt.selected = true;
+                pageSelect.appendChild(opt);
+            });
+
+            populateStoreSectionSelect(pageSelect.value, targetSection);
+        }
+
+        function populateStoreSectionSelect(pagePath, targetSection = "default") {
+            const secSelect = document.getElementById("st_section");
+            const blocks = cachedStoreLocations[pagePath] || [];
+
+            secSelect.innerHTML = "";
+            if (blocks.length === 0) {
+                const opt = document.createElement("option");
+                opt.value = targetSection || "default";
+                opt.textContent = targetSection || "default";
+                opt.selected = true;
+                secSelect.appendChild(opt);
+                return;
+            }
+
+            let foundMatch = false;
+            blocks.forEach(b => {
+                const opt = document.createElement("option");
+                opt.value = b.id;
+                opt.textContent = `${b.label} (${b.id})`;
+                if (b.id.toLowerCase() === (targetSection || "").toLowerCase()) {
+                    opt.selected = true;
+                    foundMatch = true;
+                }
+                secSelect.appendChild(opt);
+            });
+
+            if (!foundMatch && targetSection) {
+                const fallbackOpt = document.createElement("option");
+                fallbackOpt.value = targetSection;
+                fallbackOpt.textContent = targetSection;
+                fallbackOpt.selected = true;
+                secSelect.appendChild(fallbackOpt);
+            }
+        }
+
+        function onStoreFormPageChange() {
+            const pageVal = document.getElementById("st_page").value;
+            populateStoreSectionSelect(pageVal, "");
+        }
+
         function openStoreItemForm(itemId) {
             const editor = document.getElementById("store-item-editor");
             const heading = document.getElementById("store-editor-heading");
             const form = document.getElementById("store-item-form");
+            const imgPreviewBox = document.getElementById("st-existing-image-box");
+            const imgThumb = document.getElementById("st-existing-image-thumb");
+            const removeImgCheck = document.getElementById("st_remove_image");
+
             form.reset();
             document.getElementById("st-chosen-file-label").innerText = "";
+            imgPreviewBox.style.display = "none";
+            removeImgCheck.checked = false;
 
             if (!itemId) {
                 heading.innerText = "➕ Nuovo Articolo nel Catalogo";
                 document.getElementById("st_item_id").value = "";
                 document.getElementById("st_release_date").value = new Date().toISOString().split("T")[0];
-                document.getElementById("st_page").value = "index.html";
-                document.getElementById("st_section").value = "default";
+
+                // Pre-seleziona pagina/sezione dal filtro attivo se impostato
+                const activeFilter = document.getElementById("store-location-filter").value;
+                if (activeFilter !== "ALL" && activeFilter.includes("::")) {
+                    const [fPage, fSec] = activeFilter.split("::");
+                    populateStoreLocationSelects(fPage, fSec);
+                } else {
+                    populateStoreLocationSelects("index.html", "default");
+                }
             } else {
                 const item = cachedStoreItems.find(x => x.id === itemId);
                 if (!item) return;
@@ -2505,10 +3094,15 @@
                 document.getElementById("st_in_stock").value = String(Boolean(item.in_stock));
                 document.getElementById("st_priority").value = item.priority || "normal";
                 document.getElementById("st_release_date").value = item.release_date || "";
-                document.getElementById("st_page").value = item.page || "index.html";
-                document.getElementById("st_section").value = item.section || "default";
+                populateStoreLocationSelects(item.page || "index.html", item.section || "default");
                 document.getElementById("st_hidden").value = String(Boolean(item.hidden));
                 document.getElementById("st_description").value = item.description || "";
+
+                const existingImgUrl = item.image_url || item.image || item.img || "";
+                if (existingImgUrl) {
+                    imgThumb.src = existingImgUrl;
+                    imgPreviewBox.style.display = "flex";
+                }
             }
 
             editor.style.display = "block";
@@ -2519,27 +3113,38 @@
             document.getElementById("store-item-editor").style.display = "none";
         }
 
-        function updateStoreFileName(input) {
-            const label = document.getElementById("st-chosen-file-label");
-            label.innerText = (input.files && input.files[0]) ? `(${input.files[0].name})` : "";
-        }
-
         document.getElementById("store-item-form").addEventListener("submit", async (e) => {
             e.preventDefault();
+
+            const priceVal = parseFloat(document.getElementById("st_price").value);
+            const discountRaw = document.getElementById("st_discount_price").value.trim();
+            const discountVal = discountRaw !== "" ? parseFloat(discountRaw) : null;
+
+            if (isNaN(priceVal) || priceVal < 0) {
+                showNotification("⚠️ Inserisci un prezzo di listino valido (>= 0).", false);
+                return;
+            }
+            if (discountVal !== null && (isNaN(discountVal) || discountVal <= 0 || discountVal >= priceVal)) {
+                showNotification("⚠️ Il prezzo scontato deve essere maggiore di 0 e inferiore al prezzo di listino.", false);
+                return;
+            }
+
             const btn = document.getElementById("btn-save-store-item");
             btn.disabled = true;
             btn.innerHTML = "<span>🔐 Firma Passkey &amp; Sincronizzazione...</span>";
 
             try {
                 const actionProof = await obtainActionProof();
+                const itemName = document.getElementById("st_name").value.trim();
+                const existingId = document.getElementById("st_item_id").value.trim();
+
                 const formData = new FormData();
                 formData.append("site_id", selectedSiteId);
-                const existingId = document.getElementById("st_item_id").value.trim();
                 if (existingId) formData.append("item_id", existingId);
 
-                formData.append("name", document.getElementById("st_name").value);
-                formData.append("price", document.getElementById("st_price").value);
-                formData.append("discount_price", document.getElementById("st_discount_price").value);
+                formData.append("name", itemName);
+                formData.append("price", String(priceVal));
+                formData.append("discount_price", discountRaw);
                 formData.append("stock_qty", document.getElementById("st_stock_qty").value);
                 formData.append("in_stock", document.getElementById("st_in_stock").value);
                 formData.append("priority", document.getElementById("st_priority").value);
@@ -2548,6 +3153,9 @@
                 formData.append("section", document.getElementById("st_section").value);
                 formData.append("hidden", document.getElementById("st_hidden").value);
                 formData.append("description", document.getElementById("st_description").value);
+                if (document.getElementById("st_remove_image").checked) {
+                    formData.append("remove_image", "true");
+                }
                 if (actionProof) formData.append("action_proof", actionProof);
 
                 const imgInput = document.getElementById("st_image");
@@ -2559,11 +3167,16 @@
                     method: "POST",
                     body: formData
                 });
-                const data = await res.json();
+                const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
+                    activateRollbackBanner(data.cache_buster_param);
+                    appendLocalModLog(`🛍️ Store: ${existingId ? "Modificato" : "Creato"} "${itemName}"`);
                     closeStoreItemForm();
-                    await loadStoreCatalog();
+                    await Promise.all([
+                        loadStoreCatalog(),
+                        fetchUserStatus()
+                    ]);
                 } else {
                     showNotification(`🛑 ${data.message}`, false);
                 }
@@ -2575,21 +3188,30 @@
             }
         });
 
-        async function quickSaveStorePrice(itemId) {
-            const newPrice = document.getElementById(`quick-price-${itemId}`).value;
+        async function quickSaveStorePrice(itemId, rawPrice) {
+            const parsedPrice = parseFloat(rawPrice);
+            if (isNaN(parsedPrice) || parsedPrice < 0) {
+                showNotification("⚠️ Inserisci un prezzo valido (>= 0).", false);
+                return;
+            }
             try {
                 const actionProof = await obtainActionProof();
                 const formData = new FormData();
                 formData.append("site_id", selectedSiteId);
                 formData.append("item_id", itemId);
-                formData.append("price", newPrice);
+                formData.append("price", String(parsedPrice));
                 if (actionProof) formData.append("action_proof", actionProof);
 
                 const res = await apiFetch("/api/v1/store/save-item", { method: "POST", body: formData });
-                const data = await res.json();
+                const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    await loadStoreCatalog();
+                    activateRollbackBanner(data.cache_buster_param);
+                    appendLocalModLog(`💶 Prezzo Store (${itemId}): €${parsedPrice.toFixed(2)}`);
+                    await Promise.all([
+                        loadStoreCatalog(),
+                        fetchUserStatus()
+                    ]);
                 } else {
                     showNotification(`🛑 ${data.message}`, false);
                 }
@@ -2608,10 +3230,15 @@
                 if (actionProof) formData.append("action_proof", actionProof);
 
                 const res = await apiFetch("/api/v1/store/save-item", { method: "POST", body: formData });
-                const data = await res.json();
+                const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    await loadStoreCatalog();
+                    activateRollbackBanner(data.cache_buster_param);
+                    appendLocalModLog(`${nextInStock ? "🟢" : "🔴"} Stato Store (${itemId})`);
+                    await Promise.all([
+                        loadStoreCatalog(),
+                        fetchUserStatus()
+                    ]);
                 } else {
                     showNotification(`🛑 ${data.message}`, false);
                 }
@@ -2621,7 +3248,15 @@
         }
 
         async function deleteStoreItem(itemId) {
-            if (!confirm("Eliminare definitivamente questo articolo dal catalogo e dal sito?")) return;
+            const confirmed = await showGlassModal({
+                title: "🗑️ Elimina Articolo",
+                message: "Eliminare definitivamente questo articolo dal catalogo e dalla pagina del sito?",
+                confirmText: "Elimina",
+                cancelText: "Annulla",
+                isDanger: true
+            });
+            if (!confirmed) return;
+
             try {
                 const actionProof = await obtainActionProof();
                 const formData = new FormData();
@@ -2630,10 +3265,15 @@
                 if (actionProof) formData.append("action_proof", actionProof);
 
                 const res = await apiFetch("/api/v1/store/delete-item", { method: "POST", body: formData });
-                const data = await res.json();
+                const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    await loadStoreCatalog();
+                    activateRollbackBanner(data.cache_buster_param);
+                    appendLocalModLog(`🗑️ Rimosso articolo (${itemId})`);
+                    await Promise.all([
+                        loadStoreCatalog(),
+                        fetchUserStatus()
+                    ]);
                 } else {
                     showNotification(`🛑 ${data.message}`, false);
                 }
@@ -2658,10 +3298,15 @@
                 if (actionProof) formData.append("action_proof", actionProof);
 
                 const res = await apiFetch("/api/v1/store/settings", { method: "POST", body: formData });
-                const data = await res.json();
+                const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    await loadStoreCatalog();
+                    activateRollbackBanner(data.cache_buster_param);
+                    appendLocalModLog("⚙️ Aggiornate regole vetrina Store");
+                    await Promise.all([
+                        loadStoreCatalog(),
+                        fetchUserStatus()
+                    ]);
                 } else {
                     showNotification(`🛑 ${data.message}`, false);
                 }
