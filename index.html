@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SiteMaster Console — The Orbis Project</title>
-    <!-- Telegram Mini App SDK Ufficiale -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>SiteMaster Console v4.0 — The Orbis Project</title>
+    <!-- Google Identity Services SDK (OpenID Zero-Retention) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --bg-deep: #070a13;
-            --surface-glass: rgba(15, 23, 42, 0.72);
+            --surface-glass: rgba(15, 23, 42, 0.76);
+            --surface-glass-strong: rgba(15, 23, 42, 0.92);
             --surface-glass-border: rgba(255, 255, 255, 0.10);
             --surface-hover: rgba(30, 41, 59, 0.85);
             --primary-blue: #2563eb;
@@ -34,7 +35,7 @@
         body {
             font-family: var(--font-family);
             background-color: var(--bg-deep);
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 10%, rgba(37, 99, 235, 0.22) 0%, transparent 45%),
                 radial-gradient(circle at 85% 35%, rgba(139, 92, 246, 0.18) 0%, transparent 40%),
                 radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.12) 0%, transparent 50%);
@@ -48,22 +49,162 @@
 
         .app-container {
             flex: 1;
-            max-width: 600px;
+            max-width: 660px;
             margin: 0 auto;
             width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================================== */
+        /* SCHERMATA AUTENTICAZIONE (ZERO-TELEGRAM: GOOGLE + PASSKEY)     */
+        /* ============================================================== */
+        #auth-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 24px;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .auth-card {
+            background: var(--surface-glass);
+            border: 1px solid var(--surface-glass-border);
+            border-radius: 18px;
+            padding: 24px 20px;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+        }
+
+        .auth-logo-row {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .auth-logo-row h1 {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            background: linear-gradient(90deg, #ffffff 0%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-logo-row p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+        }
+
+        .auth-tab-btn {
+            padding: 9px 8px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .auth-tab-btn.active {
+            background: rgba(37, 99, 235, 0.35);
+            color: #ffffff;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+        }
+
+        .google-btn-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 44px;
+            margin: 10px 0;
+        }
+
+        .divider-or {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-hint);
+            font-size: 11px;
+            margin: 14px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .divider-or::before,
+        .divider-or::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .divider-or:not(:empty)::before { margin-right: 10px; }
+        .divider-or:not(:empty)::after { margin-left: 10px; }
+
+        .btn-passkey-login {
+            width: 100%;
+            padding: 13px;
+            border-radius: 10px;
+            border: 1px solid rgba(139, 92, 246, 0.45);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.22), rgba(37, 99, 235, 0.22));
+            color: #e9d5ff;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+
+        .btn-passkey-login:active { transform: scale(0.98); }
+
+        .privacy-zero-note {
+            margin-top: 14px;
+            font-size: 11px;
+            color: var(--text-hint);
+            text-align: center;
+            line-height: 1.45;
+        }
+
+        /* ============================================================== */
+        /* CONSOLE PRINCIPALE                                             */
+        /* ============================================================== */
+        #console-screen {
+            display: none;
+            flex-direction: column;
         }
 
         /* Header Console */
         .brand-header {
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             padding: 14px 16px;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%);
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.55) 0%, rgba(15, 23, 42, 0.8) 100%);
             border: 1px solid var(--surface-glass-border);
             border-radius: 16px;
             backdrop-filter: blur(12px);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
+        }
+
+        .brand-titles {
+            flex: 1;
+            min-width: 0;
         }
 
         .brand-titles h1 {
@@ -73,12 +214,25 @@
             background: linear-gradient(90deg, #ffffff 0%, #38bdf8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .brand-titles p {
             font-size: 12px;
             color: var(--text-muted);
             margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
         }
 
         .tier-badge {
@@ -106,13 +260,79 @@
             box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
         }
 
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-muted);
+            border-radius: 10px;
+            padding: 6px 9px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            color: #fb7185;
+            border-color: rgba(244, 63, 94, 0.4);
+        }
+
+        /* Selettore Multi-Sito (1 Utente = N Siti) */
+        .site-switcher-bar {
+            display: none;
+            margin-bottom: 14px;
+            background: var(--surface-glass);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 12px;
+            padding: 10px 12px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .site-switcher-bar label {
+            margin: 0;
+            font-size: 11px;
+            color: var(--primary-glow);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .site-switcher-bar select {
+            padding: 8px 10px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Banner Registrazione Passkey Obbligatoria */
+        .passkey-setup-banner {
+            display: none;
+            margin-bottom: 16px;
+            padding: 14px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(139, 92, 246, 0.22));
+            border: 1px solid rgba(245, 158, 11, 0.45);
+        }
+
+        .passkey-setup-banner h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fde047;
+            margin-bottom: 4px;
+        }
+
+        .passkey-setup-banner p {
+            font-size: 12px;
+            color: #e2e8f0;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
         /* Status Bar Rapida & Quota Mensile */
         .telemetry-card {
             background: var(--surface-glass);
             border: 1px solid var(--surface-glass-border);
             border-radius: 14px;
             padding: 14px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             backdrop-filter: blur(10px);
         }
 
@@ -146,6 +366,7 @@
 
         .text-emerald { color: #34d399; }
         .text-rose { color: #fb7185; }
+        .text-amber { color: #fbbf24; }
 
         .progress-wrapper {
             margin-top: 6px;
@@ -180,7 +401,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .hub-card {
@@ -199,19 +420,12 @@
             backdrop-filter: blur(12px);
         }
 
-        .hub-card:active {
-            transform: scale(0.97);
-        }
+        .hub-card:active { transform: scale(0.97); }
 
         .hub-card.active {
             border-color: var(--primary-glow);
             background: linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(15, 23, 42, 0.85));
             box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
-        }
-
-        .hub-card.locked {
-            opacity: 0.65;
-            cursor: pointer;
         }
 
         .hub-card .card-lock {
@@ -264,7 +478,7 @@
             border: 1px solid var(--surface-glass-border);
             border-radius: 16px;
             padding: 18px;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
             backdrop-filter: blur(14px);
             animation: fadeIn 0.25s ease-out forwards;
         }
@@ -275,7 +489,7 @@
         }
 
         .drawer-title {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             margin-bottom: 4px;
             display: flex;
@@ -295,6 +509,13 @@
             margin-bottom: 14px;
         }
 
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
         label {
             display: block;
             font-size: 12px;
@@ -304,27 +525,111 @@
             letter-spacing: 0.2px;
         }
 
-        select, textarea, input[type="text"], input[type="number"] {
+        select, textarea, input[type="text"], input[type="number"], input[type="date"] {
             width: 100%;
-            padding: 12px 14px;
+            padding: 11px 13px;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.12);
             background: rgba(7, 10, 19, 0.85);
             color: var(--text-main);
-            font-size: 14px;
+            font-size: 13px;
             outline: none;
             transition: border-color 0.15s, box-shadow 0.15s;
         }
 
-        select:focus, textarea:focus, input[type="text"]:focus, input[type="number"]:focus {
+        select:focus, textarea:focus, input:focus {
             border-color: var(--primary-glow);
             box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
         }
 
         textarea {
             resize: vertical;
-            min-height: 95px;
+            min-height: 90px;
             line-height: 1.45;
+        }
+
+        /* Sub-Markers Inspector Pills (TITLE, SUBTITLE, DESC, IMG) */
+        .submarkers-box {
+            display: none;
+            margin-top: 8px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.32);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .submarkers-header {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-hint);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .submarkers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .submarker-pill {
+            font-size: 11px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .submarker-pill.found {
+            border-color: rgba(16, 185, 129, 0.35);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .submarker-tag {
+            font-weight: 700;
+            font-size: 10px;
+            color: #e2e8f0;
+        }
+
+        .submarker-pill.found .submarker-tag { color: #34d399; }
+        .submarker-pill.missing .submarker-tag { color: var(--text-hint); }
+
+        .submarker-preview {
+            font-size: 10px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Multi-Select Action Pills */
+        .action-pills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .action-pill {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 7px 11px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(7, 10, 19, 0.7);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .action-pill.selected {
+            background: rgba(37, 99, 235, 0.3);
+            border-color: var(--primary-glow);
+            color: #ffffff;
         }
 
         /* Upload File Personalizzato */
@@ -333,12 +638,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 12px 14px;
+            padding: 11px 13px;
             border-radius: 10px;
-            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border: 1px dashed rgba(255, 255, 255, 0.22);
             background: rgba(255, 255, 255, 0.03);
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
         }
 
@@ -363,12 +668,12 @@
         /* Pulsanti d'Azione */
         .btn-glow-primary {
             width: 100%;
-            padding: 14px;
+            padding: 13px;
             border: none;
             border-radius: 10px;
             background: linear-gradient(135deg, var(--primary-blue) 0%, #1d4ed8 100%);
             color: #ffffff;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
@@ -385,8 +690,19 @@
             box-shadow: none;
         }
 
-        .btn-glow-primary:active:not(:disabled) {
-            transform: scale(0.98);
+        .btn-glow-primary:active:not(:disabled) { transform: scale(0.98); }
+
+        .btn-secondary-glass {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 10px;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary-glow);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
         }
 
         .btn-outline-close {
@@ -402,14 +718,41 @@
             margin-top: 12px;
         }
 
+        /* Audit Summary & Full Report */
+        .audit-summary-card {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            color: #f1f5f9;
+        }
+
+        .audit-full-report {
+            display: none;
+            margin-top: 10px;
+            background: rgba(7, 10, 19, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            color: #cbd5e1;
+            max-height: 360px;
+            overflow-y: auto;
+        }
+
         /* Box Rollback & Convalida */
         #rollback-box {
             display: none;
-            margin-top: 18px;
+            margin-bottom: 18px;
             padding: 16px;
             border-radius: 14px;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.88) 0%, rgba(15, 23, 42, 0.96) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.38);
             text-align: center;
         }
 
@@ -473,18 +816,55 @@
         }
 
         .analytics-stat-box {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.32);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 12px;
-            padding: 14px;
+            padding: 12px;
             text-align: center;
         }
 
         .analytics-stat-num {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             color: #38bdf8;
             margin-top: 4px;
+        }
+
+        .analytics-block {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .analytics-block-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .metric-list-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 12px;
+        }
+
+        .metric-list-row:last-child { border-bottom: none; }
+
+        .metric-badge-count {
+            background: rgba(56, 189, 248, 0.16);
+            color: #38bdf8;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
         }
 
         .privacy-badge {
@@ -498,7 +878,49 @@
             line-height: 1.4;
         }
 
-        /* Modulo 4: Store Catalog List */
+        /* Modulo 4: Store Intelligente & Sub-Tabs */
+        .store-subtabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+        }
+
+        .store-tab-btn {
+            padding: 8px 6px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .store-tab-btn.active {
+            background: rgba(37, 99, 235, 0.35);
+            color: #ffffff;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+        }
+
+        .store-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .store-editor-card {
+            display: none;
+            background: rgba(7, 10, 19, 0.88);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
         .catalog-list {
             display: flex;
             flex-direction: column;
@@ -506,51 +928,92 @@
             margin-bottom: 14px;
         }
 
-        .catalog-item-row {
+        .catalog-item-card {
+            background: rgba(0, 0, 0, 0.32);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .catalog-item-top {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 10px;
-            padding: 10px 12px;
+            align-items: flex-start;
+            gap: 8px;
         }
 
         .catalog-info h4 {
             font-size: 13px;
             color: #ffffff;
-            font-weight: 600;
+            font-weight: 700;
         }
 
-        .catalog-info p {
+        .catalog-meta-line {
             font-size: 11px;
             color: var(--text-muted);
+            margin-top: 2px;
         }
 
-        .catalog-actions {
+        .store-badges-row {
             display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 5px;
+        }
+
+        .mini-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .mb-featured { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .mb-new { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+        .mb-low { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
+        .mb-hidden { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+        .catalog-controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .price-input-small {
-            width: 75px !important;
+            width: 76px !important;
             padding: 6px 8px !important;
-            font-size: 13px !important;
+            font-size: 12px !important;
             text-align: right;
         }
 
-        .stock-toggle-btn {
+        .small-icon-btn {
             font-size: 11px;
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: none;
+            padding: 6px 9px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            color: #e2e8f0;
             cursor: pointer;
-            font-weight: 700;
+            font-weight: 600;
         }
 
         .stock-btn-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
         .stock-btn-red { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
+
+        .inventory-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
 
         /* Output Notifiche & Feedback */
         #notification-box {
@@ -559,7 +1022,7 @@
             border-radius: 10px;
             font-size: 13px;
             line-height: 1.4;
-            margin-top: 16px;
+            margin-bottom: 16px;
             white-space: pre-wrap;
         }
 
@@ -586,477 +1049,1230 @@
 <body>
 
     <div class="app-container">
-        <!-- 1. Header Istituzionale -->
-        <header class="brand-header">
-            <div class="brand-titles">
-                <h1 id="enterprise-name">SiteMaster Console</h1>
-                <p id="user-domain-label">The Orbis Project — Smart Core</p>
-            </div>
-            <div id="tier-badge" class="tier-badge base">PIANO BASE</div>
-        </header>
-
-        <!-- 2. Barra Telemetria & Quota Modifiche -->
-        <div class="telemetry-card">
-            <div class="telemetry-grid">
-                <div class="tele-item">
-                    <div class="tele-label">Sito Web</div>
-                    <div class="tele-val text-emerald">🟢 ONLINE</div>
-                </div>
-                <div class="tele-item">
-                    <div class="tele-label">Diagnostica</div>
-                    <div class="tele-val" id="tele-audit">⏳ In corso...</div>
-                </div>
-                <div class="tele-item">
-                    <div class="tele-label">Stack</div>
-                    <div class="tele-val" style="color: #38bdf8;">⚡ Vanilla JS</div>
-                </div>
-            </div>
-            <div class="progress-wrapper">
-                <div class="progress-meta">
-                    <span>Modifiche Mensili Consumate</span>
-                    <span id="progress-count-text">0 / 30</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div id="progress-bar-fill" class="progress-bar-fill"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. Hub 4 Colonne Principali -->
-        <div class="hub-grid">
-            <!-- Card 1: Diagnostica IA -->
-            <div class="hub-card" id="card-hub-audit" onclick="openDrawer('audit')">
-                <div class="hub-icon-wrapper">🛡️</div>
-                <h3>Diagnostica IA</h3>
-                <span>Check salute codice</span>
-            </div>
-
-            <!-- Card 2: Applica Modifica -->
-            <div class="hub-card" id="card-hub-edit" onclick="openDrawer('edit')">
-                <div class="hub-icon-wrapper">✏️</div>
-                <h3>Editor Sezioni</h3>
-                <span>Patch mirate al volo</span>
-            </div>
-
-            <!-- Card 3: In-House Analytics -->
-            <div class="hub-card" id="card-hub-analytics" onclick="openDrawer('analytics')">
-                <div id="lock-analytics" class="card-lock" style="display: none;">PRO</div>
-                <div class="hub-icon-wrapper">📊</div>
-                <h3>Statistiche</h3>
-                <span>Privacy-First Analytics</span>
-            </div>
-
-            <!-- Card 4: Store & Listini -->
-            <div class="hub-card" id="card-hub-store" onclick="openDrawer('store')">
-                <div id="lock-store" class="card-lock" style="display: none;">STORE</div>
-                <div class="hub-icon-wrapper">🛍️</div>
-                <h3>Gestione Store</h3>
-                <span>Prezzi e disponibilità</span>
-            </div>
-        </div>
 
         <!-- ============================================================== -->
-        <!-- DRAWER 1: DIAGNOSTICA IA / CHECK GIORNALIERO                   -->
+        <!-- 1. SCHERMATA ACCESSO ZERO-TELEGRAM (GOOGLE + PASSKEY)          -->
         <!-- ============================================================== -->
-        <div id="drawer-audit" class="panel-drawer">
-            <div class="drawer-title">🛡️ Diagnostica IA Quotidiana</div>
-            <p class="drawer-sub">Verifica lo stato delle prestazioni, l'integrità del codice Vanilla JS e l'assenza di collegamenti rotti.</p>
-            
-            <button type="button" class="btn-glow-primary" id="btn-run-audit" onclick="triggerDailyAudit()">
-                <span>Avvia Scansione Strutturale</span>
-            </button>
-
-            <div id="audit-report-container" style="display: none; margin-top: 14px;">
-                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 12px; font-size: 13px; line-height: 1.5;" id="audit-report-content"></div>
-            </div>
-
-            <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
-        </div>
-
-        <!-- ============================================================== -->
-        <!-- DRAWER 2: EDITOR CHIRURGICO PER SEZIONI                       -->
-        <!-- ============================================================== -->
-        <div id="drawer-edit" class="panel-drawer">
-            <div class="drawer-title">✏️ Editor Chirurgico per Sezioni</div>
-            <p class="drawer-sub">Seleziona la sezione target per isolare la modifica ed evitare alterazioni globali al codice del sito.</p>
-
-            <form id="editor-form">
-                <!-- Selettore Sezione Semantica -->
-                <div class="form-row">
-                    <label for="target_section">Sezione da modificare</label>
-                    <select id="target_section" name="target_section" required>
-                        <option value="AUTO" selected>✨ Modifica Intelligente (Globale)</option>
-                    </select>
+        <div id="auth-screen">
+            <div class="auth-card">
+                <div class="auth-logo-row">
+                    <h1>SiteMaster Console v4.0</h1>
+                    <p>The Orbis Project — Accesso Autonomo Zero-Telegram</p>
                 </div>
 
-                <!-- Tipo Operazione -->
-                <div class="form-row">
-                    <label for="action_type">Tipo di operazione</label>
-                    <select id="action_type" name="action_type">
-                        <option value="Modifica Aperta" selected>💬 Modifica Testuale Libera</option>
-                        <option value="Aggiornamento Prezzi">🏷️ Variazione Prezzi / Tariffe</option>
-                        <option value="Sostituzione Foto">📸 Aggiornamento Immagine (WebP)</option>
-                        <option value="Restyling Grafico">🎨 Ritocco Colori e Dettagli</option>
-                    </select>
+                <div class="auth-tabs">
+                    <button type="button" class="auth-tab-btn active" id="tab-auth-login" onclick="switchAuthTab('login')">🔐 Accedi</button>
+                    <button type="button" class="auth-tab-btn" id="tab-auth-pair" onclick="switchAuthTab('pair')">🎟️ Primo Accesso</button>
                 </div>
 
-                <!-- Istruzione Testuale -->
-                <div class="form-row">
-                    <label for="instruction_text">Cosa desideri modificare?</label>
-                    <textarea id="instruction_text" name="instruction" placeholder="Es: Cambia il titolo hero in 'Esperienza Esclusiva' e imposta il prezzo del padel a 15 euro..." required></textarea>
+                <!-- Tab Accesso Abituale -->
+                <div id="auth-panel-login">
+                    <div class="google-btn-wrapper" id="google-signin-login"></div>
+
+                    <div class="divider-or">oppure</div>
+
+                    <button type="button" class="btn-passkey-login" onclick="loginWithPasskey()">
+                        <span>👆 Accesso Rapido con Passkey Biometrica</span>
+                    </button>
                 </div>
 
-                <!-- Upload Immagine Opzionale -->
-                <div class="form-row">
-                    <label>Immagine da inserire (Opzionale)</label>
-                    <div class="file-upload-btn">
-                        <span>📁 Scegli foto da ottimizzare...</span>
-                        <span id="chosen-file-label" class="file-upload-name"></span>
-                        <input type="file" id="image_input" accept="image/*" onchange="updateFileName(this)">
+                <!-- Tab Primo Accesso con Codice Attivazione -->
+                <div id="auth-panel-pair" style="display: none;">
+                    <div class="form-row">
+                        <label for="pairing_code_input">Codice di Attivazione Usa-e-Getta</label>
+                        <input type="text" id="pairing_code_input" placeholder="Es: ORBIS-9A2F" style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">
                     </div>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">
+                        Inserisci il codice fornito da The Orbis Project e collegalo al tuo account Google. Al termine ti verrà chiesta la Passkey biometrica.
+                    </p>
+                    <div class="google-btn-wrapper" id="google-signin-pair"></div>
                 </div>
 
-                <button type="submit" class="btn-glow-primary" id="btn-submit-edit">
-                    <span>🚀 Applica Modifica su GitHub</span>
+                <div class="privacy-zero-note">
+                    🛡️ <b>Architettura Zero-Retention:</b> Nessuna email, nome o foto profilo viene memorizzata nei server Orbis. Viene salvato solo l'identificativo crittografico anonimo.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- 2. CONSOLE OPERATIVA MULTI-SITO                                -->
+        <!-- ============================================================== -->
+        <div id="console-screen">
+            <!-- Header Istituzionale -->
+            <header class="brand-header">
+                <div class="brand-titles">
+                    <h1 id="enterprise-name">SiteMaster Console</h1>
+                    <p id="user-domain-label">The Orbis Project — Smart Core</p>
+                </div>
+                <div class="header-right-actions">
+                    <div id="tier-badge" class="tier-badge base">PIANO BASE</div>
+                    <button type="button" class="btn-logout" title="Disconnetti" onclick="logoutSession()">🚪</button>
+                </div>
+            </header>
+
+            <!-- Selettore Multi-Sito (Visibile automaticamente se l'utente possiede >= 2 siti) -->
+            <div class="site-switcher-bar" id="site-switcher-bar">
+                <label for="site-switcher">🌐 Sito Attivo:</label>
+                <select id="site-switcher" onchange="onSwitchSite(this.value)"></select>
+            </div>
+
+            <!-- Banner Registrazione Passkey Biometrica -->
+            <div class="passkey-setup-banner" id="passkey-setup-banner">
+                <h4>🔐 Proteggi il tuo Sito con Passkey Biometrica</h4>
+                <p>Attiva FaceID, TouchID o PIN dispositivo per abilitare le modifiche su GitHub con doppio mandato crittografico.</p>
+                <button type="button" class="btn-glow-primary" onclick="registerNewPasskey()">
+                    <span>👆 Registra Passkey Ora</span>
                 </button>
-            </form>
+            </div>
 
-            <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
-        </div>
-
-        <!-- ============================================================== -->
-        <!-- DRAWER 3: STATISTICHE (PRIVACY-FIRST ANALYTICS)                -->
-        <!-- ============================================================== -->
-        <div id="drawer-analytics" class="panel-drawer">
-            <div class="drawer-title">📊 In-House Privacy-First Analytics</div>
-            <p class="drawer-sub">Tracciamento anonimo delle visite a zero cookie e zero profilazione (Conforme GDPR).</p>
-
-            <div id="analytics-unlocked-content" style="display: none;">
-                <div class="analytics-metrics-grid">
-                    <div class="analytics-stat-box">
-                        <div class="tele-label">Visite Oggi</div>
-                        <div class="analytics-stat-num" id="stat-views-today">0</div>
+            <!-- Barra Telemetria & Quota Modifiche -->
+            <div class="telemetry-card">
+                <div class="telemetry-grid">
+                    <div class="tele-item">
+                        <div class="tele-label">Sito Web</div>
+                        <div class="tele-val text-emerald">🟢 ONLINE</div>
                     </div>
-                    <div class="analytics-stat-box">
-                        <div class="tele-label">Visite Mese</div>
-                        <div class="analytics-stat-num" id="stat-views-month">0</div>
+                    <div class="tele-item">
+                        <div class="tele-label">Diagnostica</div>
+                        <div class="tele-val" id="tele-audit">⏳ Verifica...</div>
+                    </div>
+                    <div class="tele-item">
+                        <div class="tele-label">Sicurezza 2FA</div>
+                        <div class="tele-val" id="tele-2fa" style="color: #38bdf8;">🔐 Passkey</div>
                     </div>
                 </div>
-                <div class="privacy-badge">
-                    🔒 <b>Garanzia Legale:</b> Rilevazione eseguita senza memorizzare indirizzi IP né rilasciare cookie. Nessun banner di consenso richiesto.
+                <div class="progress-wrapper">
+                    <div class="progress-meta">
+                        <span>Modifiche Mensili Consumate</span>
+                        <span id="progress-count-text">0 / 30</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                    </div>
                 </div>
             </div>
 
-            <div id="analytics-locked-content" style="display: none; text-align: center; padding: 18px 8px;">
-                <div style="font-size: 32px; margin-bottom: 8px;">🔒</div>
-                <h4 style="font-size: 14px; margin-bottom: 4px;">Modulo Riservato al Piano Pro</h4>
-                <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
-                    Il cruscotto Privacy-First Analytics è incluso a partire dal Piano Pro (25–35 €/mese). Contatta The Orbis Project per effettuare l'upgrade.
-                </p>
-            </div>
+            <!-- Hub 4 Colonne Principali -->
+            <div class="hub-grid">
+                <!-- Card 1: Diagnostica IA -->
+                <div class="hub-card" id="card-hub-audit" onclick="openDrawer('audit')">
+                    <div class="hub-icon-wrapper">🛡️</div>
+                    <h3>Diagnostica IA</h3>
+                    <span>Check salute codice</span>
+                </div>
 
-            <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
-        </div>
+                <!-- Card 2: Editor Chirurgico -->
+                <div class="hub-card" id="card-hub-edit" onclick="openDrawer('edit')">
+                    <div class="hub-icon-wrapper">✏️</div>
+                    <h3>Editor Sezioni</h3>
+                    <span>Patch mirate al volo</span>
+                </div>
 
-        <!-- ============================================================== -->
-        <!-- DRAWER 4: GESTIONE STORE & LISTINI                             -->
-        <!-- ============================================================== -->
-        <div id="drawer-store" class="panel-drawer">
-            <div class="drawer-title">🛍️ Catalogo & Listino Prezzi</div>
-            <p class="drawer-sub">Modifica prezzi e disponibilità direttamente su GitHub senza toccare il codice.</p>
+                <!-- Card 3: In-House Analytics (Solo Sito) -->
+                <div class="hub-card" id="card-hub-analytics" onclick="openDrawer('analytics')">
+                    <div id="lock-analytics" class="card-lock" style="display: none;">PRO</div>
+                    <div class="hub-icon-wrapper">📊</div>
+                    <h3>Statistiche Sito</h3>
+                    <span>Privacy-First Analytics</span>
+                </div>
 
-            <div id="store-unlocked-content" style="display: none;">
-                <div class="catalog-list" id="store-items-container">
-                    <!-- Popolato dinamicamente da JS -->
+                <!-- Card 4: Store Intelligente & Statistiche Prodotti -->
+                <div class="hub-card" id="card-hub-store" onclick="openDrawer('store')">
+                    <div id="lock-store" class="card-lock" style="display: none;">STORE</div>
+                    <div class="hub-icon-wrapper">🛍️</div>
+                    <h3>Gestione Store</h3>
+                    <span>Catalogo e metriche</span>
                 </div>
             </div>
 
-            <div id="store-locked-content" style="display: none; text-align: center; padding: 18px 8px;">
-                <div style="font-size: 32px; margin-bottom: 8px;">📦</div>
-                <h4 style="font-size: 14px; margin-bottom: 4px;">Modulo Store Non Attivo</h4>
-                <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
-                    La gestione e-commerce richiede il Piano Pro Store. Contatta il supporto commerciale per attivare il catalogo.
-                </p>
+            <!-- ============================================================== -->
+            <!-- DRAWER 1: DIAGNOSTICA IA / CHECK GIORNALIERO                   -->
+            <!-- ============================================================== -->
+            <div id="drawer-audit" class="panel-drawer">
+                <div class="drawer-title">🛡️ Diagnostica IA Quotidiana</div>
+                <p class="drawer-sub">Ispezione statica deterministica + Red Teaming Gemini Pro su sicurezza, mobile e reattività &lt;150ms.</p>
+
+                <button type="button" class="btn-glow-primary" id="btn-run-audit" onclick="triggerDailyAudit()">
+                    <span>Avvia Scansione Strutturale</span>
+                </button>
+
+                <div id="audit-report-container" style="display: none; margin-top: 14px;">
+                    <div class="audit-summary-card" id="audit-summary-content"></div>
+                    <button type="button" class="btn-secondary-glass" id="btn-toggle-full-audit" onclick="toggleFullAuditReport()">
+                        📄 Mostra Report Tecnico Completo
+                    </button>
+                    <div class="audit-full-report" id="audit-report-content"></div>
+                </div>
+
+                <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
             </div>
 
-            <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
-        </div>
+            <!-- ============================================================== -->
+            <!-- DRAWER 2: EDITOR CHIRURGICO PER SEZIONI & SOTTO-MARCATORI      -->
+            <!-- ============================================================== -->
+            <div id="drawer-edit" class="panel-drawer">
+                <div class="drawer-title">✏️ Editor Chirurgico per Sezioni</div>
+                <p class="drawer-sub">Seleziona pagina e sezione target. I blocchi Store sono isolati automaticamente dal Tagliafuoco.</p>
 
-        <!-- ============================================================== -->
-        <!-- BOX COLLAUDO & ROLLBACK RAPIDO (5 SECONDI)                     -->
-        <!-- ============================================================== -->
-        <div id="rollback-box">
-            <div class="rollback-title">🚀 Modifica Pubblicata con Successo!</div>
-            <div class="rollback-desc">Controlla subito il risultato online per verificare le modifiche.</div>
-            <a href="#" id="site-preview-btn" class="site-preview-link" target="_blank">🌐 Apri il tuo sito (Bypass Cache)</a>
-            <div class="action-split">
-                <button type="button" class="btn-action-confirm" onclick="triggerConfirm()">✅ Convalida</button>
-                <button type="button" class="btn-action-rollback" onclick="triggerRollback()">❌ Rollback (5s)</button>
+                <form id="editor-form">
+                    <!-- Selettore Pagina HTML -->
+                    <div class="form-row">
+                        <label for="target_page">Pagina del Sito</label>
+                        <select id="target_page" name="target_page" onchange="loadSiteSections(this.value)">
+                            <option value="index.html" selected>index.html</option>
+                        </select>
+                    </div>
+
+                    <!-- Selettore Sezione Semantica -->
+                    <div class="form-row">
+                        <label for="target_section">Sezione da modificare</label>
+                        <select id="target_section" name="target_section" onchange="renderSubMarkersPreview()" required>
+                            <option value="AUTO" selected>✨ Modifica Intelligente (Globale)</option>
+                        </select>
+
+                        <!-- Ispettore Sotto-Marcatori (TITLE, SUBTITLE, DESC, IMG) -->
+                        <div class="submarkers-box" id="submarkers-box">
+                            <div class="submarkers-header">Sotto-marcatori rilevati nella sezione</div>
+                            <div class="submarkers-grid" id="submarkers-grid"></div>
+                        </div>
+                    </div>
+
+                    <!-- Tipo Operazione Multi-Selezione -->
+                    <div class="form-row">
+                        <label>Tipi di operazione (seleziona uno o più)</label>
+                        <div class="action-pills-grid" id="action-pills-grid">
+                            <div class="action-pill selected" data-val="Modifica Aperta" onclick="toggleActionPill(this)">💬 Testi</div>
+                            <div class="action-pill" data-val="Aggiornamento Prezzi" onclick="toggleActionPill(this)">🏷️ Prezzi / Tariffe</div>
+                            <div class="action-pill" data-val="Sostituzione Foto" onclick="toggleActionPill(this)">📸 Immagine WebP</div>
+                            <div class="action-pill" data-val="Restyling Grafico" onclick="toggleActionPill(this)">🎨 Colori / Dettagli</div>
+                            <div class="action-pill" data-val="Aggiornamento Link" onclick="toggleActionPill(this)">🔗 Link / CTA</div>
+                        </div>
+                    </div>
+
+                    <!-- Istruzione Testuale -->
+                    <div class="form-row">
+                        <label for="instruction_text">Cosa desideri modificare?</label>
+                        <textarea id="instruction_text" name="instruction" placeholder="Es: Cambia il titolo hero in 'Esperienza Esclusiva' e aggiorna la descrizione..." required></textarea>
+                    </div>
+
+                    <!-- Upload Immagine Opzionale -->
+                    <div class="form-row">
+                        <label>Immagine da inserire (Opzionale — Conversione WebP automatica)</label>
+                        <div class="file-upload-btn">
+                            <span>📁 Scegli foto da ottimizzare...</span>
+                            <span id="chosen-file-label" class="file-upload-name"></span>
+                            <input type="file" id="image_input" accept="image/*" onchange="updateFileName(this)">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-glow-primary" id="btn-submit-edit">
+                        <span>🔐 Firma con Passkey &amp; Applica</span>
+                    </button>
+                </form>
+
+                <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
             </div>
-        </div>
 
-        <!-- Notifiche Dinamiche -->
-        <div id="notification-box"></div>
+            <!-- ============================================================== -->
+            <!-- DRAWER 3: STATISTICHE SITO (PRIVACY-FIRST ANALYTICS)           -->
+            <!-- ============================================================== -->
+            <div id="drawer-analytics" class="panel-drawer">
+                <div class="drawer-title">📊 Statistiche Sito (Privacy-First)</div>
+                <p class="drawer-sub">Metriche anonime di navigazione e clic pulsanti a zero cookie e zero IP (GDPR-Free).</p>
+
+                <div id="analytics-unlocked-content" style="display: none;">
+                    <div class="analytics-metrics-grid">
+                        <div class="analytics-stat-box">
+                            <div class="tele-label">Visite Oggi</div>
+                            <div class="analytics-stat-num" id="stat-views-today">0</div>
+                        </div>
+                        <div class="analytics-stat-box">
+                            <div class="tele-label">Visite Mese</div>
+                            <div class="analytics-stat-num" id="stat-views-month">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Pagine più visitate -->
+                    <div class="analytics-block">
+                        <div class="analytics-block-title">📄 Pagine Visitate</div>
+                        <div id="analytics-pages-list"></div>
+                    </div>
+
+                    <!-- Sezioni più lette -->
+                    <div class="analytics-block">
+                        <div class="analytics-block-title">👁️ Sezioni Lette (&gt;2s)</div>
+                        <div id="analytics-sections-list"></div>
+                    </div>
+
+                    <!-- Pulsanti tracciati (data-orbis-track) -->
+                    <div class="analytics-block">
+                        <div class="analytics-block-title">🖱️ Interazioni Pulsanti &amp; CTA</div>
+                        <div id="analytics-tracks-list"></div>
+                    </div>
+
+                    <div class="privacy-badge">
+                        🔒 <b>Garanzia Legale:</b> Rilevazione eseguita senza memorizzare indirizzi IP né rilasciare cookie. Nessun banner di consenso richiesto.
+                    </div>
+                </div>
+
+                <div id="analytics-locked-content" style="display: none; text-align: center; padding: 18px 8px;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">🔒</div>
+                    <h4 style="font-size: 14px; margin-bottom: 4px;">Modulo Riservato al Piano Pro</h4>
+                    <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+                        Il cruscotto Privacy-First Analytics è incluso nel Piano Pro. Contatta The Orbis Project per attivarlo.
+                    </p>
+                </div>
+
+                <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- DRAWER 4: GESTIONE STORE INTELLIGENTE & STATISTICHE PRODOTTI   -->
+            <!-- ============================================================== -->
+            <div id="drawer-store" class="panel-drawer">
+                <div class="drawer-title">🛍️ Store Intelligente &amp; Catalogo</div>
+                <p class="drawer-sub">Sincronizzazione deterministica su GitHub a zero token IA con badge e ordinamento automatico.</p>
+
+                <div id="store-unlocked-content" style="display: none;">
+                    <!-- Sub-tabs Store -->
+                    <div class="store-subtabs">
+                        <button type="button" class="store-tab-btn active" id="stab-catalog" onclick="switchStoreTab('catalog')">📦 Catalogo</button>
+                        <button type="button" class="store-tab-btn" id="stab-stats" onclick="switchStoreTab('stats')">📈 Statistiche</button>
+                        <button type="button" class="store-tab-btn" id="stab-settings" onclick="switchStoreTab('settings')">⚙️ Regole</button>
+                    </div>
+
+                    <!-- TAB 4A: CATALOGO & EDITOR PRODOTTO -->
+                    <div id="store-view-catalog">
+                        <div class="store-toolbar">
+                            <select id="store-location-filter" onchange="renderFilteredStoreItems()" style="flex: 1;">
+                                <option value="ALL">Tutte le pagine e sezioni</option>
+                            </select>
+                            <button type="button" class="btn-glow-primary" style="width: auto; padding: 10px 14px;" onclick="openStoreItemForm(null)">
+                                <span>➕ Nuovo</span>
+                            </button>
+                        </div>
+
+                        <!-- Form Crea / Modifica Articolo -->
+                        <div class="store-editor-card" id="store-item-editor">
+                            <div class="drawer-title" id="store-editor-heading" style="font-size: 13px; margin-bottom: 10px;">➕ Nuovo Articolo</div>
+                            <form id="store-item-form">
+                                <input type="hidden" id="st_item_id">
+                                <div class="form-row">
+                                    <label for="st_name">Nome Prodotto *</label>
+                                    <input type="text" id="st_name" required placeholder="Es: Racchetta Pro Carbon">
+                                </div>
+                                <div class="form-grid-2">
+                                    <div>
+                                        <label for="st_price">Prezzo Listino (€) *</label>
+                                        <input type="number" step="0.01" id="st_price" required placeholder="99.00">
+                                    </div>
+                                    <div>
+                                        <label for="st_discount_price">Prezzo Scontato (€)</label>
+                                        <input type="number" step="0.01" id="st_discount_price" placeholder="Vuoto = nessuno">
+                                    </div>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div>
+                                        <label for="st_stock_qty">Quantità Magazzino</label>
+                                        <input type="number" id="st_stock_qty" placeholder="Vuoto = illimitata">
+                                    </div>
+                                    <div>
+                                        <label for="st_in_stock">Stato Disponibilità</label>
+                                        <select id="st_in_stock">
+                                            <option value="true">🟢 Disponibile</option>
+                                            <option value="false">🔴 Esaurito</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div>
+                                        <label for="st_priority">Priorità Vetrina</label>
+                                        <select id="st_priority">
+                                            <option value="high">⭐ In Evidenza</option>
+                                            <option value="normal" selected>Standard</option>
+                                            <option value="low">Bassa</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="st_release_date">Data Inserimento</label>
+                                        <input type="date" id="st_release_date">
+                                    </div>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div>
+                                        <label for="st_page">Pagina Destinazione</label>
+                                        <input type="text" id="st_page" value="index.html" placeholder="index.html">
+                                    </div>
+                                    <div>
+                                        <label for="st_section">Sezione Store ID</label>
+                                        <input type="text" id="st_section" value="default" placeholder="default">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <label for="st_hidden">Visibilità sul Sito</label>
+                                    <select id="st_hidden">
+                                        <option value="false">👁️ Visibile nel catalogo</option>
+                                        <option value="true">🙈 Nascosto temporaneamente</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label for="st_description">Descrizione Breve</label>
+                                    <input type="text" id="st_description" placeholder="Caratteristiche principali...">
+                                </div>
+                                <div class="form-row">
+                                    <label>Foto Prodotto (WebP automatico)</label>
+                                    <div class="file-upload-btn">
+                                        <span>📸 Carica immagine prodotto...</span>
+                                        <span id="st-chosen-file-label" class="file-upload-name"></span>
+                                        <input type="file" id="st_image" accept="image/*" onchange="updateStoreFileName(this)">
+                                    </div>
+                                </div>
+                                <div class="action-split">
+                                    <button type="submit" class="btn-glow-primary" id="btn-save-store-item">
+                                        <span>🔐 Salva Prodotto</span>
+                                    </button>
+                                    <button type="button" class="btn-outline-close" style="margin-top: 0; width: auto; padding: 0 14px;" onclick="closeStoreItemForm()">Annulla</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="catalog-list" id="store-items-container"></div>
+                    </div>
+
+                    <!-- TAB 4B: STATISTICHE DEDICATE AI SINGOLI PRODOTTI -->
+                    <div id="store-view-stats" style="display: none;">
+                        <div class="inventory-kpi-grid">
+                            <div class="analytics-stat-box">
+                                <div class="tele-label">Totale</div>
+                                <div class="analytics-stat-num" id="st-kpi-total">0</div>
+                            </div>
+                            <div class="analytics-stat-box">
+                                <div class="tele-label">Disponibili</div>
+                                <div class="analytics-stat-num text-emerald" id="st-kpi-avail">0</div>
+                            </div>
+                            <div class="analytics-stat-box">
+                                <div class="tele-label">Scorte Basse</div>
+                                <div class="analytics-stat-num text-amber" id="st-kpi-low">0</div>
+                            </div>
+                        </div>
+
+                        <div class="analytics-block">
+                            <div class="analytics-block-title">🏆 Top Prodotti (Clic &amp; Carrello)</div>
+                            <div id="st-top-products-list"></div>
+                        </div>
+
+                        <div class="analytics-block">
+                            <div class="analytics-block-title">💤 Prodotti a Zero Interazioni</div>
+                            <div id="st-zero-products-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4C: REGOLE AUTOMATICHE STORE -->
+                    <div id="store-view-settings" style="display: none;">
+                        <form id="store-settings-form">
+                            <div class="form-row">
+                                <label for="set_sort_mode">Ordinamento Automatico Vetrina</label>
+                                <select id="set_sort_mode">
+                                    <option value="priority_then_newest">⭐ Priorità + Più Recenti (Consigliato)</option>
+                                    <option value="newest">🆕 Più Recenti Prima</option>
+                                    <option value="price_asc">💶 Prezzo Crescente</option>
+                                    <option value="price_desc">💎 Prezzo Decrescente</option>
+                                </select>
+                            </div>
+                            <div class="form-grid-2">
+                                <div>
+                                    <label for="set_new_days">Durata Badge "Novità" (giorni)</label>
+                                    <input type="number" id="set_new_days" min="0" value="15">
+                                </div>
+                                <div>
+                                    <label for="set_low_thresh">Soglia "Ultimi Pezzi"</label>
+                                    <input type="number" id="set_low_thresh" min="1" value="2">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-glow-primary" id="btn-save-store-settings">
+                                <span>🔐 Applica Regole al Sito</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="store-locked-content" style="display: none; text-align: center; padding: 18px 8px;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">📦</div>
+                    <h4 style="font-size: 14px; margin-bottom: 4px;">Modulo Store Non Attivo</h4>
+                    <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+                        La gestione e-commerce richiede il Piano Pro Store. Contatta The Orbis Project per attivare il catalogo.
+                    </p>
+                </div>
+
+                <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- BOX COLLAUDO & ROLLBACK RAPIDO (5 SECONDI)                     -->
+            <!-- ============================================================== -->
+            <div id="rollback-box">
+                <div class="rollback-title">🚀 Modifica Pubblicata con Successo!</div>
+                <div class="rollback-desc">Verifica subito il risultato online. Se non convalidi, il sistema ripristina in automatico dopo 30 minuti.</div>
+                <a href="#" id="site-preview-btn" class="site-preview-link" target="_blank">🌐 Apri il tuo sito (Bypass Cache)</a>
+                <div class="action-split">
+                    <button type="button" class="btn-action-confirm" onclick="triggerConfirm()">✅ Convalida</button>
+                    <button type="button" class="btn-action-rollback" onclick="triggerRollback()">❌ Rollback (5s)</button>
+                </div>
+            </div>
+
+            <!-- Notifiche Dinamiche -->
+            <div id="notification-box"></div>
+        </div>
 
         <!-- Footer -->
         <footer class="app-footer">
-            Sviluppato con Ingegneria Umanistica da <a href="#" onclick="openOrbisSite()">The Orbis Project</a> • Roma
+            Sviluppato con Ingegneria Umanistica da <a href="https://www.theorbisproject.com" target="_blank">The Orbis Project</a> • Roma
         </footer>
     </div>
 
-    <!-- SCRIPT CLIENT TELEGRAM MINI APP -->
+    <!-- ================================================================== -->
+    <!-- SCRIPT CLIENT AUTONOMO (GOOGLE OPENID + WEBAUTHN PASSKEY 2FA)      -->
+    <!-- ================================================================== -->
     <script>
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.ready();
-            tg.expand();
-        }
+        // Configurazione Backend & Google Client ID
+        const API_BASE_URL = "https://smith-anchor-untoasted.ngrok-free.dev";
+        const GOOGLE_CLIENT_ID = "INSERISCI_QUI_IL_TUO_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
 
-        // Endpoint di Backend collegato a ngrok
-        const NGROK_BASE_URL = "https://smith-anchor-untoasted.ngrok-free.dev";
-        const REQ_HEADERS = { "ngrok-skip-browser-warning": "true" };
+        const DEFAULT_HEADERS = { "ngrok-skip-browser-warning": "true" };
 
-        // Risoluzione Utente Telegram
-        const tgUser = tg?.initDataUnsafe?.user;
-        const userId = tgUser ? String(tgUser.id) : "5658639537"; // Fallback cliente Michelangelo Sport di test
+        // Stato Globale Sessione
+        let sessionToken = localStorage.getItem("orbis_session_token") || "";
+        let currentUserId = localStorage.getItem("orbis_user_id") || "";
+        let selectedSiteId = localStorage.getItem("orbis_selected_site_id") || "";
+        let userSites = [];
 
         let currentDomain = "";
         let currentTier = "base";
+        let requirePasskey2FA = true;
+        let cachedActionProof = { token: "", expiresAt: 0 };
 
-        function openOrbisSite() {
-            const url = "https://www.theorbisproject.com";
-            if (tg?.openLink) { tg.openLink(url); } else { window.open(url, '_blank'); }
+        let cachedSectionsData = [];
+        let cachedStoreItems = [];
+        let cachedStoreLocations = {};
+
+        /* ============================================================== */
+        /* 1. HELPER BASE64URL & WEBAUTHN PASSKEY                         */
+        /* ============================================================== */
+        function b64urlToUint8Array(b64url) {
+            const padding = "=".repeat((4 - (b64url.length % 4)) % 4);
+            const base64 = (b64url + padding).replace(/-/g, "+").replace(/_/g, "/");
+            const rawData = atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
         }
 
-        function showNotification(msg, isSuccess = true) {
-            const box = document.getElementById('notification-box');
-            box.className = isSuccess ? "notif-success" : "notif-error";
-            box.innerText = msg;
-            box.style.display = "block";
-            box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        function bufferToB64url(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = "";
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
         }
 
-        function updateFileName(input) {
-            const label = document.getElementById('chosen-file-label');
-            if (input.files && input.files[0]) {
-                label.innerText = `(${input.files[0].name})`;
-            } else {
-                label.innerText = "";
+        async function registerNewPasskey() {
+            if (!window.PublicKeyCredential) {
+                showNotification("❌ Questo browser o dispositivo non supporta le Passkey WebAuthn.", false);
+                return;
+            }
+            try {
+                const optRes = await apiFetch("/api/v1/auth/passkey/register-options", { method: "POST" });
+                const optData = await optRes.json();
+                if (optData.status !== "success") {
+                    showNotification(`⚠️ ${optData.message || "Errore opzioni Passkey"}`, false);
+                    return;
+                }
+
+                const pubKey = optData.publicKey;
+                pubKey.challenge = b64urlToUint8Array(pubKey.challenge);
+                pubKey.user.id = b64urlToUint8Array(pubKey.user.id);
+
+                const credential = await navigator.credentials.create({ publicKey: pubKey });
+                const serializedCred = {
+                    id: credential.id,
+                    rawId: bufferToB64url(credential.rawId),
+                    type: credential.type,
+                    response: {
+                        clientDataJSON: bufferToB64url(credential.response.clientDataJSON),
+                        attestationObject: bufferToB64url(credential.response.attestationObject)
+                    }
+                };
+
+                const verRes = await apiFetch("/api/v1/auth/passkey/register-verify", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        challenge_id: optData.challenge_id,
+                        credential: serializedCred,
+                        device_name: navigator.platform || "Dispositivo Titolare"
+                    })
+                });
+                const verData = await verRes.json();
+                if (verData.status === "success") {
+                    if (verData.action_proof) {
+                        cachedActionProof = { token: verData.action_proof, expiresAt: Date.now() + 50000 };
+                    }
+                    document.getElementById("passkey-setup-banner").style.display = "none";
+                    showNotification(`✅ ${verData.message}`, true);
+                    fetchUserStatus();
+                } else {
+                    showNotification(`❌ ${verData.message}`, false);
+                }
+            } catch (err) {
+                showNotification(`⚠️ Registrazione Passkey annullata: ${err.message}`, false);
             }
         }
 
-        /* Gestione Drawer / Sezioni */
+        async function loginWithPasskey() {
+            if (!window.PublicKeyCredential) {
+                alert("Il tuo dispositivo non supporta le Passkey WebAuthn.");
+                return;
+            }
+            try {
+                const optRes = await fetch(`${API_BASE_URL}/api/v1/auth/passkey/assertion-options`, {
+                    method: "POST",
+                    headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: currentUserId || null })
+                });
+                const optData = await optRes.json();
+                if (optData.status !== "success") {
+                    alert(optData.message || "Impossibile avviare Passkey.");
+                    return;
+                }
+
+                const pubKey = optData.publicKey;
+                pubKey.challenge = b64urlToUint8Array(pubKey.challenge);
+                if (Array.isArray(pubKey.allowCredentials)) {
+                    pubKey.allowCredentials = pubKey.allowCredentials.map(c => ({
+                        ...c,
+                        id: b64urlToUint8Array(c.id)
+                    }));
+                }
+
+                const assertion = await navigator.credentials.get({ publicKey: pubKey });
+                const serialized = {
+                    id: assertion.id,
+                    rawId: bufferToB64url(assertion.rawId),
+                    type: assertion.type,
+                    response: {
+                        clientDataJSON: bufferToB64url(assertion.response.clientDataJSON),
+                        authenticatorData: bufferToB64url(assertion.response.authenticatorData),
+                        signature: bufferToB64url(assertion.response.signature),
+                        userHandle: assertion.response.userHandle ? bufferToB64url(assertion.response.userHandle) : null
+                    }
+                };
+
+                const verRes = await fetch(`${API_BASE_URL}/api/v1/auth/passkey/assertion-verify`, {
+                    method: "POST",
+                    headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        challenge_id: optData.challenge_id,
+                        credential: serialized
+                    })
+                });
+                const verData = await verRes.json();
+                if (verData.status === "success") {
+                    completeAuthSuccess(verData);
+                } else {
+                    alert(verData.message || "Passkey non riconosciuta.");
+                }
+            } catch (err) {
+                alert("Verifica Passkey annullata o non riuscita.");
+            }
+        }
+
+        async function obtainActionProof() {
+            if (!requirePasskey2FA) return "";
+            if (cachedActionProof.token && Date.now() < cachedActionProof.expiresAt) {
+                return cachedActionProof.token;
+            }
+            if (!window.PublicKeyCredential) {
+                throw new Error("Passkey WebAuthn non supportata su questo browser.");
+            }
+
+            const optRes = await fetch(`${API_BASE_URL}/api/v1/auth/passkey/assertion-options`, {
+                method: "POST",
+                headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: currentUserId || null })
+            });
+            const optData = await optRes.json();
+            if (optData.status !== "success") {
+                throw new Error(optData.message || "Errore richiesta conferma Passkey.");
+            }
+
+            const pubKey = optData.publicKey;
+            pubKey.challenge = b64urlToUint8Array(pubKey.challenge);
+            if (Array.isArray(pubKey.allowCredentials)) {
+                pubKey.allowCredentials = pubKey.allowCredentials.map(c => ({
+                    ...c,
+                    id: b64urlToUint8Array(c.id)
+                }));
+            }
+
+            const assertion = await navigator.credentials.get({ publicKey: pubKey });
+            const serialized = {
+                id: assertion.id,
+                rawId: bufferToB64url(assertion.rawId),
+                type: assertion.type,
+                response: {
+                    clientDataJSON: bufferToB64url(assertion.response.clientDataJSON),
+                    authenticatorData: bufferToB64url(assertion.response.authenticatorData),
+                    signature: bufferToB64url(assertion.response.signature),
+                    userHandle: assertion.response.userHandle ? bufferToB64url(assertion.response.userHandle) : null
+                }
+            };
+
+            const verRes = await fetch(`${API_BASE_URL}/api/v1/auth/passkey/assertion-verify`, {
+                method: "POST",
+                headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    challenge_id: optData.challenge_id,
+                    credential: serialized
+                })
+            });
+            const verData = await verRes.json();
+            if (verData.status !== "success" || !verData.action_proof) {
+                throw new Error(verData.message || "Conferma biometrica fallita.");
+            }
+
+            cachedActionProof = { token: verData.action_proof, expiresAt: Date.now() + 45000 };
+            return verData.action_proof;
+        }
+
+        /* ============================================================== */
+        /* 2. GOOGLE SIGN-IN & FIRST-ACCESS PAIRING                       */
+        /* ============================================================== */
+        function switchAuthTab(tab) {
+            document.getElementById("tab-auth-login").classList.toggle("active", tab === "login");
+            document.getElementById("tab-auth-pair").classList.toggle("active", tab === "pair");
+            document.getElementById("auth-panel-login").style.display = tab === "login" ? "block" : "none";
+            document.getElementById("auth-panel-pair").style.display = tab === "pair" ? "block" : "none";
+        }
+
+        function initGoogleIdentity() {
+            if (!window.google || !google.accounts || !google.accounts.id) {
+                setTimeout(initGoogleIdentity, 300);
+                return;
+            }
+            if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.startsWith("INSERISCI_QUI")) {
+                document.getElementById("google-signin-login").innerHTML =
+                    '<div style="font-size:11px; color:#fbbf24; text-align:center;">⚠️ Configura GOOGLE_CLIENT_ID nel codice per abilitare il pulsante Google.</div>';
+                document.getElementById("google-signin-pair").innerHTML =
+                    '<div style="font-size:11px; color:#fbbf24; text-align:center;">⚠️ Configura GOOGLE_CLIENT_ID per completare l\'abbinamento.</div>';
+                return;
+            }
+
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleCredentialResponse
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById("google-signin-login"),
+                { theme: "filled_black", size: "large", shape: "pill", text: "signin_with", width: 280 }
+            );
+            google.accounts.id.renderButton(
+                document.getElementById("google-signin-pair"),
+                { theme: "filled_blue", size: "large", shape: "pill", text: "continue_with", width: 280 }
+            );
+        }
+
+        async function handleGoogleCredentialResponse(response) {
+            const idToken = response.credential;
+            const isPairingMode = document.getElementById("auth-panel-pair").style.display === "block";
+
+            if (isPairingMode) {
+                const pairingCode = document.getElementById("pairing_code_input").value.trim();
+                if (!pairingCode) {
+                    alert("Inserisci prima il codice di attivazione usa-e-getta.");
+                    return;
+                }
+                const res = await fetch(`${API_BASE_URL}/api/v1/auth/pair`, {
+                    method: "POST",
+                    headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                    body: JSON.stringify({ pairing_code: pairingCode, google_id_token: idToken })
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    completeAuthSuccess(data);
+                } else {
+                    alert(data.message || "Abbinamento non riuscito.");
+                }
+            } else {
+                const res = await fetch(`${API_BASE_URL}/api/v1/auth/google`, {
+                    method: "POST",
+                    headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                    body: JSON.stringify({ google_id_token: idToken })
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    completeAuthSuccess(data);
+                } else {
+                    alert(data.message || "Accesso Google non riconosciuto.");
+                }
+            }
+        }
+
+        function completeAuthSuccess(authData) {
+            sessionToken = authData.token;
+            currentUserId = authData.user_id || "";
+            userSites = authData.sites || [];
+
+            localStorage.setItem("orbis_session_token", sessionToken);
+            if (currentUserId) localStorage.setItem("orbis_user_id", currentUserId);
+            if (authData.action_proof) {
+                cachedActionProof = { token: authData.action_proof, expiresAt: Date.now() + 45000 };
+            }
+
+            if (userSites.length > 0) {
+                const stillValid = userSites.some(s => s.site_id === selectedSiteId);
+                if (!stillValid) {
+                    selectedSiteId = userSites[0].site_id;
+                    localStorage.setItem("orbis_selected_site_id", selectedSiteId);
+                }
+            }
+
+            enterConsoleMode(authData.requires_passkey_setup);
+        }
+
+        function logoutSession() {
+            sessionToken = "";
+            cachedActionProof = { token: "", expiresAt: 0 };
+            localStorage.removeItem("orbis_session_token");
+            document.getElementById("console-screen").style.display = "none";
+            document.getElementById("auth-screen").style.display = "flex";
+        }
+
+        /* ============================================================== */
+        /* 3. FETCH WRAPPER AUTENTICATO & INIZIALIZZAZIONE CONSOLE        */
+        /* ============================================================== */
+        async function apiFetch(endpoint, options = {}) {
+            const headers = {
+                ...DEFAULT_HEADERS,
+                ...(options.headers || {}),
+                "Authorization": `Bearer ${sessionToken}`
+            };
+            const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
+            if (res.status === 401) {
+                logoutSession();
+                throw new Error("Sessione scaduta. Effettua nuovamente l'accesso.");
+            }
+            if (res.status === 403) {
+                cachedActionProof = { token: "", expiresAt: 0 };
+                let errDetail = "Autorizzazione Passkey negata o scaduta.";
+                try {
+                    const errJson = await res.json();
+                    if (errJson.detail) errDetail = errJson.detail;
+                } catch (_) {}
+                throw new Error(errDetail);
+            }
+            return res;
+        }
+
+        async function enterConsoleMode(forcePasskeyPrompt = false) {
+            document.getElementById("auth-screen").style.display = "none";
+            document.getElementById("console-screen").style.display = "flex";
+
+            if (forcePasskeyPrompt) {
+                document.getElementById("passkey-setup-banner").style.display = "block";
+            }
+
+            await loadUserSitesList();
+            if (selectedSiteId) {
+                await fetchUserStatus();
+                await loadSiteSections("index.html");
+            }
+        }
+
+        async function loadUserSitesList() {
+            try {
+                const res = await apiFetch("/api/v1/sites");
+                const data = await res.json();
+                if (data.status === "success") {
+                    userSites = data.sites || [];
+                    document.getElementById("passkey-setup-banner").style.display = data.requires_passkey_setup ? "block" : "none";
+
+                    const switcherBar = document.getElementById("site-switcher-bar");
+                    const switcherSelect = document.getElementById("site-switcher");
+
+                    if (userSites.length > 0) {
+                        if (!userSites.some(s => s.site_id === selectedSiteId)) {
+                            selectedSiteId = userSites[0].site_id;
+                            localStorage.setItem("orbis_selected_site_id", selectedSiteId);
+                        }
+                    }
+
+                    if (userSites.length > 1) {
+                        switcherSelect.innerHTML = "";
+                        userSites.forEach(s => {
+                            const opt = document.createElement("option");
+                            opt.value = s.site_id;
+                            opt.textContent = `${s.business_name} (${s.domain || s.site_id})`;
+                            if (s.site_id === selectedSiteId) opt.selected = true;
+                            switcherSelect.appendChild(opt);
+                        });
+                        switcherBar.style.display = "flex";
+                    } else {
+                        switcherBar.style.display = "none";
+                    }
+                }
+            } catch (err) {
+                console.error("Errore elenco siti:", err);
+            }
+        }
+
+        async function onSwitchSite(newSiteId) {
+            selectedSiteId = newSiteId;
+            localStorage.setItem("orbis_selected_site_id", selectedSiteId);
+            closeAllDrawers();
+            await fetchUserStatus();
+            await loadSiteSections("index.html");
+        }
+
+        /* ============================================================== */
+        /* 4. TELEMETRIA, STATO SITO & MODULI                             */
+        /* ============================================================== */
+        async function fetchUserStatus() {
+            if (!selectedSiteId) return;
+            try {
+                const res = await apiFetch(`/api/v1/user-status?site_id=${encodeURIComponent(selectedSiteId)}`);
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    document.getElementById("enterprise-name").innerText = data.business_name || "SiteMaster Console";
+                    currentDomain = data.domain || "";
+                    document.getElementById("user-domain-label").innerText = currentDomain
+                        ? `${currentDomain} • ID: ${data.site_id}`
+                        : `The Orbis Project • ID: ${data.site_id}`;
+
+                    currentTier = (data.tier || "base").toLowerCase();
+                    requirePasskey2FA = Boolean(data.require_passkey_2fa);
+
+                    const tierBadge = document.getElementById("tier-badge");
+                    tierBadge.innerText = `PIANO ${currentTier.toUpperCase()}`;
+                    tierBadge.className = `tier-badge ${currentTier}`;
+
+                    document.getElementById("passkey-setup-banner").style.display = data.requires_passkey_setup ? "block" : "none";
+                    document.getElementById("tele-2fa").innerText = requirePasskey2FA ? "🔐 Passkey 2FA" : "⚡ Standard";
+
+                    const teleAudit = document.getElementById("tele-audit");
+                    teleAudit.innerText = data.audit_done ? "🟢 Eseguito" : "🔴 Da fare";
+                    teleAudit.className = `tele-val ${data.audit_done ? "text-emerald" : "text-rose"}`;
+
+                    if (data.last_audit_summary) {
+                        document.getElementById("audit-summary-content").innerText = data.last_audit_summary;
+                        document.getElementById("audit-report-content").innerText = data.last_audit_report || "";
+                        document.getElementById("audit-report-container").style.display = "block";
+                    } else {
+                        document.getElementById("audit-report-container").style.display = "none";
+                    }
+
+                    const count = data.mod_count || 0;
+                    const limit = data.mod_limit || 30;
+                    document.getElementById("progress-count-text").innerText = `${count} / ${limit}`;
+                    const pct = Math.min(100, Math.round((count / limit) * 100));
+                    document.getElementById("progress-bar-fill").style.width = `${pct}%`;
+
+                    document.getElementById("lock-analytics").style.display = data.modules_unlocked?.privacy_analytics ? "none" : "block";
+                    document.getElementById("lock-store").style.display = data.modules_unlocked?.store_manager ? "none" : "block";
+
+                    if (data.has_pending_rollback) {
+                        const previewBtn = document.getElementById("site-preview-btn");
+                        previewBtn.href = currentDomain ? `${currentDomain}?v=${Date.now()}` : "#";
+                        document.getElementById("rollback-box").style.display = "block";
+                    } else {
+                        document.getElementById("rollback-box").style.display = "none";
+                    }
+                }
+            } catch (err) {
+                console.error("Errore telemetria:", err);
+                document.getElementById("tele-audit").innerText = "❌ Errore";
+            }
+        }
+
+        function showNotification(msg, isSuccess = true) {
+            const box = document.getElementById("notification-box");
+            box.className = isSuccess ? "notif-success" : "notif-error";
+            box.innerText = msg;
+            box.style.display = "block";
+            box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
         function closeAllDrawers() {
-            document.querySelectorAll('.panel-drawer').forEach(d => d.style.display = 'none');
-            document.querySelectorAll('.hub-card').forEach(c => c.classList.remove('active'));
-            document.getElementById('notification-box').style.display = 'none';
+            document.querySelectorAll(".panel-drawer").forEach(d => d.style.display = "none");
+            document.querySelectorAll(".hub-card").forEach(c => c.classList.remove("active"));
+            document.getElementById("notification-box").style.display = "none";
         }
 
         function openDrawer(type) {
             const targetDrawer = document.getElementById(`drawer-${type}`);
             const targetCard = document.getElementById(`card-hub-${type}`);
-            const isAlreadyOpen = targetDrawer.style.display === 'block';
+            const isAlreadyOpen = targetDrawer.style.display === "block";
 
             closeAllDrawers();
 
             if (!isAlreadyOpen) {
-                targetDrawer.style.display = 'block';
-                targetCard.classList.add('active');
+                targetDrawer.style.display = "block";
+                targetCard.classList.add("active");
 
-                if (type === 'analytics') loadAnalytics();
-                if (type === 'store') loadStoreCatalog();
+                if (type === "analytics") loadAnalytics();
+                if (type === "store") loadStoreCatalog();
             }
         }
 
-        /* 1. Inizializzazione Dati Utente & Tiering */
-        async function fetchUserStatus() {
-            try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/user-status?telegram_id=${encodeURIComponent(userId)}`, { headers: REQ_HEADERS });
-                const data = await res.json();
-
-                if (data.status === "success") {
-                    document.getElementById('enterprise-name').innerText = data.business_name || "SiteMaster Console";
-                    currentDomain = data.domain || "";
-                    document.getElementById('user-domain-label').innerText = currentDomain || "The Orbis Project — Smart Core";
-
-                    currentTier = (data.tier || "base").toLowerCase();
-                    const tierBadge = document.getElementById('tier-badge');
-                    tierBadge.innerText = `PIANO ${currentTier.toUpperCase()}`;
-                    tierBadge.className = `tier-badge ${currentTier}`;
-
-                    // Telemetria & Progress Bar
-                    const teleAudit = document.getElementById('tele-audit');
-                    teleAudit.innerText = data.audit_done ? "🟢 Eseguito" : "🔴 Da fare";
-                    teleAudit.className = `tele-val ${data.audit_done ? 'text-emerald' : 'text-rose'}`;
-
-                    const count = data.mod_count || 0;
-                    const limit = data.mod_limit || 30;
-                    document.getElementById('progress-count-text').innerText = `${count} / ${limit}`;
-                    const pct = Math.min(100, Math.round((count / limit) * 100));
-                    document.getElementById('progress-bar-fill').style.width = `${pct}%`;
-
-                    // Gestione Lucchetti Moduli
-                    document.getElementById('lock-analytics').style.display = (currentTier === "pro") ? "none" : "block";
-                    document.getElementById('lock-store').style.display = (data.modules_unlocked?.store_manager) ? "none" : "block";
-                }
-            } catch (err) {
-                console.error("Errore telemetria utente:", err);
-                document.getElementById('tele-audit').innerText = "❌ Offline";
-            }
-        }
-
-        /* 2. Caricamento Dinamico Sezioni Semantiche (ORBIS-SECTION) */
-        async function loadSiteSections() {
-            const sectionSelect = document.getElementById('target_section');
-            try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/get-sections?telegram_id=${encodeURIComponent(userId)}`, { headers: REQ_HEADERS });
-                const data = await res.json();
-
-                if (data.status === "success" && data.sections) {
-                    sectionSelect.innerHTML = "";
-                    data.sections.forEach(sec => {
-                        const opt = document.createElement('option');
-                        opt.value = sec.id;
-                        opt.textContent = sec.label;
-                        if (sec.id === 'AUTO') opt.selected = true;
-                        sectionSelect.appendChild(opt);
-                    });
-                }
-            } catch (err) {
-                console.error("Errore recupero sezioni:", err);
-                sectionSelect.innerHTML = '<option value="AUTO" selected>✨ Modifica Intelligente (Globale)</option>';
-            }
-        }
-
-        /* 3. Esecuzione Diagnostica IA Quotidiana */
+        /* ============================================================== */
+        /* 5. DRAWER 1: DIAGNOSTICA IA (SINTESI + REPORT COMPLETO)        */
+        /* ============================================================== */
         async function triggerDailyAudit() {
-            const btn = document.getElementById('btn-run-audit');
-            const container = document.getElementById('audit-report-container');
-            const content = document.getElementById('audit-report-content');
+            const btn = document.getElementById("btn-run-audit");
+            const container = document.getElementById("audit-report-container");
+            const summaryEl = document.getElementById("audit-summary-content");
+            const fullEl = document.getElementById("audit-report-content");
 
             btn.disabled = true;
-            btn.innerText = "⏳ Scansione in corso con Gemini Pro...";
+            btn.innerHTML = "<span>⏳ Ispezione Statica + Gemini Pro in corso...</span>";
 
             const formData = new FormData();
-            formData.append("telegram_id", userId);
+            formData.append("site_id", selectedSiteId);
 
             try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/run-audit`, {
+                const res = await apiFetch("/api/v1/run-audit", {
                     method: "POST",
-                    headers: REQ_HEADERS,
                     body: formData
                 });
                 const data = await res.json();
 
                 if (data.status === "success") {
                     container.style.display = "block";
-                    content.innerText = data.details;
+                    summaryEl.innerText = data.summary || data.details;
+                    fullEl.innerText = data.details || "";
+                    fullEl.style.display = "none";
+                    document.getElementById("btn-toggle-full-audit").innerText = "📄 Mostra Report Tecnico Completo";
                     fetchUserStatus();
                 } else {
                     showNotification(`⚠️ ${data.message}`, false);
                 }
             } catch (err) {
-                showNotification("❌ Errore durante il check.", false);
+                showNotification(`❌ ${err.message}`, false);
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Avvia Scansione Strutturale";
+                btn.innerHTML = "<span>Avvia Scansione Strutturale</span>";
             }
         }
 
-        /* 4. Applicazione Modifica a Sezione Isolata */
-        const form = document.getElementById('editor-form');
-        const submitBtn = document.getElementById('btn-submit-edit');
-        const rollbackBox = document.getElementById('rollback-box');
+        function toggleFullAuditReport() {
+            const fullEl = document.getElementById("audit-report-content");
+            const btn = document.getElementById("btn-toggle-full-audit");
+            const isHidden = fullEl.style.display === "none" || fullEl.style.display === "";
+            fullEl.style.display = isHidden ? "block" : "none";
+            btn.innerText = isHidden ? "🔼 Nascondi Report Tecnico Completo" : "📄 Mostra Report Tecnico Completo";
+        }
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = "<span>⏳ Elaborazione Gemini Pro in corso...</span>";
-            rollbackBox.style.display = "none";
-
-            const formData = new FormData();
-            formData.append("telegram_id", userId);
-            formData.append("target_page", "index.html");
-            formData.append("target_section", document.getElementById('target_section').value);
-            formData.append("action_type", document.getElementById('action_type').value);
-            formData.append("instruction", document.getElementById('instruction_text').value);
-
-            const fileInput = document.getElementById('image_input');
-            if (fileInput.files[0]) {
-                formData.append("image", fileInput.files[0]);
-            }
+        /* ============================================================== */
+        /* 6. DRAWER 2: EDITOR CHIRURGICO SEZIONI & SOTTO-MARCATORI       */
+        /* ============================================================== */
+        async function loadSiteSections(targetFile = "index.html") {
+            if (!selectedSiteId) return;
+            const pageSelect = document.getElementById("target_page");
+            const sectionSelect = document.getElementById("target_section");
 
             try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/update-site`, {
+                const url = `/api/v1/get-sections?site_id=${encodeURIComponent(selectedSiteId)}&target_file=${encodeURIComponent(targetFile)}`;
+                const res = await apiFetch(url);
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    if (Array.isArray(data.files) && data.files.length > 0) {
+                        pageSelect.innerHTML = "";
+                        data.files.forEach(f => {
+                            const opt = document.createElement("option");
+                            opt.value = f;
+                            opt.textContent = `📄 ${f}`;
+                            if (f === (data.current_file || targetFile)) opt.selected = true;
+                            pageSelect.appendChild(opt);
+                        });
+                    }
+
+                    cachedSectionsData = data.sections || [];
+                    sectionSelect.innerHTML = "";
+                    cachedSectionsData.forEach(sec => {
+                        const opt = document.createElement("option");
+                        opt.value = sec.id;
+                        opt.textContent = sec.label;
+                        if (sec.id === "AUTO") opt.selected = true;
+                        sectionSelect.appendChild(opt);
+                    });
+
+                    renderSubMarkersPreview();
+                }
+            } catch (err) {
+                console.error("Errore caricamento sezioni:", err);
+                sectionSelect.innerHTML = '<option value="AUTO" selected>✨ Modifica Intelligente (Globale)</option>';
+                document.getElementById("submarkers-box").style.display = "none";
+            }
+        }
+
+        function renderSubMarkersPreview() {
+            const selectedSecId = document.getElementById("target_section").value;
+            const box = document.getElementById("submarkers-box");
+            const grid = document.getElementById("submarkers-grid");
+
+            const secObj = cachedSectionsData.find(s => s.id === selectedSecId);
+            if (!secObj || !secObj.sub_markers) {
+                box.style.display = "none";
+                return;
+            }
+
+            const labelsMap = {
+                TITLE: "Titolo",
+                SUBTITLE: "Sottotitolo",
+                DESC: "Descrizione",
+                IMG: "Immagine"
+            };
+
+            grid.innerHTML = "";
+            ["TITLE", "SUBTITLE", "DESC", "IMG"].forEach(key => {
+                const info = secObj.sub_markers[key] || { found: false, preview: "Non trovato" };
+                const pill = document.createElement("div");
+                pill.className = `submarker-pill ${info.found ? "found" : "missing"}`;
+                pill.innerHTML = `
+                    <span class="submarker-tag">${info.found ? "✅" : "⚪"} ${labelsMap[key]}</span>
+                    <span class="submarker-preview" title="${escapeHtml(info.preview)}">${escapeHtml(info.preview)}</span>
+                `;
+                grid.appendChild(pill);
+            });
+
+            box.style.display = "block";
+        }
+
+        function toggleActionPill(el) {
+            el.classList.toggle("selected");
+            const selected = document.querySelectorAll("#action-pills-grid .action-pill.selected");
+            if (selected.length === 0) {
+                el.classList.add("selected");
+            }
+        }
+
+        function getSelectedActionTypes() {
+            const pills = Array.from(document.querySelectorAll("#action-pills-grid .action-pill.selected"));
+            return pills.map(p => p.getAttribute("data-val")).join(", ") || "Modifica Aperta";
+        }
+
+        function updateFileName(input) {
+            const label = document.getElementById("chosen-file-label");
+            label.innerText = (input.files && input.files[0]) ? `(${input.files[0].name})` : "";
+        }
+
+        document.getElementById("editor-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById("btn-submit-edit");
+            const rollbackBox = document.getElementById("rollback-box");
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = "<span>🔐 Verifica Passkey in corso...</span>";
+            rollbackBox.style.display = "none";
+
+            try {
+                const actionProof = await obtainActionProof();
+                submitBtn.innerHTML = "<span>⏳ Elaborazione Gemini Pro su GitHub...</span>";
+
+                const formData = new FormData();
+                formData.append("site_id", selectedSiteId);
+                formData.append("target_page", document.getElementById("target_page").value);
+                formData.append("target_section", document.getElementById("target_section").value);
+                formData.append("action_types", getSelectedActionTypes());
+                formData.append("instruction", document.getElementById("instruction_text").value);
+                if (actionProof) formData.append("action_proof", actionProof);
+
+                const fileInput = document.getElementById("image_input");
+                if (fileInput.files[0]) {
+                    formData.append("image", fileInput.files[0]);
+                }
+
+                const res = await apiFetch("/api/v1/update-site", {
                     method: "POST",
-                    headers: REQ_HEADERS,
                     body: formData
                 });
                 const data = await res.json();
 
                 if (res.ok && data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    
-                    // Configurazione link preview con cache-buster
-                    const previewBtn = document.getElementById('site-preview-btn');
+                    const previewBtn = document.getElementById("site-preview-btn");
                     const buster = data.cache_buster_param || `?v=${Date.now()}`;
                     previewBtn.href = currentDomain ? `${currentDomain}${buster}` : "#";
-                    
+
                     rollbackBox.style.display = "block";
-                    form.reset();
+                    document.getElementById("instruction_text").value = "";
+                    fileInput.value = "";
                     updateFileName(fileInput);
                     fetchUserStatus();
+                    loadSiteSections(document.getElementById("target_page").value);
                 } else {
-                    showNotification(`🛑 ${data.message || "Errore sconosciuto."}`, false);
+                    showNotification(`🛑 ${data.message || "Errore durante l'applicazione."}`, false);
                 }
             } catch (err) {
-                showNotification(`❌ Errore di rete: ${err.message}`, false);
+                showNotification(`❌ ${err.message}`, false);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = "<span>🚀 Applica Modifica su GitHub</span>";
+                submitBtn.innerHTML = "<span>🔐 Firma con Passkey &amp; Applica</span>";
             }
         });
 
-        /* 5. Convalida e Rollback Rapido (5 secondi) */
         async function triggerConfirm() {
             const formData = new FormData();
-            formData.append("telegram_id", userId);
+            formData.append("site_id", selectedSiteId);
             try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/confirm-modification`, {
+                const res = await apiFetch("/api/v1/confirm-modification", {
                     method: "POST",
-                    headers: REQ_HEADERS,
                     body: formData
                 });
                 const data = await res.json();
                 showNotification(`✅ ${data.message}`, true);
-                rollbackBox.style.display = "none";
+                document.getElementById("rollback-box").style.display = "none";
             } catch (err) {
-                showNotification("❌ Impossibile convalidare la modifica.", false);
+                showNotification(`❌ ${err.message}`, false);
             }
         }
 
         async function triggerRollback() {
-            const formData = new FormData();
-            formData.append("telegram_id", userId);
             try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/rollback`, {
+                const actionProof = await obtainActionProof();
+                const formData = new FormData();
+                formData.append("site_id", selectedSiteId);
+                if (actionProof) formData.append("action_proof", actionProof);
+
+                const res = await apiFetch("/api/v1/rollback", {
                     method: "POST",
-                    headers: REQ_HEADERS,
                     body: formData
                 });
                 const data = await res.json();
-                showNotification(`🔄 ${data.message}`, true);
-                rollbackBox.style.display = "none";
-                fetchUserStatus();
+                if (data.status === "success") {
+                    showNotification(`🔄 ${data.message}`, true);
+                    document.getElementById("rollback-box").style.display = "none";
+                    fetchUserStatus();
+                    loadSiteSections(document.getElementById("target_page").value);
+                } else {
+                    showNotification(`⚠️ ${data.message}`, false);
+                }
             } catch (err) {
-                showNotification("❌ Errore durante il ripristino.", false);
+                showNotification(`❌ ${err.message}`, false);
             }
         }
 
-        /* 6. Caricamento Modulo Analytics */
+        /* ============================================================== */
+        /* 7. DRAWER 3: STATISTICHE SITO (SEPARATE DAI PRODOTTI)          */
+        /* ============================================================== */
         async function loadAnalytics() {
-            const unlocked = document.getElementById('analytics-unlocked-content');
-            const locked = document.getElementById('analytics-locked-content');
+            const unlocked = document.getElementById("analytics-unlocked-content");
+            const locked = document.getElementById("analytics-locked-content");
 
             if (currentTier !== "pro") {
                 unlocked.style.display = "none";
@@ -1065,49 +2281,106 @@
             }
 
             try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/analytics/stats?telegram_id=${encodeURIComponent(userId)}`, { headers: REQ_HEADERS });
+                const res = await apiFetch(`/api/v1/analytics/stats?site_id=${encodeURIComponent(selectedSiteId)}`);
                 const data = await res.json();
+
                 if (data.status === "success") {
-                    document.getElementById('stat-views-today').innerText = data.views_today || 0;
-                    document.getElementById('stat-views-month').innerText = data.views_month || 0;
+                    document.getElementById("stat-views-today").innerText = data.views_today || 0;
+                    document.getElementById("stat-views-month").innerText = data.views_month || 0;
+
+                    renderKeyValueMetricList("analytics-pages-list", data.pages || {}, "Nessuna pagina ancora registrata");
+                    renderKeyValueMetricList("analytics-sections-list", data.sections || {}, "Nessuna sezione rilevata (>2s)");
+
+                    const tracksContainer = document.getElementById("analytics-tracks-list");
+                    const tracks = data.tracked_elements || [];
+                    if (tracks.length === 0) {
+                        tracksContainer.innerHTML = '<div style="font-size:12px; color:var(--text-hint);">Nessun elemento con data-orbis-track rilevato.</div>';
+                    } else {
+                        tracksContainer.innerHTML = tracks.map(t => `
+                            <div class="metric-list-row">
+                                <span><b>${escapeHtml(t.label)}</b> <span style="color:var(--text-hint); font-size:10px;">(${escapeHtml(t.id)})</span></span>
+                                <span class="metric-badge-count">${t.count} clic</span>
+                            </div>
+                        `).join("");
+                    }
+
                     unlocked.style.display = "block";
                     locked.style.display = "none";
+                } else {
+                    unlocked.style.display = "none";
+                    locked.style.display = "block";
                 }
             } catch (err) {
-                console.error("Errore caricamento statistiche:", err);
+                console.error("Errore analytics:", err);
             }
         }
 
-        /* 7. Caricamento & Gestione Store */
+        function renderKeyValueMetricList(containerId, objMap, emptyText) {
+            const el = document.getElementById(containerId);
+            const entries = Object.entries(objMap).sort((a, b) => b[1] - a[1]);
+            if (entries.length === 0) {
+                el.innerHTML = `<div style="font-size:12px; color:var(--text-hint);">${emptyText}</div>`;
+                return;
+            }
+            el.innerHTML = entries.map(([k, v]) => `
+                <div class="metric-list-row">
+                    <span>${escapeHtml(k)}</span>
+                    <span class="metric-badge-count">${v}</span>
+                </div>
+            `).join("");
+        }
+
+        /* ============================================================== */
+        /* 8. DRAWER 4: STORE INTELLIGENTE & STATISTICHE PRODOTTI         */
+        /* ============================================================== */
+        function switchStoreTab(tabName) {
+            ["catalog", "stats", "settings"].forEach(t => {
+                document.getElementById(`stab-${t}`).classList.toggle("active", t === tabName);
+                document.getElementById(`store-view-${t}`).style.display = t === tabName ? "block" : "none";
+            });
+        }
+
         async function loadStoreCatalog() {
-            const unlocked = document.getElementById('store-unlocked-content');
-            const locked = document.getElementById('store-locked-content');
-            const container = document.getElementById('store-items-container');
+            const unlocked = document.getElementById("store-unlocked-content");
+            const locked = document.getElementById("store-locked-content");
 
             try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/store/catalog?telegram_id=${encodeURIComponent(userId)}`, { headers: REQ_HEADERS });
+                const res = await apiFetch(`/api/v1/store/catalog?site_id=${encodeURIComponent(selectedSiteId)}`);
                 const data = await res.json();
 
-                if (data.status === "success" && data.catalog?.items) {
-                    container.innerHTML = "";
-                    data.catalog.items.forEach(item => {
-                        const row = document.createElement('div');
-                        row.className = "catalog-item-row";
-                        row.innerHTML = `
-                            <div class="catalog-info">
-                                <h4>${item.name}</h4>
-                                <p>Cod: ${item.id}</p>
-                            </div>
-                            <div class="catalog-actions">
-                                <input type="number" step="0.5" class="price-input-small" id="price-${item.id}" value="${item.price}">
-                                <button type="button" class="stock-toggle-btn ${item.in_stock ? 'stock-btn-green' : 'stock-btn-red'}" id="stock-${item.id}" onclick="saveStoreItem('${item.id}', ${!item.in_stock})">
-                                    ${item.in_stock ? 'Disponibile' : 'Esaurito'}
-                                </button>
-                                <button type="button" class="btn-glow-primary" style="padding: 6px 10px; font-size: 11px; width: auto;" onclick="saveStorePrice('${item.id}')">💾</button>
-                            </div>
-                        `;
-                        container.appendChild(row);
+                if (data.status === "success") {
+                    cachedStoreItems = data.items || [];
+                    cachedStoreLocations = data.store_locations || {};
+
+                    // Popola filtro location (pagine/sezioni store)
+                    const locFilter = document.getElementById("store-location-filter");
+                    const prevFilter = locFilter.value;
+                    locFilter.innerHTML = '<option value="ALL">Tutte le pagine e sezioni</option>';
+                    Object.entries(cachedStoreLocations).forEach(([pagePath, blocks]) => {
+                        blocks.forEach(b => {
+                            const opt = document.createElement("option");
+                            opt.value = `${pagePath}::${b.id}`;
+                            opt.textContent = `📄 ${pagePath} → ${b.label} (${b.id})`;
+                            locFilter.appendChild(opt);
+                        });
                     });
+                    if (Array.from(locFilter.options).some(o => o.value === prevFilter)) {
+                        locFilter.value = prevFilter;
+                    }
+
+                    // Popola Impostazioni Store
+                    if (data.settings) {
+                        document.getElementById("set_sort_mode").value = data.settings.sort_mode || "priority_then_newest";
+                        document.getElementById("set_new_days").value = data.settings.new_badge_days ?? 15;
+                        document.getElementById("set_low_thresh").value = data.settings.low_stock_threshold ?? 2;
+                    }
+
+                    // Popola Statistiche Prodotti (Tab 4B)
+                    renderStoreStats(data.store_stats || {});
+
+                    // Renderizza Catalogo (Tab 4A)
+                    renderFilteredStoreItems();
+
                     unlocked.style.display = "block";
                     locked.style.display = "none";
                 } else {
@@ -1120,44 +2393,303 @@
             }
         }
 
-        async function saveStoreItem(itemId, newStock) {
-            const priceVal = document.getElementById(`price-${itemId}`).value;
-            await sendStoreUpdate(itemId, priceVal, newStock);
+        function renderStoreStats(stats) {
+            document.getElementById("st-kpi-total").innerText = stats.total_items || 0;
+            document.getElementById("st-kpi-avail").innerText = stats.available_count || 0;
+            document.getElementById("st-kpi-low").innerText = stats.low_stock_count || 0;
+
+            const topEl = document.getElementById("st-top-products-list");
+            const tops = stats.top_products || [];
+            topEl.innerHTML = tops.length === 0
+                ? '<div style="font-size:12px; color:var(--text-hint);">Nessuna interazione prodotto ancora registrata.</div>'
+                : tops.map(p => `
+                    <div class="metric-list-row">
+                        <span><b>${escapeHtml(p.name)}</b></span>
+                        <span class="metric-badge-count">👆 ${p.clicks} • 🛒 ${p.cart_adds}</span>
+                    </div>
+                `).join("");
+
+            const zeroEl = document.getElementById("st-zero-products-list");
+            const zeros = stats.zero_click_products || [];
+            zeroEl.innerHTML = zeros.length === 0
+                ? '<div style="font-size:12px; color:#34d399;">Ottimo! Tutti gli articoli visibili hanno ricevuto interazioni.</div>'
+                : zeros.map(z => `
+                    <div class="metric-list-row">
+                        <span>${escapeHtml(z.name)} <span style="color:var(--text-hint); font-size:10px;">(${escapeHtml(z.section)})</span></span>
+                        <span style="font-size:11px; color:#fb7185;">0 clic</span>
+                    </div>
+                `).join("");
         }
 
-        async function saveStorePrice(itemId) {
-            const priceVal = document.getElementById(`price-${itemId}`).value;
-            await sendStoreUpdate(itemId, priceVal, null);
+        function renderFilteredStoreItems() {
+            const container = document.getElementById("store-items-container");
+            const filterVal = document.getElementById("store-location-filter").value;
+
+            let filtered = cachedStoreItems;
+            if (filterVal !== "ALL") {
+                const [fPage, fSec] = filterVal.split("::");
+                filtered = cachedStoreItems.filter(it =>
+                    (it.page || "index.html") === fPage &&
+                    (it.section || "default").toLowerCase() === fSec.toLowerCase()
+                );
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:18px; font-size:12px; color:var(--text-muted);">Nessun prodotto in questa sezione. Premi "➕ Nuovo" per aggiungerlo.</div>';
+                return;
+            }
+
+            container.innerHTML = "";
+            filtered.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "catalog-item-card";
+
+                const badges = [];
+                if (item.priority === "high") badges.push('<span class="mini-badge mb-featured">In Evidenza</span>');
+                if (item.is_new) badges.push('<span class="mini-badge mb-new">Novità</span>');
+                if (item.stock_qty !== null && item.stock_qty > 0) badges.push(`<span class="mini-badge mb-low">Qtà: ${item.stock_qty}</span>`);
+                if (item.hidden) badges.push('<span class="mini-badge mb-hidden">Nascosto</span>');
+
+                const priceLabel = item.discount_price
+                    ? `<del style="color:var(--text-hint);">€${Number(item.price).toFixed(2)}</del> <b style="color:#34d399;">€${Number(item.discount_price).toFixed(2)}</b>`
+                    : `<b>€${Number(item.price).toFixed(2)}</b>`;
+
+                card.innerHTML = `
+                    <div class="catalog-item-top">
+                        <div class="catalog-info">
+                            <h4>${escapeHtml(item.name)}</h4>
+                            <div class="catalog-meta-line">ID: ${escapeHtml(item.id)} • ${priceLabel} • 👆 ${item.clicks || 0} / 🛒 ${item.cart_adds || 0}</div>
+                            <div class="store-badges-row">${badges.join("")}</div>
+                        </div>
+                        <button type="button" class="small-icon-btn" onclick='openStoreItemForm(${JSON.stringify(item.id)})'>✏️ Modifica</button>
+                    </div>
+                    <div class="catalog-controls-bar">
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <input type="number" step="0.5" class="price-input-small" id="quick-price-${item.id}" value="${item.price}">
+                            <button type="button" class="small-icon-btn" title="Salva Prezzo" onclick="quickSaveStorePrice('${item.id}')">💾 €</button>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <button type="button" class="small-icon-btn ${item.in_stock ? "stock-btn-green" : "stock-btn-red"}" onclick="quickToggleStoreStock('${item.id}', ${!item.in_stock})">
+                                ${item.in_stock ? "🟢 Disponibile" : "🔴 Esaurito"}
+                            </button>
+                            <button type="button" class="small-icon-btn" style="color:#fb7185;" title="Elimina" onclick="deleteStoreItem('${item.id}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
-        async function sendStoreUpdate(itemId, price, inStock) {
-            const formData = new FormData();
-            formData.append("telegram_id", userId);
-            formData.append("item_id", itemId);
-            if (price !== null) formData.append("new_price", price);
-            if (inStock !== null) formData.append("in_stock", inStock);
+        function openStoreItemForm(itemId) {
+            const editor = document.getElementById("store-item-editor");
+            const heading = document.getElementById("store-editor-heading");
+            const form = document.getElementById("store-item-form");
+            form.reset();
+            document.getElementById("st-chosen-file-label").innerText = "";
+
+            if (!itemId) {
+                heading.innerText = "➕ Nuovo Articolo nel Catalogo";
+                document.getElementById("st_item_id").value = "";
+                document.getElementById("st_release_date").value = new Date().toISOString().split("T")[0];
+                document.getElementById("st_page").value = "index.html";
+                document.getElementById("st_section").value = "default";
+            } else {
+                const item = cachedStoreItems.find(x => x.id === itemId);
+                if (!item) return;
+                heading.innerText = `✏️ Modifica: ${item.name}`;
+                document.getElementById("st_item_id").value = item.id;
+                document.getElementById("st_name").value = item.name || "";
+                document.getElementById("st_price").value = item.price ?? 0;
+                document.getElementById("st_discount_price").value = item.discount_price ?? "";
+                document.getElementById("st_stock_qty").value = item.stock_qty ?? "";
+                document.getElementById("st_in_stock").value = String(Boolean(item.in_stock));
+                document.getElementById("st_priority").value = item.priority || "normal";
+                document.getElementById("st_release_date").value = item.release_date || "";
+                document.getElementById("st_page").value = item.page || "index.html";
+                document.getElementById("st_section").value = item.section || "default";
+                document.getElementById("st_hidden").value = String(Boolean(item.hidden));
+                document.getElementById("st_description").value = item.description || "";
+            }
+
+            editor.style.display = "block";
+            editor.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        function closeStoreItemForm() {
+            document.getElementById("store-item-editor").style.display = "none";
+        }
+
+        function updateStoreFileName(input) {
+            const label = document.getElementById("st-chosen-file-label");
+            label.innerText = (input.files && input.files[0]) ? `(${input.files[0].name})` : "";
+        }
+
+        document.getElementById("store-item-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btn-save-store-item");
+            btn.disabled = true;
+            btn.innerHTML = "<span>🔐 Firma Passkey &amp; Sincronizzazione...</span>";
 
             try {
-                const res = await fetch(`${NGROK_BASE_URL}/api/v1/store/update-item`, {
+                const actionProof = await obtainActionProof();
+                const formData = new FormData();
+                formData.append("site_id", selectedSiteId);
+                const existingId = document.getElementById("st_item_id").value.trim();
+                if (existingId) formData.append("item_id", existingId);
+
+                formData.append("name", document.getElementById("st_name").value);
+                formData.append("price", document.getElementById("st_price").value);
+                formData.append("discount_price", document.getElementById("st_discount_price").value);
+                formData.append("stock_qty", document.getElementById("st_stock_qty").value);
+                formData.append("in_stock", document.getElementById("st_in_stock").value);
+                formData.append("priority", document.getElementById("st_priority").value);
+                formData.append("release_date", document.getElementById("st_release_date").value);
+                formData.append("page", document.getElementById("st_page").value);
+                formData.append("section", document.getElementById("st_section").value);
+                formData.append("hidden", document.getElementById("st_hidden").value);
+                formData.append("description", document.getElementById("st_description").value);
+                if (actionProof) formData.append("action_proof", actionProof);
+
+                const imgInput = document.getElementById("st_image");
+                if (imgInput.files[0]) {
+                    formData.append("image", imgInput.files[0]);
+                }
+
+                const res = await apiFetch("/api/v1/store/save-item", {
                     method: "POST",
-                    headers: REQ_HEADERS,
                     body: formData
                 });
                 const data = await res.json();
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    loadStoreCatalog();
+                    closeStoreItemForm();
+                    await loadStoreCatalog();
                 } else {
                     showNotification(`🛑 ${data.message}`, false);
                 }
             } catch (err) {
-                showNotification("❌ Errore aggiornamento catalogo.", false);
+                showNotification(`❌ ${err.message}`, false);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "<span>🔐 Salva Prodotto</span>";
+            }
+        });
+
+        async function quickSaveStorePrice(itemId) {
+            const newPrice = document.getElementById(`quick-price-${itemId}`).value;
+            try {
+                const actionProof = await obtainActionProof();
+                const formData = new FormData();
+                formData.append("site_id", selectedSiteId);
+                formData.append("item_id", itemId);
+                formData.append("price", newPrice);
+                if (actionProof) formData.append("action_proof", actionProof);
+
+                const res = await apiFetch("/api/v1/store/save-item", { method: "POST", body: formData });
+                const data = await res.json();
+                if (data.status === "success") {
+                    showNotification(`✅ ${data.message}`, true);
+                    await loadStoreCatalog();
+                } else {
+                    showNotification(`🛑 ${data.message}`, false);
+                }
+            } catch (err) {
+                showNotification(`❌ ${err.message}`, false);
             }
         }
 
-        // Avvio automatico all'apertura della Mini App
-        fetchUserStatus();
-        loadSiteSections();
+        async function quickToggleStoreStock(itemId, nextInStock) {
+            try {
+                const actionProof = await obtainActionProof();
+                const formData = new FormData();
+                formData.append("site_id", selectedSiteId);
+                formData.append("item_id", itemId);
+                formData.append("in_stock", String(nextInStock));
+                if (actionProof) formData.append("action_proof", actionProof);
+
+                const res = await apiFetch("/api/v1/store/save-item", { method: "POST", body: formData });
+                const data = await res.json();
+                if (data.status === "success") {
+                    showNotification(`✅ ${data.message}`, true);
+                    await loadStoreCatalog();
+                } else {
+                    showNotification(`🛑 ${data.message}`, false);
+                }
+            } catch (err) {
+                showNotification(`❌ ${err.message}`, false);
+            }
+        }
+
+        async function deleteStoreItem(itemId) {
+            if (!confirm("Eliminare definitivamente questo articolo dal catalogo e dal sito?")) return;
+            try {
+                const actionProof = await obtainActionProof();
+                const formData = new FormData();
+                formData.append("site_id", selectedSiteId);
+                formData.append("item_id", itemId);
+                if (actionProof) formData.append("action_proof", actionProof);
+
+                const res = await apiFetch("/api/v1/store/delete-item", { method: "POST", body: formData });
+                const data = await res.json();
+                if (data.status === "success") {
+                    showNotification(`✅ ${data.message}`, true);
+                    await loadStoreCatalog();
+                } else {
+                    showNotification(`🛑 ${data.message}`, false);
+                }
+            } catch (err) {
+                showNotification(`❌ ${err.message}`, false);
+            }
+        }
+
+        document.getElementById("store-settings-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btn-save-store-settings");
+            btn.disabled = true;
+            btn.innerHTML = "<span>🔐 Firma Passkey &amp; Riordino Sito...</span>";
+
+            try {
+                const actionProof = await obtainActionProof();
+                const formData = new FormData();
+                formData.append("site_id", selectedSiteId);
+                formData.append("sort_mode", document.getElementById("set_sort_mode").value);
+                formData.append("new_badge_days", document.getElementById("set_new_days").value);
+                formData.append("low_stock_threshold", document.getElementById("set_low_thresh").value);
+                if (actionProof) formData.append("action_proof", actionProof);
+
+                const res = await apiFetch("/api/v1/store/settings", { method: "POST", body: formData });
+                const data = await res.json();
+                if (data.status === "success") {
+                    showNotification(`✅ ${data.message}`, true);
+                    await loadStoreCatalog();
+                } else {
+                    showNotification(`🛑 ${data.message}`, false);
+                }
+            } catch (err) {
+                showNotification(`❌ ${err.message}`, false);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "<span>🔐 Applica Regole al Sito</span>";
+            }
+        });
+
+        function escapeHtml(str) {
+            return String(str ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        /* ============================================================== */
+        /* 9. AVVIO APPLICAZIONE                                          */
+        /* ============================================================== */
+        window.addEventListener("DOMContentLoaded", () => {
+            initGoogleIdentity();
+            if (sessionToken) {
+                enterConsoleMode(false);
+            }
+        });
     </script>
 </body>
 </html>
