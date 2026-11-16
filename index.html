@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiteMaster Console v4.1 — The Orbis Project</title>
-    <!-- Google Identity Services SDK (OpenID Zero-Retention) -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <title>SiteMaster Console v5.0 — The Orbis Project</title>
     <style>
         :root {
             --bg-deep: #070a13;
             --surface-glass: rgba(15, 23, 42, 0.76);
-            --surface-glass-strong: rgba(15, 23, 42, 0.95);
+            --surface-glass-strong: rgba(15, 23, 42, 0.96);
             --surface-glass-border: rgba(255, 255, 255, 0.10);
             --surface-hover: rgba(30, 41, 59, 0.85);
             --primary-blue: #2563eb;
@@ -57,13 +55,13 @@
         }
 
         /* ============================================================== */
-        /* SCHERMATA AUTENTICAZIONE (ZERO-TELEGRAM: GOOGLE + PASSKEY)     */
+        /* SCHERMATA AUTENTICAZIONE (ZERO-GOOGLE • PASSKEY • DUAL-QR)     */
         /* ============================================================== */
         #auth-screen {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            margin-top: 24px;
+            margin-top: 20px;
             animation: fadeIn 0.3s ease-out forwards;
         }
 
@@ -78,7 +76,7 @@
 
         .auth-logo-row {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .auth-logo-row h1 {
@@ -98,7 +96,7 @@
 
         .auth-tabs {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 6px;
             background: rgba(0, 0, 0, 0.35);
             padding: 4px;
@@ -107,12 +105,12 @@
         }
 
         .auth-tab-btn {
-            padding: 9px 8px;
+            padding: 9px 6px;
             border: none;
             border-radius: 8px;
             background: transparent;
             color: var(--text-muted);
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.15s;
@@ -124,56 +122,96 @@
             border: 1px solid rgba(56, 189, 248, 0.4);
         }
 
-        .google-btn-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 44px;
-            margin: 10px 0;
-        }
-
-        .divider-or {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            color: var(--text-hint);
-            font-size: 11px;
-            margin: 14px 0;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-
-        .divider-or::before,
-        .divider-or::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .divider-or:not(:empty)::before { margin-right: 10px; }
-        .divider-or:not(:empty)::after { margin-left: 10px; }
-
         .btn-passkey-login {
             width: 100%;
-            padding: 13px;
-            border-radius: 10px;
-            border: 1px solid rgba(139, 92, 246, 0.45);
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.22), rgba(37, 99, 235, 0.22));
-            color: #e9d5ff;
-            font-size: 13px;
+            padding: 15px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.32), rgba(139, 92, 246, 0.28));
+            color: #ffffff;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
             transition: all 0.15s;
         }
 
         .btn-passkey-login:active { transform: scale(0.98); }
 
+        .qr-mode-switch {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .qr-mode-btn {
+            padding: 10px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            background: rgba(7, 10, 19, 0.65);
+            color: var(--text-muted);
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.15s;
+        }
+
+        .qr-mode-btn.active {
+            border-color: var(--primary-glow);
+            background: rgba(56, 189, 248, 0.15);
+            color: #ffffff;
+        }
+
+        .qr-stage-box {
+            background: rgba(7, 10, 19, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .qr-svg-frame {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 8px auto 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            min-width: 196px;
+            min-height: 196px;
+        }
+
+        .qr-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: rgba(56, 189, 248, 0.14);
+            color: var(--primary-glow);
+            margin-bottom: 8px;
+        }
+
+        .qr-token-fallback-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
         .privacy-zero-note {
-            margin-top: 14px;
+            margin-top: 16px;
             font-size: 11px;
             color: var(--text-hint);
             text-align: center;
@@ -186,6 +224,19 @@
         #console-screen {
             display: none;
             flex-direction: column;
+        }
+
+        .volatile-session-banner {
+            display: none;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: rgba(245, 158, 11, 0.16);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fde047;
+            font-size: 11.5px;
+            font-weight: 600;
+            text-align: center;
         }
 
         /* Header Console */
@@ -582,7 +633,7 @@
             letter-spacing: 0.2px;
         }
 
-        select, textarea, input[type="text"], input[type="number"], input[type="date"], input[type="search"] {
+        select, textarea, input[type="text"], input[type="password"], input[type="number"], input[type="date"], input[type="search"] {
             width: 100%;
             padding: 11px 13px;
             border-radius: 10px;
@@ -972,6 +1023,14 @@
         }
 
         /* Modulo 4: Store Intelligente & Sub-Tabs */
+        .store-quota-strip {
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+        }
+
         .store-subtabs {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -1126,13 +1185,13 @@
         .notif-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
         .notif-error { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.35); }
 
-        /* Modale Custom Glassmorphism (Alert / Confirm / Passkey Manager) */
+        /* Modale Custom Glassmorphism (Alert / Confirm / Device Manager / QR Scanner) */
         .glass-modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: rgba(3, 6, 14, 0.78);
+            background: rgba(3, 6, 14, 0.82);
             backdrop-filter: blur(8px);
             align-items: center;
             justify-content: center;
@@ -1142,12 +1201,14 @@
 
         .glass-modal-card {
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             background: var(--surface-glass-strong);
             border: 1px solid rgba(56, 189, 248, 0.3);
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .glass-modal-title {
@@ -1164,7 +1225,7 @@
             font-size: 13px;
             color: #cbd5e1;
             line-height: 1.45;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             white-space: pre-wrap;
         }
 
@@ -1172,6 +1233,35 @@
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+        }
+
+        .device-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 10px;
+            border-radius: 9px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 6px;
+        }
+
+        .scanner-video-box {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .scanner-video-box video {
+            width: 100%;
+            max-height: 240px;
+            object-fit: cover;
+            display: block;
         }
 
         /* Footer Istituzionale */
@@ -1196,45 +1286,79 @@
     <div class="app-container">
 
         <!-- ============================================================== -->
-        <!-- 1. SCHERMATA ACCESSO ZERO-TELEGRAM (GOOGLE + PASSKEY)          -->
+        <!-- 1. SCHERMATA ACCESSO ZERO-GOOGLE (PASSKEY • DUAL-QR • 1° ACCESSO)-->
         <!-- ============================================================== -->
         <div id="auth-screen">
             <div class="auth-card">
                 <div class="auth-logo-row">
-                    <h1>SiteMaster Console v4.1</h1>
-                    <p>The Orbis Project — Accesso Autonomo Zero-Telegram</p>
+                    <h1>SiteMaster Console v5.0</h1>
+                    <p>The Orbis Project — Architettura Blindata Zero-Google</p>
                 </div>
 
                 <div class="auth-tabs">
-                    <button type="button" class="auth-tab-btn active" id="tab-auth-login" onclick="switchAuthTab('login')">🔐 Accedi</button>
-                    <button type="button" class="auth-tab-btn" id="tab-auth-pair" onclick="switchAuthTab('pair')">🎟️ Primo Accesso</button>
+                    <button type="button" class="auth-tab-btn active" id="tab-auth-passkey" onclick="switchAuthTab('passkey')">👆 Passkey</button>
+                    <button type="button" class="auth-tab-btn" id="tab-auth-qr" onclick="switchAuthTab('qr')">📷 Accesso QR</button>
+                    <button type="button" class="auth-tab-btn" id="tab-auth-first" onclick="switchAuthTab('first')">🎟️ 1° Accesso</button>
                 </div>
 
-                <!-- Tab Accesso Abituale -->
-                <div id="auth-panel-login">
-                    <div class="google-btn-wrapper" id="google-signin-login"></div>
-
-                    <div class="divider-or">oppure</div>
-
+                <!-- TAB 1: ACCESSO BIOMETRICO / PIN DISPOSITIVO -->
+                <div id="auth-panel-passkey">
+                    <p style="font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 14px; line-height: 1.45;">
+                        Accedi istantaneamente con l'impronta digitale, il riconoscimento facciale o il PIN del tuo dispositivo autorizzato.
+                    </p>
                     <button type="button" class="btn-passkey-login" onclick="loginWithPasskey()">
-                        <span>👆 Accesso Rapido con Passkey Biometrica</span>
+                        <span>👆 Entra con Passkey Biometrica / PIN</span>
                     </button>
                 </div>
 
-                <!-- Tab Primo Accesso con Codice Attivazione -->
-                <div id="auth-panel-pair" style="display: none;">
-                    <div class="form-row">
-                        <label for="pairing_code_input">Codice di Attivazione Usa-e-Getta</label>
-                        <input type="text" id="pairing_code_input" placeholder="Es: ORBIS-9A2F" style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">
+                <!-- TAB 2: DUAL-QR BRIDGE (STILE WHATSAPP WEB) -->
+                <div id="auth-panel-qr" style="display: none;">
+                    <div class="qr-mode-switch">
+                        <button type="button" class="qr-mode-btn active" id="qr-mode-temp" onclick="selectQrAuthMode('temp_login')">
+                            ⏳ Accesso Temporaneo
+                        </button>
+                        <button type="button" class="qr-mode-btn" id="qr-mode-add" onclick="selectQrAuthMode('add_device')">
+                            📱 Aggiungi Dispositivo
+                        </button>
                     </div>
-                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">
-                        Inserisci il codice fornito da The Orbis Project e collegalo al tuo account Google. Al termine ti verrà chiesta la Passkey biometrica.
-                    </p>
-                    <div class="google-btn-wrapper" id="google-signin-pair"></div>
+
+                    <div class="qr-stage-box">
+                        <div class="qr-status-pill" id="qr-status-pill">⏳ In attesa di scansione...</div>
+                        <p id="qr-mode-desc" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4; margin-bottom: 4px;">
+                            Inquadra questo QR dal tuo telefono già connesso. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.
+                        </p>
+
+                        <div class="qr-svg-frame" id="qr-svg-container"></div>
+
+                        <div class="qr-token-fallback-row">
+                            <button type="button" class="small-icon-btn" onclick="copyCurrentQrCode()">📋 Copia Codice QR</button>
+                            <button type="button" class="small-icon-btn" onclick="initQrAuthSession()">🔄 Rigenera</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: PRIMO ACCESSO BURN-AFTER-READING -->
+                <div id="auth-panel-first" style="display: none;">
+                    <form id="first-access-form">
+                        <div class="form-row">
+                            <label for="first_username_input">Username Temporaneo</label>
+                            <input type="text" id="first_username_input" autocomplete="off" placeholder="Es: orbis_9a2f" required>
+                        </div>
+                        <div class="form-row">
+                            <label for="first_password_input">Password Temporanea</label>
+                            <input type="password" id="first_password_input" autocomplete="off" placeholder="Inserisci password temporanea" required>
+                        </div>
+                        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                            🔥 <b>Autodistruzione Credenziali:</b> Subito dopo l'ingresso ti verrà chiesto di registrare la biometria o il PIN di questo dispositivo. Da quel momento username e password verranno distrutti per sempre.
+                        </p>
+                        <button type="submit" class="btn-glow-primary" id="btn-first-access">
+                            <span>🔐 Accedi e Attiva Dispositivo</span>
+                        </button>
+                    </form>
                 </div>
 
                 <div class="privacy-zero-note">
-                    🛡️ <b>Architettura Zero-Retention:</b> Nessuna email, nome o foto profilo viene memorizzata nei server Orbis. Viene salvato solo l'identificativo crittografico anonimo.
+                    🛡️ <b>Zero-Retention &amp; Zero-Google:</b> Nessuna email, numero di telefono o account esterno collegato. I tuoi dati restano esclusivamente nel tuo dispositivo.
                 </div>
             </div>
         </div>
@@ -1243,6 +1367,11 @@
         <!-- 2. CONSOLE OPERATIVA MULTI-SITO                                -->
         <!-- ============================================================== -->
         <div id="console-screen">
+            <!-- Avviso Sessione Volatile (QR Temporaneo) -->
+            <div class="volatile-session-banner" id="volatile-session-banner">
+                ⏳ <b>Sessione Temporanea Attiva:</b> Dispositivo non salvato. Chiudendo questa finestra verrai disconnesso automaticamente.
+            </div>
+
             <!-- Header Istituzionale -->
             <header class="brand-header">
                 <div class="brand-titles">
@@ -1251,23 +1380,24 @@
                 </div>
                 <div class="header-right-actions">
                     <div id="tier-badge" class="tier-badge base">PIANO BASE</div>
-                    <button type="button" class="btn-header-icon" title="Gestione Passkey e Dispositivi" onclick="openPasskeyManagerModal()">🔑</button>
+                    <button type="button" class="btn-header-icon" title="Scansiona QR da PC/Tablet" onclick="openQrScannerModal()">📷</button>
+                    <button type="button" class="btn-header-icon" title="Dispositivi &amp; Passkey (Max 4)" onclick="openPasskeyManagerModal()">🔑</button>
                     <button type="button" class="btn-header-icon btn-logout" title="Disconnetti" onclick="logoutSession()">🚪</button>
                 </div>
             </header>
 
-            <!-- Selettore Multi-Sito (Visibile automaticamente se l'utente possiede >= 2 siti) -->
+            <!-- Selettore Multi-Sito (1 Utente = N Siti) -->
             <div class="site-switcher-bar" id="site-switcher-bar">
                 <label for="site-switcher">🌐 Sito Attivo:</label>
                 <select id="site-switcher" onchange="onSwitchSite(this.value)"></select>
             </div>
 
-            <!-- Banner Registrazione Passkey Obbligatoria -->
+            <!-- Banner Registrazione Passkey Obbligatoria (1° Accesso o Aggiunta Dispositivo) -->
             <div class="passkey-setup-banner" id="passkey-setup-banner">
-                <h4>🔐 Proteggi il tuo Sito con Passkey Biometrica</h4>
-                <p>Attiva FaceID, TouchID o PIN dispositivo per abilitare le modifiche su GitHub con doppio mandato crittografico.</p>
+                <h4>🔐 Completa l'Attivazione di Questo Dispositivo</h4>
+                <p>Registra ora la tua impronta digitale, riconoscimento facciale o PIN di sistema per blindare l'account e distruggere le credenziali temporanee.</p>
                 <button type="button" class="btn-glow-primary" onclick="registerNewPasskey()">
-                    <span>👆 Registra Passkey Ora</span>
+                    <span>👆 Registra Passkey / PIN Ora</span>
                 </button>
             </div>
 
@@ -1283,13 +1413,13 @@
                         <div class="tele-val" id="tele-audit">⏳ Verifica...</div>
                     </div>
                     <div class="tele-item">
-                        <div class="tele-label">Sicurezza 2FA</div>
-                        <div class="tele-val" id="tele-2fa" style="color: #38bdf8;">🔐 Passkey</div>
+                        <div class="tele-label">Dispositivi</div>
+                        <div class="tele-val" id="tele-devices" style="color: #38bdf8;">🔑 0 / 4</div>
                     </div>
                 </div>
                 <div class="progress-wrapper">
                     <div class="progress-meta">
-                        <span>Modifiche Mensili Consumate</span>
+                        <span>Modifiche AI Mensili Consumate</span>
                         <span id="progress-count-text">0 / 30</span>
                     </div>
                     <div class="progress-bar-bg">
@@ -1367,7 +1497,6 @@
                 <p class="drawer-sub">Seleziona pagina e sezione target. I blocchi Store sono isolati automaticamente dal Tagliafuoco.</p>
 
                 <form id="editor-form">
-                    <!-- Selettore Pagina HTML -->
                     <div class="form-row">
                         <label for="target_page">Pagina del Sito</label>
                         <select id="target_page" name="target_page" onchange="loadSiteSections(this.value)">
@@ -1375,21 +1504,18 @@
                         </select>
                     </div>
 
-                    <!-- Selettore Sezione Semantica -->
                     <div class="form-row">
                         <label for="target_section">Sezione da modificare</label>
                         <select id="target_section" name="target_section" onchange="renderSubMarkersPreview()" required>
                             <option value="AUTO" selected>✨ Modifica Intelligente (Globale)</option>
                         </select>
 
-                        <!-- Ispettore Sotto-Marcatori (TITLE, SUBTITLE, DESC, IMG) -->
                         <div class="submarkers-box" id="submarkers-box">
                             <div class="submarkers-header">Sotto-marcatori rilevati nella sezione</div>
                             <div class="submarkers-grid" id="submarkers-grid"></div>
                         </div>
                     </div>
 
-                    <!-- Tipo Operazione Multi-Selezione -->
                     <div class="form-row">
                         <label>Tipi di operazione (seleziona uno o più)</label>
                         <div class="action-pills-grid" id="action-pills-grid">
@@ -1401,13 +1527,11 @@
                         </div>
                     </div>
 
-                    <!-- Istruzione Testuale -->
                     <div class="form-row">
                         <label for="instruction_text">Cosa desideri modificare?</label>
                         <textarea id="instruction_text" name="instruction" placeholder="Es: Cambia il titolo hero in 'Esperienza Esclusiva' e aggiorna la descrizione..." required></textarea>
                     </div>
 
-                    <!-- Upload Immagine Opzionale -->
                     <div class="form-row">
                         <label>Immagine da inserire (Opzionale — Max 12 MB, conversione WebP)</label>
                         <div class="file-upload-btn">
@@ -1453,19 +1577,16 @@
                         </div>
                     </div>
 
-                    <!-- Pagine più visitate -->
                     <div class="analytics-block">
                         <div class="analytics-block-title">📄 Pagine Visitate</div>
                         <div id="analytics-pages-list"></div>
                     </div>
 
-                    <!-- Sezioni più lette -->
                     <div class="analytics-block">
                         <div class="analytics-block-title">👁️ Sezioni Lette (&gt;2s)</div>
                         <div id="analytics-sections-list"></div>
                     </div>
 
-                    <!-- Pulsanti tracciati (data-orbis-track) -->
                     <div class="analytics-block">
                         <div class="analytics-block-title">🖱️ Interazioni Pulsanti &amp; CTA</div>
                         <div id="analytics-tracks-list"></div>
@@ -1502,6 +1623,17 @@
                 <p class="drawer-sub">Sincronizzazione deterministica su GitHub a zero token IA con badge e ordinamento automatico.</p>
 
                 <div id="store-unlocked-content" style="display: none;">
+                    <!-- Quota Operazioni Store Separata -->
+                    <div class="store-quota-strip">
+                        <div class="progress-meta" style="margin-bottom: 4px;">
+                            <span>Operazioni Store Mensili (Zero Token IA)</span>
+                            <span id="store-progress-text">0 / 100</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div id="store-progress-fill" class="progress-bar-fill" style="background: linear-gradient(90deg, #10b981, #38bdf8);"></div>
+                        </div>
+                    </div>
+
                     <!-- Sub-tabs Store -->
                     <div class="store-subtabs">
                         <button type="button" class="store-tab-btn active" id="stab-catalog" onclick="switchStoreTab('catalog')">📦 Catalogo</button>
@@ -1531,12 +1663,12 @@
                                 <input type="hidden" id="st_item_id">
                                 <div class="form-row">
                                     <label for="st_name">Nome Prodotto *</label>
-                                    <input type="text" id="st_name" required placeholder="Es: Racchetta Pro Carbon">
+                                    <input type="text" id="st_name" required placeholder="Es: Siero Illuminante">
                                 </div>
                                 <div class="form-grid-2">
                                     <div>
                                         <label for="st_price">Prezzo Listino (€) *</label>
-                                        <input type="number" step="0.01" min="0" id="st_price" required placeholder="99.00">
+                                        <input type="number" step="0.01" min="0" id="st_price" required placeholder="45.00">
                                     </div>
                                     <div>
                                         <label for="st_discount_price">Prezzo Scontato (€)</label>
@@ -1594,7 +1726,6 @@
                                 <div class="form-row">
                                     <label>Foto Prodotto (Max 12 MB — WebP automatico)</label>
 
-                                    <!-- Anteprima Immagine Esistente in Modifica -->
                                     <div class="existing-img-preview" id="st-existing-image-box">
                                         <img id="st-existing-image-thumb" src="" alt="Anteprima prodotto">
                                         <div class="existing-img-meta">
@@ -1727,7 +1858,7 @@
     </div>
 
     <!-- ================================================================== -->
-    <!-- MODALE CUSTOM GLASSMORPHISM (CONFERME, AVVISI & GESTIONE PASSKEY)  -->
+    <!-- MODALE CUSTOM GLASSMORPHISM (CONFERME, DISPOSITIVI & QR SCANNER)   -->
     <!-- ================================================================== -->
     <div class="glass-modal-overlay" id="glass-modal-overlay">
         <div class="glass-modal-card">
@@ -1739,39 +1870,224 @@
     </div>
 
     <!-- ================================================================== -->
-    <!-- SCRIPT CLIENT AUTONOMO (GOOGLE OPENID + WEBAUTHN PASSKEY 2FA)      -->
+    <!-- SCRIPT CLIENT AUTONOMO (ZERO-GOOGLE • PASSKEY • DUAL-QR NATIVO)    -->
     <!-- ================================================================== -->
     <script>
-        // Configurazione Backend & Google Client ID (Configurazione locale/ngrok attuale)
         const API_BASE_URL = "https://smith-anchor-untoasted.ngrok-free.dev";
-        const GOOGLE_CLIENT_ID = "469505334527-edukemeurksnpr8959jhng7qfsoc1tn7.apps.googleusercontent.com";
-
         const DEFAULT_HEADERS = { "ngrok-skip-browser-warning": "true" };
         const MAX_IMAGE_BYTES = 12 * 1024 * 1024; // 12 MB limite client-side
 
-        // Stato Globale Sessione
-        let sessionToken = localStorage.getItem("orbis_session_token") || "";
-        let currentUserId = localStorage.getItem("orbis_user_id") || "";
-        let selectedSiteId = localStorage.getItem("orbis_selected_site_id") || "";
+        // Gestione Storage Intelligente (Persistente vs Volatile da QR Temporaneo)
+        function readStoredAuth(key) {
+            return sessionStorage.getItem(key) || localStorage.getItem(key) || "";
+        }
+
+        let sessionMode = readStoredAuth("orbis_session_mode") || "persistent";
+        let sessionToken = readStoredAuth("orbis_session_token");
+        let currentUserId = readStoredAuth("orbis_user_id");
+        let selectedSiteId = readStoredAuth("orbis_selected_site_id");
         let userSites = [];
 
         let currentDomain = "";
         let currentTier = "base";
         let requirePasskey2FA = true;
-        let cachedActionProof = { token: "", expiresAt: 0 };
+        let cachedActionProof = {
+            token: sessionStorage.getItem("orbis_delegated_proof") || "",
+            expiresAt: sessionStorage.getItem("orbis_delegated_proof") ? (Date.now() + 3600000) : 0
+        };
 
         let cachedSectionsData = [];
         let cachedStoreItems = [];
         let cachedStoreLocations = {};
 
+        // Stato QR Login / Pairing
+        let activeQrMode = "temp_login";
+        let activeQrToken = "";
+        let qrPollInterval = null;
+        let activeScannerStream = null;
+
         /* ============================================================== */
-        /* 0. HELPER MODALI, PARSER ERRORI & NORMALIZZAZIONE URL          */
+        /* 0. GENERATORE QR CODE SVG NATIVO (VERSION 4-L • ZERO CDN)      */
+        /* ============================================================== */
+        const OrbisQrSvg = (() => {
+            const GF_EXP = new Uint8Array(512);
+            const GF_LOG = new Uint8Array(256);
+            let x = 1;
+            for (let i = 0; i < 255; i++) {
+                GF_EXP[i] = x;
+                GF_LOG[x] = i;
+                x <<= 1;
+                if (x & 0x100) x ^= 0x11d;
+            }
+            for (let i = 255; i < 512; i++) GF_EXP[i] = GF_EXP[i - 255];
+
+            function gfMul(a, b) {
+                return (a === 0 || b === 0) ? 0 : GF_EXP[GF_LOG[a] + GF_LOG[b]];
+            }
+
+            function rsGeneratorPoly(degree) {
+                let poly = [1];
+                for (let i = 0; i < degree; i++) {
+                    const next = new Array(poly.length + 1).fill(0);
+                    const factor = GF_EXP[i];
+                    for (let j = 0; j < poly.length; j++) {
+                        next[j] ^= poly[j];
+                        next[j + 1] ^= gfMul(poly[j], factor);
+                    }
+                    poly = next;
+                }
+                return poly;
+            }
+
+            function rsComputeEc(dataBytes, ecCount) {
+                const gen = rsGeneratorPoly(ecCount);
+                const rem = new Uint8Array(ecCount);
+                for (let i = 0; i < dataBytes.length; i++) {
+                    const factor = dataBytes[i] ^ rem[0];
+                    rem.copyWithin(0, 1);
+                    rem[ecCount - 1] = 0;
+                    for (let j = 0; j < ecCount; j++) {
+                        rem[j] ^= gfMul(factor, gen[j + 1]);
+                    }
+                }
+                return rem;
+            }
+
+            function generateSvg(text, pxSize = 180) {
+                const utf8 = new TextEncoder().encode(text);
+                if (utf8.length > 78) throw new Error("Payload QR troppo lungo.");
+
+                // Version 4-L: 33x33, 80 data codewords, 20 EC codewords
+                const size = 33;
+                const dataCap = 80;
+                const ecCap = 20;
+
+                const bits = [];
+                const pushBits = (val, len) => {
+                    for (let i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1);
+                };
+
+                pushBits(0b0100, 4); // Byte mode
+                pushBits(utf8.length, 8);
+                for (let b of utf8) pushBits(b, 8);
+                pushBits(0, Math.min(4, dataCap * 8 - bits.length));
+                while (bits.length % 8 !== 0) bits.push(0);
+
+                const dataBytes = new Uint8Array(dataCap);
+                for (let i = 0; i < bits.length / 8; i++) {
+                    let byteVal = 0;
+                    for (let b = 0; b < 8; b++) byteVal = (byteVal << 1) | bits[i * 8 + b];
+                    dataBytes[i] = byteVal;
+                }
+                const pads = [0xec, 0x11];
+                for (let i = bits.length / 8, p = 0; i < dataCap; i++, p ^= 1) {
+                    dataBytes[i] = pads[p];
+                }
+
+                const ecBytes = rsComputeEc(dataBytes, ecCap);
+                const allCodewords = new Uint8Array(dataCap + ecCap);
+                allCodewords.set(dataBytes, 0);
+                allCodewords.set(ecBytes, dataCap);
+
+                const modules = Array.from({ length: size }, () => new Uint8Array(size));
+                const isFunc = Array.from({ length: size }, () => new Uint8Array(size));
+
+                const setFunc = (r, c, dark) => {
+                    if (r >= 0 && r < size && c >= 0 && c < size) {
+                        modules[r][c] = dark ? 1 : 0;
+                        isFunc[r][c] = 1;
+                    }
+                };
+
+                // Finder patterns + separators
+                [[0, 0], [0, size - 7], [size - 7, 0]].forEach(([r0, c0]) => {
+                    for (let dr = -1; dr <= 7; dr++) {
+                        for (let dc = -1; dc <= 7; dc++) {
+                            const inOuter = dr >= 0 && dr <= 6 && dc >= 0 && dc <= 6;
+                            const onBorder = dr === 0 || dr === 6 || dc === 0 || dc === 6;
+                            const inInner = dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4;
+                            setFunc(r0 + dr, c0 + dc, inOuter && (onBorder || inInner));
+                        }
+                    }
+                });
+
+                // Timing patterns
+                for (let i = 8; i < size - 8; i++) {
+                    setFunc(6, i, i % 2 === 0);
+                    setFunc(i, 6, i % 2 === 0);
+                }
+
+                // Alignment pattern at (26, 26)
+                for (let dr = -2; dr <= 2; dr++) {
+                    for (let dc = -2; dc <= 2; dc++) {
+                        const dark = Math.max(Math.abs(dr), Math.abs(dc)) !== 1;
+                        setFunc(26 + dr, 26 + dc, dark);
+                    }
+                }
+
+                // Format info (Level L, Mask 0 -> 0x77C4)
+                const fmt = 0x77c4;
+                for (let i = 0; i <= 5; i++) setFunc(8, i, (fmt >>> i) & 1);
+                setFunc(8, 7, (fmt >>> 6) & 1);
+                setFunc(8, 8, (fmt >>> 7) & 1);
+                setFunc(7, 8, (fmt >>> 8) & 1);
+                for (let i = 9; i < 15; i++) setFunc(14 - i, 8, (fmt >>> i) & 1);
+
+                for (let i = 0; i < 8; i++) setFunc(8, size - 1 - i, (fmt >>> i) & 1);
+                for (let i = 8; i < 15; i++) setFunc(size - 15 + i, 8, (fmt >>> i) & 1);
+                setFunc(size - 8, 8, 1);
+
+                // Zig-zag bit placement + Mask 0 ((r + c) % 2 === 0)
+                let bitIdx = 0;
+                const totalBits = allCodewords.length * 8;
+                let upward = true;
+                for (let right = size - 1; right >= 1; right -= 2) {
+                    if (right === 6) right = 5;
+                    for (let step = 0; step < size; step++) {
+                        const r = upward ? (size - 1 - step) : step;
+                        for (let dx = 0; dx < 2; dx++) {
+                            const c = right - dx;
+                            if (!isFunc[r][c]) {
+                                let bit = 0;
+                                if (bitIdx < totalBits) {
+                                    bit = (allCodewords[bitIdx >>> 3] >>> (7 - (bitIdx & 7))) & 1;
+                                    bitIdx++;
+                                }
+                                if ((r + c) % 2 === 0) bit ^= 1;
+                                modules[r][c] = bit;
+                            }
+                        }
+                    }
+                    upward = !upward;
+                }
+
+                let rects = "";
+                for (let r = 0; r < size; r++) {
+                    for (let c = 0; c < size; c++) {
+                        if (modules[r][c]) rects += `<rect x="${c}" y="${r}" width="1" height="1"/>`;
+                    }
+                }
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${pxSize}" height="${pxSize}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#ffffff"/><g fill="#070a13">${rects}</g></svg>`;
+            }
+
+            return { generateSvg };
+        })();
+
+        /* ============================================================== */
+        /* 1. HELPER MODALI, PARSER ERRORI & NORMALIZZAZIONE URL          */
         /* ============================================================== */
         function normalizeSiteUrl(domain) {
             const clean = String(domain || "").trim();
             if (!clean) return "#";
             if (/^https?:\/\//i.test(clean)) return clean;
             return `https://${clean}`;
+        }
+
+        function stopCameraScanner() {
+            if (activeScannerStream) {
+                activeScannerStream.getTracks().forEach(t => t.stop());
+                activeScannerStream = null;
+            }
         }
 
         function showGlassModal({ title, message, confirmText = "OK", cancelText = "", isDanger = false, extraHtml = "" }) {
@@ -1796,6 +2112,7 @@
                 actionsEl.innerHTML = "";
 
                 const closeWith = (val) => {
+                    stopCameraScanner();
                     overlay.style.display = "none";
                     resolve(val);
                 };
@@ -1810,13 +2127,15 @@
                     actionsEl.appendChild(btnCancel);
                 }
 
-                const btnConfirm = document.createElement("button");
-                btnConfirm.type = "button";
-                btnConfirm.className = isDanger ? "btn-action-rollback" : "btn-glow-primary";
-                btnConfirm.style.cssText = "width:auto; padding:10px 18px;";
-                btnConfirm.textContent = confirmText;
-                btnConfirm.onclick = () => closeWith(true);
-                actionsEl.appendChild(btnConfirm);
+                if (confirmText) {
+                    const btnConfirm = document.createElement("button");
+                    btnConfirm.type = "button";
+                    btnConfirm.className = isDanger ? "btn-action-rollback" : "btn-glow-primary";
+                    btnConfirm.style.cssText = "width:auto; padding:10px 18px;";
+                    btnConfirm.textContent = confirmText;
+                    btnConfirm.onclick = () => closeWith(true);
+                    actionsEl.appendChild(btnConfirm);
+                }
 
                 overlay.style.display = "flex";
             });
@@ -1858,7 +2177,7 @@
         }
 
         /* ============================================================== */
-        /* 1. HELPER BASE64URL & WEBAUTHN PASSKEY                         */
+        /* 2. WEBAUTHN PASSKEY (BIOMETRIA / PIN DISPOSITIVO)              */
         /* ============================================================== */
         function b64urlToUint8Array(b64url) {
             const padding = "=".repeat((4 - (b64url.length % 4)) % 4);
@@ -1889,13 +2208,22 @@
                 const optRes = await apiFetch("/api/v1/auth/passkey/register-options", { method: "POST" });
                 const optData = await parseApiJson(optRes);
                 if (optData.status !== "success") {
-                    showNotification(`⚠️ ${optData.message || "Errore opzioni Passkey"}`, false);
+                    await showGlassModal({
+                        title: optData.code === "DEVICE_LIMIT_REACHED" ? "🚫 Limite Dispositivi Raggiunto" : "⚠️ Attenzione",
+                        message: optData.message || "Impossibile registrare questo dispositivo."
+                    });
                     return;
                 }
 
                 const pubKey = optData.publicKey;
                 pubKey.challenge = b64urlToUint8Array(pubKey.challenge);
                 pubKey.user.id = b64urlToUint8Array(pubKey.user.id);
+                if (Array.isArray(pubKey.excludeCredentials)) {
+                    pubKey.excludeCredentials = pubKey.excludeCredentials.map(c => ({
+                        ...c,
+                        id: b64urlToUint8Array(c.id)
+                    }));
+                }
 
                 const credential = await navigator.credentials.create({ publicKey: pubKey });
                 const serializedCred = {
@@ -1921,6 +2249,16 @@
                 });
                 const verData = await parseApiJson(verRes);
                 if (verData.status === "success") {
+                    // Aggiorna la sessione a permanente in localStorage ora che la Passkey è registrata
+                    if (verData.token) {
+                        sessionToken = verData.token;
+                        sessionMode = "persistent";
+                        sessionStorage.removeItem("orbis_session_token");
+                        sessionStorage.removeItem("orbis_session_mode");
+                        localStorage.setItem("orbis_session_token", sessionToken);
+                        localStorage.setItem("orbis_session_mode", "persistent");
+                        if (currentUserId) localStorage.setItem("orbis_user_id", currentUserId);
+                    }
                     if (verData.action_proof) {
                         cachedActionProof = { token: verData.action_proof, expiresAt: Date.now() + 50000 };
                     }
@@ -1936,23 +2274,72 @@
         }
 
         async function openPasskeyManagerModal() {
-            const extraHtml = `
-                <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px; margin-bottom:10px;">
-                    <label for="new-passkey-device-name" style="font-size:11px; color:var(--text-muted);">Etichetta nuovo dispositivo (opzionale)</label>
-                    <input type="text" id="new-passkey-device-name" placeholder="Es: iPhone Titolare / PC Ufficio">
-                </div>
-            `;
-            const confirmed = await showGlassModal({
-                title: "🔑 Gestione Passkey Biometriche",
-                message: "Puoi associare più dispositivi (es. smartphone + computer dell'ufficio) allo stesso account per autorizzare le modifiche con FaceID, TouchID o PIN.",
-                confirmText: "➕ Aggiungi Dispositivo",
-                cancelText: "Chiudi",
-                extraHtml
-            });
-            if (confirmed) {
-                const nameInput = document.getElementById("new-passkey-device-name");
-                const label = nameInput ? nameInput.value : "";
-                await registerNewPasskey(label);
+            try {
+                const res = await apiFetch("/api/v1/auth/passkeys");
+                const data = await parseApiJson(res);
+                const devices = data.devices || [];
+                const count = data.count || devices.length;
+                const maxDev = data.max_devices || 4;
+                const limitReached = count >= maxDev;
+
+                const listHtml = devices.length === 0
+                    ? '<div style="font-size:12px; color:#fbbf24; margin-bottom:10px;">Nessun dispositivo registrato al momento.</div>'
+                    : devices.map(d => `
+                        <div class="device-row">
+                            <div style="min-width:0; flex:1;">
+                                <div style="font-size:12px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">📱 ${escapeHtml(d.device_name)}</div>
+                                <div style="font-size:10px; color:var(--text-hint);">Attivato: ${escapeHtml((d.created_at || "").slice(0, 10))}</div>
+                            </div>
+                            ${devices.length > 1 ? `<button type="button" class="small-icon-btn" style="color:#fb7185;" onclick="revokeDevicePasskey('${escapeHtml(d.credential_id)}')">🗑️</button>` : '<span style="font-size:10px; color:#34d399; font-weight:700;">Principale</span>'}
+                        </div>
+                    `).join("");
+
+                const addSectionHtml = limitReached
+                    ? `<div style="background:rgba(244,63,94,0.14); border:1px solid rgba(244,63,94,0.35); border-radius:10px; padding:10px; font-size:11.5px; color:#fda4af; line-height:1.4;">
+                         🚫 <b>Limite di ${maxDev} dispositivi raggiunto (${count}/${maxDev}).</b><br>
+                         Per collegare un 5° dispositivo richiedi l'estensione del piano a The Orbis Project oppure rimuovi un vecchio dispositivo.
+                       </div>`
+                    : `<div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px; margin-top:8px;">
+                         <label for="new-passkey-device-name" style="font-size:11px; color:var(--text-muted);">Registra questo dispositivo (${count}/${maxDev} slot usati)</label>
+                         <input type="text" id="new-passkey-device-name" placeholder="Es: iPhone Titolare / PC Ufficio">
+                       </div>`;
+
+                const confirmed = await showGlassModal({
+                    title: `🔑 Dispositivi Autorizzati (${count} / ${maxDev})`,
+                    message: "Ogni dispositivo usa la propria Passkey locale (FaceID, Impronta o PIN). Per associare un altro dispositivo a distanza usa 'Accesso QR → Aggiungi Dispositivo' sulla schermata di login.",
+                    confirmText: limitReached ? "" : "➕ Registra Questo Dispositivo",
+                    cancelText: "Chiudi",
+                    extraHtml: listHtml + addSectionHtml
+                });
+
+                if (confirmed && !limitReached) {
+                    const nameInput = document.getElementById("new-passkey-device-name");
+                    const label = nameInput ? nameInput.value : "";
+                    await registerNewPasskey(label);
+                }
+            } catch (err) {
+                showNotification(`❌ ${err.message}`, false);
+            }
+        }
+
+        async function revokeDevicePasskey(credentialId) {
+            try {
+                const actionProof = await obtainActionProof();
+                const res = await apiFetch("/api/v1/auth/passkeys/delete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ credential_id: credentialId, action_proof: actionProof })
+                });
+                const data = await parseApiJson(res);
+                document.getElementById("glass-modal-overlay").style.display = "none";
+                if (data.status === "success") {
+                    showNotification(`✅ ${data.message}`, true);
+                    fetchUserStatus();
+                } else {
+                    showNotification(`⚠️ ${data.message}`, false);
+                }
+            } catch (err) {
+                showNotification(`❌ ${err.message}`, false);
             }
         }
 
@@ -2015,7 +2402,7 @@
                 } else {
                     await showGlassModal({
                         title: "🛑 Accesso Negato",
-                        message: verData.message || "Passkey non riconosciuta."
+                        message: verData.message || "Dispositivo non riconosciuto."
                     });
                 }
             } catch (err) {
@@ -2030,6 +2417,9 @@
             if (!requirePasskey2FA) return "";
             if (cachedActionProof.token && Date.now() < cachedActionProof.expiresAt) {
                 return cachedActionProof.token;
+            }
+            if (sessionMode === "volatile") {
+                throw new Error("Sessione temporanea scaduta. Ripeti la scansione QR dal tuo telefono.");
             }
             if (!window.PublicKeyCredential) {
                 throw new Error("Passkey WebAuthn non supportata su questo browser.");
@@ -2085,128 +2475,325 @@
         }
 
         /* ============================================================== */
-        /* 2. GOOGLE SIGN-IN & FIRST-ACCESS PAIRING                       */
+        /* 3. DUAL-QR BRIDGE & PRIMO ACCESSO BURN-AFTER-READING           */
         /* ============================================================== */
+        function stopQrPolling() {
+            if (qrPollInterval) {
+                clearInterval(qrPollInterval);
+                qrPollInterval = null;
+            }
+        }
+
         function switchAuthTab(tab) {
-            document.getElementById("tab-auth-login").classList.toggle("active", tab === "login");
-            document.getElementById("tab-auth-pair").classList.toggle("active", tab === "pair");
-            document.getElementById("auth-panel-login").style.display = tab === "login" ? "block" : "none";
-            document.getElementById("auth-panel-pair").style.display = tab === "pair" ? "block" : "none";
-        }
-
-        function initGoogleIdentity() {
-            if (!window.google || !google.accounts || !google.accounts.id) {
-                setTimeout(initGoogleIdentity, 300);
-                return;
-            }
-            if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.startsWith("INSERISCI_QUI")) {
-                document.getElementById("google-signin-login").innerHTML =
-                    '<div style="font-size:11px; color:#fbbf24; text-align:center;">⚠️ Configura GOOGLE_CLIENT_ID nel codice per abilitare il pulsante Google.</div>';
-                document.getElementById("google-signin-pair").innerHTML =
-                    '<div style="font-size:11px; color:#fbbf24; text-align:center;">⚠️ Configura GOOGLE_CLIENT_ID per completare l\'abbinamento.</div>';
-                return;
-            }
-
-            google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleGoogleCredentialResponse
+            ["passkey", "qr", "first"].forEach(t => {
+                document.getElementById(`tab-auth-${t}`).classList.toggle("active", t === tab);
+                document.getElementById(`auth-panel-${t}`).style.display = t === tab ? "block" : "none";
             });
-
-            google.accounts.id.renderButton(
-                document.getElementById("google-signin-login"),
-                { theme: "filled_black", size: "large", shape: "pill", text: "signin_with", width: 280 }
-            );
-            google.accounts.id.renderButton(
-                document.getElementById("google-signin-pair"),
-                { theme: "filled_blue", size: "large", shape: "pill", text: "continue_with", width: 280 }
-            );
+            if (tab === "qr") {
+                initQrAuthSession();
+            } else {
+                stopQrPolling();
+            }
         }
 
-        async function handleGoogleCredentialResponse(response) {
-            const idToken = response.credential;
-            const isPairingMode = document.getElementById("auth-panel-pair").style.display === "block";
+        function selectQrAuthMode(mode) {
+            activeQrMode = mode;
+            document.getElementById("qr-mode-temp").classList.toggle("active", mode === "temp_login");
+            document.getElementById("qr-mode-add").classList.toggle("active", mode === "add_device");
+
+            const descEl = document.getElementById("qr-mode-desc");
+            if (mode === "temp_login") {
+                descEl.innerHTML = 'Inquadra questo QR dal tuo telefono già connesso. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.';
+            } else {
+                descEl.innerHTML = 'Inquadra questo QR dal tuo telefono già connesso per <b>associare permanentemente</b> questo dispositivo (Max 4 dispositivi per account).';
+            }
+            initQrAuthSession();
+        }
+
+        async function initQrAuthSession() {
+            stopQrPolling();
+            const container = document.getElementById("qr-svg-container");
+            const pill = document.getElementById("qr-status-pill");
+            pill.textContent = "⏳ Generazione codice QR...";
+            container.innerHTML = '<div style="color:#070a13; font-size:12px; font-weight:700;">Caricamento...</div>';
 
             try {
-                if (isPairingMode) {
-                    const pairingCode = document.getElementById("pairing_code_input").value.trim();
-                    if (!pairingCode) {
-                        await showGlassModal({
-                            title: "🎟️ Codice Mancante",
-                            message: "Inserisci prima il codice di attivazione usa-e-getta."
-                        });
-                        return;
-                    }
-                    const res = await fetch(`${API_BASE_URL}/api/v1/auth/pair`, {
-                        method: "POST",
-                        headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
-                        body: JSON.stringify({ pairing_code: pairingCode, google_id_token: idToken })
-                    });
-                    const data = await parseApiJson(res);
-                    if (data.status === "success") {
-                        completeAuthSuccess(data);
-                    } else {
-                        await showGlassModal({
-                            title: "🛑 Abbinamento Fallito",
-                            message: data.message || "Abbinamento non riuscito."
-                        });
-                    }
+                const res = await fetch(`${API_BASE_URL}/api/v1/auth/qr/create`, {
+                    method: "POST",
+                    headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                    body: JSON.stringify({ mode: activeQrMode })
+                });
+                const data = await parseApiJson(res);
+                if (data.status === "success" && data.qr_token) {
+                    activeQrToken = data.qr_token;
+                    const qrPayload = `ORBIS_QR:${activeQrToken}`;
+                    container.innerHTML = OrbisQrSvg.generateSvg(qrPayload, 180);
+                    pill.textContent = "📷 Inquadra con il telefono loggato";
+
+                    qrPollInterval = setInterval(pollQrAuthStatus, 2200);
                 } else {
-                    const res = await fetch(`${API_BASE_URL}/api/v1/auth/google`, {
-                        method: "POST",
-                        headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
-                        body: JSON.stringify({ google_id_token: idToken })
+                    pill.textContent = "⚠️ Errore generazione QR";
+                }
+            } catch (err) {
+                pill.textContent = "❌ Server non raggiungibile";
+            }
+        }
+
+        async function pollQrAuthStatus() {
+            if (!activeQrToken) return;
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/v1/auth/qr/status/${encodeURIComponent(activeQrToken)}`, {
+                    headers: DEFAULT_HEADERS
+                });
+                const data = await parseApiJson(res);
+                const pill = document.getElementById("qr-status-pill");
+
+                if (data.status === "approved" && data.auth) {
+                    stopQrPolling();
+                    pill.textContent = "✅ Autorizzato! Accesso in corso...";
+                    completeAuthSuccess(data.auth);
+                } else if (data.status === "expired") {
+                    stopQrPolling();
+                    pill.textContent = "⌛ QR Scaduto — Premi Rigenera";
+                } else if (data.status === "error") {
+                    stopQrPolling();
+                    pill.textContent = "🚫 Operazione Bloccata";
+                    await showGlassModal({
+                        title: data.code === "DEVICE_LIMIT_REACHED" ? "🚫 Limite 4 Dispositivi Raggiunto" : "⚠️ Accesso Negato",
+                        message: data.message || "Impossibile completare l'abbinamento."
                     });
-                    const data = await parseApiJson(res);
-                    if (data.status === "success") {
-                        completeAuthSuccess(data);
-                    } else {
-                        await showGlassModal({
-                            title: "🛑 Accesso Non Riconosciuto",
-                            message: data.message || "Accesso Google non riconosciuto."
-                        });
-                    }
+                }
+            } catch (_) {}
+        }
+
+        async function copyCurrentQrCode() {
+            if (!activeQrToken) return;
+            const payload = `ORBIS_QR:${activeQrToken}`;
+            try {
+                await navigator.clipboard.writeText(payload);
+                const pill = document.getElementById("qr-status-pill");
+                pill.textContent = "📋 Codice copiato! Incollalo sul telefono";
+            } catch (_) {}
+        }
+
+        // Primo Accesso con Username & Password Temporanea (Burn-After-Reading)
+        document.getElementById("first-access-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btn-first-access");
+            const username = document.getElementById("first_username_input").value.trim();
+            const password = document.getElementById("first_password_input").value.trim();
+
+            btn.disabled = true;
+            btn.innerHTML = "<span>⏳ Verifica credenziali temporanee...</span>";
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/v1/auth/first-access`, {
+                    method: "POST",
+                    headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await parseApiJson(res);
+                if (data.status === "success") {
+                    document.getElementById("first_username_input").value = "";
+                    document.getElementById("first_password_input").value = "";
+                    completeAuthSuccess(data);
+                    // Avvia subito la registrazione della Passkey così le credenziali temporanee vengono distrutte
+                    setTimeout(() => registerNewPasskey(), 400);
+                } else {
+                    await showGlassModal({
+                        title: "🛑 Accesso Non Riuscito",
+                        message: data.message || "Credenziali non valide o già autodistrutte."
+                    });
                 }
             } catch (err) {
                 await showGlassModal({
-                    title: "❌ Errore Autenticazione",
-                    message: err.message || "Errore di connessione al server."
+                    title: "❌ Errore Connessione",
+                    message: err.message || "Impossibile contattare il server."
                 });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "<span>🔐 Accedi e Attiva Dispositivo</span>";
+            }
+        });
+
+        /* ============================================================== */
+        /* 4. SCANNER QR PER TELEFONO LOGGATO (AUTORIZZA PC / TABLET)     */
+        /* ============================================================== */
+        async function openQrScannerModal() {
+            const extraHtml = `
+                <div class="scanner-video-box" id="qr-video-wrapper" style="display:none;">
+                    <video id="qr-scanner-video" playsinline muted></video>
+                </div>
+                <div id="qr-scanner-hint" style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px;">
+                    Avvio fotocamera per inquadrare il QR Code...
+                </div>
+                <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
+                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Oppure incolla il codice copiato dal PC:</label>
+                    <input type="text" id="manual-qr-input" placeholder="ORBIS_QR:qr_...">
+                </div>
+            `;
+
+            const modalPromise = showGlassModal({
+                title: "📷 Autorizza Dispositivo Esterno",
+                message: "Inquadra il codice QR mostrato sullo schermo del computer o tablet. Ti verrà chiesta la conferma biometrica.",
+                confirmText: "✅ Autorizza Codice Incollato",
+                cancelText: "Annulla",
+                extraHtml
+            });
+
+            startLiveQrCamera();
+
+            const confirmedManual = await modalPromise;
+            if (confirmedManual) {
+                const manualVal = (document.getElementById("manual-qr-input")?.value || "").trim();
+                if (manualVal) {
+                    await processScannedQrPayload(manualVal);
+                }
             }
         }
 
+        async function startLiveQrCamera() {
+            const videoWrapper = document.getElementById("qr-video-wrapper");
+            const videoEl = document.getElementById("qr-scanner-video");
+            const hintEl = document.getElementById("qr-scanner-hint");
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                if (hintEl) hintEl.textContent = "Fotocamera non disponibile su questo browser: incolla il codice QR qui sotto.";
+                return;
+            }
+
+            try {
+                activeScannerStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" }
+                });
+                if (!videoEl || !videoWrapper) {
+                    stopCameraScanner();
+                    return;
+                }
+                videoEl.srcObject = activeScannerStream;
+                await videoEl.play();
+                videoWrapper.style.display = "block";
+
+                if ("BarcodeDetector" in window) {
+                    if (hintEl) hintEl.textContent = "🎯 Inquadra il QR Code nello schermo...";
+                    const detector = new BarcodeDetector({ formats: ["qr_code"] });
+                    const scanLoop = async () => {
+                        if (!activeScannerStream) return;
+                        try {
+                            const codes = await detector.detect(videoEl);
+                            if (codes && codes.length > 0 && codes[0].rawValue) {
+                                const raw = codes[0].rawValue.trim();
+                                if (raw.startsWith("ORBIS_QR:")) {
+                                    stopCameraScanner();
+                                    document.getElementById("glass-modal-overlay").style.display = "none";
+                                    await processScannedQrPayload(raw);
+                                    return;
+                                }
+                            }
+                        } catch (_) {}
+                        if (activeScannerStream) requestAnimationFrame(scanLoop);
+                    };
+                    requestAnimationFrame(scanLoop);
+                } else {
+                    if (hintEl) hintEl.textContent = "Incolla il codice QR copiato dal PC nel campo qui sotto per autorizzare.";
+                }
+            } catch (_) {
+                if (hintEl) hintEl.textContent = "Permesso fotocamera negato o assente: incolla il codice QR qui sotto.";
+            }
+        }
+
+        async function processScannedQrPayload(rawPayload) {
+            const cleaned = rawPayload.replace(/^ORBIS_QR:/i, "").trim();
+            if (!cleaned) {
+                showNotification("⚠️ Codice QR non valido.", false);
+                return;
+            }
+
+            try {
+                const actionProof = await obtainActionProof();
+                const res = await apiFetch("/api/v1/auth/qr/approve", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        qr_token: cleaned,
+                        action_proof: actionProof
+                    })
+                });
+                const data = await parseApiJson(res);
+                if (data.status === "success") {
+                    showNotification(`✅ ${data.message}`, true);
+                } else {
+                    await showGlassModal({
+                        title: data.code === "DEVICE_LIMIT_REACHED" ? "🚫 Limite 4 Dispositivi Raggiunto" : "⚠️ Autorizzazione Negata",
+                        message: data.message || "Impossibile autorizzare il codice QR."
+                    });
+                }
+            } catch (err) {
+                showNotification(`❌ ${err.message}`, false);
+            }
+        }
+
+        /* ============================================================== */
+        /* 5. GESTIONE SESSIONE (VOLATILE VS PERSISTENTE) & API FETCH     */
+        /* ============================================================== */
         function completeAuthSuccess(authData) {
+            stopQrPolling();
             sessionToken = authData.token;
             currentUserId = authData.user_id || "";
             userSites = authData.sites || [];
+            sessionMode = authData.session_mode || "persistent";
 
-            localStorage.setItem("orbis_session_token", sessionToken);
-            if (currentUserId) localStorage.setItem("orbis_user_id", currentUserId);
+            const isVolatile = (sessionMode === "volatile" || sessionMode === "onboarding");
+            const storage = isVolatile ? sessionStorage : localStorage;
+
+            if (isVolatile) {
+                localStorage.removeItem("orbis_session_token");
+                localStorage.removeItem("orbis_session_mode");
+            } else {
+                sessionStorage.removeItem("orbis_session_token");
+                sessionStorage.removeItem("orbis_session_mode");
+            }
+
+            storage.setItem("orbis_session_token", sessionToken);
+            storage.setItem("orbis_session_mode", sessionMode);
+            if (currentUserId) storage.setItem("orbis_user_id", currentUserId);
+
             if (authData.action_proof) {
-                cachedActionProof = { token: authData.action_proof, expiresAt: Date.now() + 45000 };
+                const ttl = sessionMode === "volatile" ? 14000000 : 45000;
+                cachedActionProof = { token: authData.action_proof, expiresAt: Date.now() + ttl };
+                if (sessionMode === "volatile") {
+                    sessionStorage.setItem("orbis_delegated_proof", authData.action_proof);
+                }
             }
 
             if (userSites.length > 0) {
                 const stillValid = userSites.some(s => s.site_id === selectedSiteId);
                 if (!stillValid) {
                     selectedSiteId = userSites[0].site_id;
-                    localStorage.setItem("orbis_selected_site_id", selectedSiteId);
+                    storage.setItem("orbis_selected_site_id", selectedSiteId);
                 }
             }
 
-            enterConsoleMode(authData.requires_passkey_setup);
+            enterConsoleMode(Boolean(authData.requires_passkey_setup));
+
+            if (authData.mode === "add_device") {
+                setTimeout(() => registerNewPasskey(), 400);
+            }
         }
 
         function logoutSession() {
+            stopQrPolling();
             sessionToken = "";
+            sessionMode = "persistent";
             cachedActionProof = { token: "", expiresAt: 0 };
             localStorage.removeItem("orbis_session_token");
+            localStorage.removeItem("orbis_session_mode");
+            sessionStorage.clear();
+            document.getElementById("volatile-session-banner").style.display = "none";
             document.getElementById("console-screen").style.display = "none";
             document.getElementById("auth-screen").style.display = "flex";
         }
 
-        /* ============================================================== */
-        /* 3. FETCH WRAPPER AUTENTICATO & INIZIALIZZAZIONE CONSOLE        */
-        /* ============================================================== */
         async function apiFetch(endpoint, options = {}) {
             const headers = {
                 ...DEFAULT_HEADERS,
@@ -2219,7 +2806,9 @@
                 throw new Error("Sessione scaduta. Effettua nuovamente l'accesso.");
             }
             if (res.status === 403) {
-                cachedActionProof = { token: "", expiresAt: 0 };
+                if (sessionMode !== "volatile") {
+                    cachedActionProof = { token: "", expiresAt: 0 };
+                }
                 let errDetail = "Autorizzazione Passkey negata o scaduta.";
                 try {
                     const errJson = await res.json();
@@ -2236,6 +2825,9 @@
         async function enterConsoleMode(forcePasskeyPrompt = false) {
             document.getElementById("auth-screen").style.display = "none";
             document.getElementById("console-screen").style.display = "flex";
+
+            document.getElementById("volatile-session-banner").style.display =
+                sessionMode === "volatile" ? "block" : "none";
 
             if (forcePasskeyPrompt) {
                 document.getElementById("passkey-setup-banner").style.display = "block";
@@ -2264,7 +2856,8 @@
                     if (userSites.length > 0) {
                         if (!userSites.some(s => s.site_id === selectedSiteId)) {
                             selectedSiteId = userSites[0].site_id;
-                            localStorage.setItem("orbis_selected_site_id", selectedSiteId);
+                            const storage = (sessionMode === "volatile" || sessionMode === "onboarding") ? sessionStorage : localStorage;
+                            storage.setItem("orbis_selected_site_id", selectedSiteId);
                         }
                     }
 
@@ -2289,7 +2882,8 @@
 
         async function onSwitchSite(newSiteId) {
             selectedSiteId = newSiteId;
-            localStorage.setItem("orbis_selected_site_id", selectedSiteId);
+            const storage = (sessionMode === "volatile" || sessionMode === "onboarding") ? sessionStorage : localStorage;
+            storage.setItem("orbis_selected_site_id", selectedSiteId);
             closeAllDrawers();
             await Promise.all([
                 fetchUserStatus(),
@@ -2298,7 +2892,7 @@
         }
 
         /* ============================================================== */
-        /* 4. TELEMETRIA, STATO SITO, MINI AUDIT LOG & ROLLBACK           */
+        /* 6. TELEMETRIA, STATO SITO, MINI AUDIT LOG & ROLLBACK           */
         /* ============================================================== */
         function activateRollbackBanner(busterParam = "") {
             const previewBtn = document.getElementById("site-preview-btn");
@@ -2378,7 +2972,7 @@
                     tierBadge.className = `tier-badge ${currentTier}`;
 
                     document.getElementById("passkey-setup-banner").style.display = data.requires_passkey_setup ? "block" : "none";
-                    document.getElementById("tele-2fa").innerText = requirePasskey2FA ? "🔐 Passkey 2FA" : "⚡ Standard";
+                    document.getElementById("tele-devices").innerText = `🔑 ${data.devices_count ?? 0} / ${data.max_devices ?? 4}`;
 
                     const teleAudit = document.getElementById("tele-audit");
                     teleAudit.innerText = data.audit_done ? "🟢 Eseguito" : "🔴 Da fare";
@@ -2397,6 +2991,12 @@
                     document.getElementById("progress-count-text").innerText = `${count} / ${limit}`;
                     const pct = Math.min(100, Math.round((count / limit) * 100));
                     document.getElementById("progress-bar-fill").style.width = `${pct}%`;
+
+                    const stCount = data.store_mod_count || 0;
+                    const stLimit = data.store_mod_limit || 100;
+                    document.getElementById("store-progress-text").innerText = `${stCount} / ${stLimit}`;
+                    const stPct = Math.min(100, Math.round((stCount / stLimit) * 100));
+                    document.getElementById("store-progress-fill").style.width = `${stPct}%`;
 
                     renderMiniAuditLog(data.recent_modifications || null);
 
@@ -2446,7 +3046,7 @@
         }
 
         /* ============================================================== */
-        /* 5. DRAWER 1: DIAGNOSTICA IA (SINTESI + REPORT COMPLETO)        */
+        /* 7. DRAWER 1: DIAGNOSTICA IA (SINTESI + REPORT COMPLETO)        */
         /* ============================================================== */
         async function triggerDailyAudit() {
             const btn = document.getElementById("btn-run-audit");
@@ -2494,7 +3094,7 @@
         }
 
         /* ============================================================== */
-        /* 6. DRAWER 2: EDITOR CHIRURGICO SEZIONI & SOTTO-MARCATORI       */
+        /* 8. DRAWER 2: EDITOR CHIRURGICO SEZIONI & SOTTO-MARCATORI       */
         /* ============================================================== */
         async function loadSiteSections(targetFile = "index.html") {
             if (!selectedSiteId) return;
@@ -2720,7 +3320,7 @@
         }
 
         /* ============================================================== */
-        /* 7. DRAWER 3: STATISTICHE SITO (SEPARATE DAI PRODOTTI)          */
+        /* 9. DRAWER 3: STATISTICHE SITO (SEPARATE DAI PRODOTTI)          */
         /* ============================================================== */
         async function loadAnalytics() {
             const unlocked = document.getElementById("analytics-unlocked-content");
@@ -2805,7 +3405,7 @@
         }
 
         /* ============================================================== */
-        /* 8. DRAWER 4: STORE INTELLIGENTE & STATISTICHE PRODOTTI         */
+        /* 10. DRAWER 4: STORE INTELLIGENTE & STATISTICHE PRODOTTI        */
         /* ============================================================== */
         function switchStoreTab(tabName) {
             ["catalog", "stats", "settings"].forEach(t => {
@@ -2829,7 +3429,6 @@
                     cachedStoreItems = data.items || [];
                     cachedStoreLocations = data.store_locations || {};
 
-                    // Popola filtro location (pagine/sezioni store)
                     const locFilter = document.getElementById("store-location-filter");
                     const prevFilter = locFilter.value;
                     locFilter.innerHTML = '<option value="ALL">Tutte le pagine e sezioni</option>';
@@ -2845,17 +3444,13 @@
                         locFilter.value = prevFilter;
                     }
 
-                    // Popola Impostazioni Store
                     if (data.settings) {
                         document.getElementById("set_sort_mode").value = data.settings.sort_mode || "priority_then_newest";
                         document.getElementById("set_new_days").value = data.settings.new_badge_days ?? 15;
                         document.getElementById("set_low_thresh").value = data.settings.low_stock_threshold ?? 2;
                     }
 
-                    // Popola Statistiche Prodotti (Tab 4B)
                     renderStoreStats(data.store_stats || {});
-
-                    // Renderizza Catalogo (Tab 4A)
                     renderFilteredStoreItems();
 
                     unlocked.style.display = "block";
@@ -2976,7 +3571,6 @@
             });
         }
 
-        // Event Delegation sicura per le card del catalogo Store
         document.getElementById("store-items-container").addEventListener("click", (e) => {
             const btn = e.target.closest("button[data-action]");
             if (!btn) return;
@@ -2997,7 +3591,6 @@
             }
         });
 
-        /* Selettori guidati Pagina & Sezione Store nel form prodotto */
         function populateStoreLocationSelects(targetPage = "index.html", targetSection = "default") {
             const pageSelect = document.getElementById("st_page");
             const pages = Object.keys(cachedStoreLocations);
@@ -3074,7 +3667,6 @@
                 document.getElementById("st_item_id").value = "";
                 document.getElementById("st_release_date").value = new Date().toISOString().split("T")[0];
 
-                // Pre-seleziona pagina/sezione dal filtro attivo se impostato
                 const activeFilter = document.getElementById("store-location-filter").value;
                 if (activeFilter !== "ALL" && activeFilter.includes("::")) {
                     const [fPage, fSec] = activeFilter.split("::");
@@ -3327,10 +3919,9 @@
         }
 
         /* ============================================================== */
-        /* 9. AVVIO APPLICAZIONE                                          */
+        /* 11. AVVIO APPLICAZIONE                                         */
         /* ============================================================== */
         window.addEventListener("DOMContentLoaded", () => {
-            initGoogleIdentity();
             if (sessionToken) {
                 enterConsoleMode(false);
             }
