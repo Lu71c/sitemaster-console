@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiteMaster Console v6.0 — The Orbis Project</title>
+    <title>SiteMaster Console Orbis — The Orbis Project</title>
     <style>
         :root {
-            --bg-deep: #070a13;
-            --surface-glass: rgba(15, 23, 42, 0.76);
-            --surface-glass-strong: rgba(15, 23, 42, 0.97);
-            --surface-glass-border: rgba(255, 255, 255, 0.10);
-            --surface-hover: rgba(30, 41, 59, 0.85);
-            --primary-blue: #2563eb;
-            --primary-glow: #38bdf8;
-            --accent-purple: #8b5cf6;
-            --accent-gold: #f59e0b;
+            --bg-deep: #060911;
+            --surface-glass: rgba(13, 20, 36, 0.82);
+            --surface-glass-strong: rgba(13, 20, 36, 0.98);
+            --surface-glass-border: rgba(148, 163, 184, 0.14);
+            --surface-hover: rgba(23, 35, 58, 0.9);
+            --primary-blue: #1d4ed8;
+            --primary-royal: #3b82f6;
+            --primary-deep-accent: #60a5fa;
+            --accent-purple: #7c3aed;
+            --accent-gold: #d97706;
             --emerald-online: #10b981;
-            --rose-danger: #f43f5e;
-            --text-main: #f8fafc;
+            --rose-danger: #e11d48;
+            --text-main: #f1f5f9;
             --text-muted: #94a3b8;
             --text-hint: #64748b;
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
@@ -34,9 +35,9 @@
             font-family: var(--font-family);
             background-color: var(--bg-deep);
             background-image:
-                radial-gradient(circle at 15% 10%, rgba(37, 99, 235, 0.22) 0%, transparent 45%),
-                radial-gradient(circle at 85% 35%, rgba(139, 92, 246, 0.18) 0%, transparent 40%),
-                radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.12) 0%, transparent 50%);
+                radial-gradient(circle at 15% 10%, rgba(29, 78, 216, 0.20) 0%, transparent 48%),
+                radial-gradient(circle at 85% 35%, rgba(124, 58, 237, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 50% 92%, rgba(15, 23, 42, 0.45) 0%, transparent 55%);
             background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
@@ -54,14 +55,52 @@
             flex-direction: column;
         }
 
+        /* Espansione armoniosa su Tablet (Verticale e Orizzontale) */
+        @media (min-width: 768px) {
+            body {
+                padding: 28px 32px;
+            }
+            .app-container {
+                max-width: 820px;
+            }
+            #auth-screen {
+                flex: 1;
+                justify-content: center;
+                margin-top: 0 !important;
+            }
+            .auth-card {
+                padding: 36px 34px !important;
+            }
+            .auth-logo-row h1 {
+                font-size: 26px !important;
+            }
+            .auth-logo-row p {
+                font-size: 14px !important;
+            }
+            .auth-tab-btn {
+                padding: 12px 10px !important;
+                font-size: 13px !important;
+            }
+            .btn-passkey-login {
+                padding: 18px 16px !important;
+                font-size: 15px !important;
+            }
+            .hub-grid {
+                gap: 16px !important;
+            }
+            .hub-card {
+                padding: 22px 18px !important;
+            }
+        }
+
         /* ============================================================== */
-        /* SCHERMATA AUTENTICAZIONE (ZERO-GOOGLE • PASSKEY • DUAL-QR)     */
+        /* SCHERMATA AUTENTICAZIONE (PASSKEY • DUAL-QR • 1° ACCESSO)      */
         /* ============================================================== */
         #auth-screen {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            margin-top: 20px;
+            margin-top: 24px;
             animation: fadeIn 0.3s ease-out forwards;
         }
 
@@ -69,36 +108,37 @@
             background: var(--surface-glass);
             border: 1px solid var(--surface-glass-border);
             border-radius: 18px;
-            padding: 24px 20px;
+            padding: 26px 20px;
             backdrop-filter: blur(14px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
         }
 
         .auth-logo-row {
             text-align: center;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
         .auth-logo-row h1 {
-            font-size: 21px;
+            font-size: 22px;
             font-weight: 800;
             letter-spacing: -0.4px;
-            background: linear-gradient(90deg, #ffffff 0%, #38bdf8 100%);
+            background: linear-gradient(135deg, #cbd5e1 0%, #3b82f6 55%, #1d4ed8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .auth-logo-row p {
-            font-size: 12px;
+            font-size: 12.5px;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-top: 6px;
+            line-height: 1.45;
         }
 
         .auth-tabs {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 6px;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0, 0, 0, 0.42);
             padding: 4px;
             border-radius: 10px;
             margin-bottom: 18px;
@@ -117,17 +157,17 @@
         }
 
         .auth-tab-btn.active {
-            background: rgba(37, 99, 235, 0.35);
+            background: rgba(29, 78, 216, 0.42);
             color: #ffffff;
-            border: 1px solid rgba(56, 189, 248, 0.4);
+            border: 1px solid rgba(59, 130, 246, 0.45);
         }
 
         .btn-passkey-login {
             width: 100%;
             padding: 15px 14px;
             border-radius: 12px;
-            border: 1px solid rgba(56, 189, 248, 0.45);
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.32), rgba(139, 92, 246, 0.28));
+            border: 1px solid rgba(59, 130, 246, 0.45);
+            background: linear-gradient(135deg, rgba(29, 78, 216, 0.42), rgba(30, 41, 59, 0.85));
             color: #ffffff;
             font-size: 14px;
             font-weight: 700;
@@ -136,7 +176,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
+            box-shadow: 0 6px 20px rgba(29, 78, 216, 0.25);
             transition: all 0.15s;
         }
 
@@ -153,7 +193,7 @@
             padding: 10px 8px;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.10);
-            background: rgba(7, 10, 19, 0.65);
+            background: rgba(6, 9, 17, 0.72);
             color: var(--text-muted);
             font-size: 11.5px;
             font-weight: 700;
@@ -163,13 +203,13 @@
         }
 
         .qr-mode-btn.active {
-            border-color: var(--primary-glow);
-            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--primary-royal);
+            background: rgba(29, 78, 216, 0.24);
             color: #ffffff;
         }
 
         .qr-stage-box {
-            background: rgba(7, 10, 19, 0.78);
+            background: rgba(6, 9, 17, 0.82);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 14px;
             padding: 16px;
@@ -184,7 +224,7 @@
             padding: 12px;
             border-radius: 12px;
             margin: 8px auto 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
             min-width: 196px;
             min-height: 196px;
         }
@@ -197,8 +237,8 @@
             font-weight: 600;
             padding: 5px 10px;
             border-radius: 20px;
-            background: rgba(56, 189, 248, 0.14);
-            color: var(--primary-glow);
+            background: rgba(29, 78, 216, 0.22);
+            color: var(--primary-deep-accent);
             margin-bottom: 8px;
         }
 
@@ -231,9 +271,9 @@
             margin-bottom: 12px;
             padding: 8px 12px;
             border-radius: 10px;
-            background: rgba(245, 158, 11, 0.16);
-            border: 1px solid rgba(245, 158, 11, 0.4);
-            color: #fde047;
+            background: rgba(217, 119, 6, 0.16);
+            border: 1px solid rgba(217, 119, 6, 0.4);
+            color: #fcd34d;
             font-size: 11.5px;
             font-weight: 600;
             text-align: center;
@@ -241,15 +281,15 @@
 
         .brand-header {
             margin-bottom: 14px;
-            padding: 14px 16px;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.55) 0%, rgba(15, 23, 42, 0.8) 100%);
+            padding: 13px 14px;
+            background: linear-gradient(135deg, rgba(23, 35, 58, 0.65) 0%, rgba(13, 20, 36, 0.88) 100%);
             border: 1px solid var(--surface-glass-border);
             border-radius: 16px;
             backdrop-filter: blur(12px);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .brand-titles {
@@ -258,30 +298,20 @@
         }
 
         .brand-titles h1 {
-            font-size: 17px;
+            font-size: clamp(13.5px, 3.8vw, 18px);
             font-weight: 800;
             letter-spacing: -0.3px;
-            background: linear-gradient(90deg, #ffffff 0%, #38bdf8 100%);
+            background: linear-gradient(135deg, #cbd5e1 0%, #3b82f6 65%, #1d4ed8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .brand-titles p {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            line-height: 1.25;
+            word-break: break-word;
         }
 
         .header-right-actions {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             flex-shrink: 0;
         }
 
@@ -289,46 +319,62 @@
             font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
-            padding: 5px 10px;
+            padding: 5px 9px;
             border-radius: 20px;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.7px;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
         }
 
         .tier-badge.base {
-            background: rgba(148, 163, 184, 0.15);
+            background: rgba(148, 163, 184, 0.14);
             color: #cbd5e1;
             border: 1px solid rgba(148, 163, 184, 0.3);
         }
 
-        .tier-badge.pro {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(139, 92, 246, 0.25));
-            color: #fde047;
+        .tier-badge.gold {
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.24), rgba(180, 83, 9, 0.3));
+            color: #fcd34d;
             border: 1px solid rgba(245, 158, 11, 0.5);
-            box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+        }
+
+        .tier-badge.pro {
+            background: linear-gradient(135deg, rgba(29, 78, 216, 0.35), rgba(124, 58, 237, 0.32));
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.55);
+            box-shadow: 0 0 12px rgba(29, 78, 216, 0.25);
         }
 
         .btn-header-icon {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.11);
             color: var(--text-muted);
             border-radius: 10px;
-            padding: 6px 9px;
+            padding: 6px 8px;
             font-size: 12px;
             cursor: pointer;
             transition: all 0.15s;
+            line-height: 1;
         }
 
         .btn-header-icon:hover {
-            color: var(--primary-glow);
-            border-color: rgba(56, 189, 248, 0.4);
+            color: var(--primary-deep-accent);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-logout {
+            background: rgba(225, 29, 72, 0.14);
+            border: 1px solid rgba(225, 29, 72, 0.42);
+            color: #fb7185;
+            font-weight: 800;
+            font-size: 13px;
+            padding: 6px 9px;
         }
 
         .btn-logout:hover {
-            color: #fb7185;
-            border-color: rgba(244, 63, 94, 0.4);
+            background: rgba(225, 29, 72, 0.26);
+            color: #ffffff;
+            border-color: #f43f5e;
         }
 
         /* Selettore Multi-Sito (1 Utente = N Siti) */
@@ -336,7 +382,7 @@
             display: none;
             margin-bottom: 14px;
             background: var(--surface-glass);
-            border: 1px solid rgba(56, 189, 248, 0.25);
+            border: 1px solid rgba(59, 130, 246, 0.25);
             border-radius: 12px;
             padding: 10px 12px;
             align-items: center;
@@ -346,7 +392,7 @@
         .site-switcher-bar label {
             margin: 0;
             font-size: 11px;
-            color: var(--primary-glow);
+            color: var(--primary-deep-accent);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             white-space: nowrap;
@@ -364,14 +410,14 @@
             margin-bottom: 16px;
             padding: 14px;
             border-radius: 14px;
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(139, 92, 246, 0.22));
-            border: 1px solid rgba(245, 158, 11, 0.45);
+            background: linear-gradient(135deg, rgba(29, 78, 216, 0.22), rgba(30, 41, 59, 0.85));
+            border: 1px solid rgba(59, 130, 246, 0.45);
         }
 
         .passkey-setup-banner h4 {
             font-size: 13px;
             font-weight: 700;
-            color: #fde047;
+            color: #93c5fd;
             margin-bottom: 4px;
         }
 
@@ -382,7 +428,7 @@
             margin-bottom: 10px;
         }
 
-        /* Status Bar Rapida & Quota Mensile */
+        /* Status Bar Rapida & Quote Mensili */
         .telemetry-card {
             background: var(--surface-glass);
             border: 1px solid var(--surface-glass-border);
@@ -403,7 +449,7 @@
         .tele-item {
             padding: 8px 4px;
             border-radius: 10px;
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.28);
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
@@ -425,7 +471,7 @@
         .text-amber { color: #fbbf24; }
 
         .progress-wrapper {
-            margin-top: 6px;
+            margin-top: 8px;
         }
 
         .progress-meta {
@@ -447,15 +493,15 @@
         .progress-bar-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, var(--primary-blue), var(--primary-glow));
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-royal));
             border-radius: 10px;
             transition: width 0.4s ease;
         }
 
         /* Macchina del Tempo GitHub (Cronologia Modifiche & Ripristino) */
         .mini-log-toggle {
-            margin-top: 10px;
-            padding-top: 8px;
+            margin-top: 12px;
+            padding-top: 9px;
             border-top: 1px solid rgba(255, 255, 255, 0.06);
             display: flex;
             justify-content: space-between;
@@ -466,7 +512,7 @@
             user-select: none;
         }
 
-        .mini-log-toggle:hover { color: var(--primary-glow); }
+        .mini-log-toggle:hover { color: var(--primary-deep-accent); }
 
         .mini-log-list {
             display: none;
@@ -483,8 +529,8 @@
             align-items: center;
             font-size: 10.5px;
             color: var(--text-muted);
-            background: rgba(56, 189, 248, 0.08);
-            border: 1px solid rgba(56, 189, 248, 0.2);
+            background: rgba(29, 78, 216, 0.14);
+            border: 1px solid rgba(59, 130, 246, 0.25);
             padding: 6px 9px;
             border-radius: 8px;
         }
@@ -497,7 +543,7 @@
             font-size: 11px;
             padding: 8px 9px;
             border-radius: 9px;
-            background: rgba(0, 0, 0, 0.28);
+            background: rgba(0, 0, 0, 0.30);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -524,16 +570,16 @@
             font-weight: 700;
             padding: 5px 8px;
             border-radius: 7px;
-            border: 1px solid rgba(56, 189, 248, 0.35);
-            background: rgba(56, 189, 248, 0.12);
-            color: var(--primary-glow);
+            border: 1px solid rgba(59, 130, 246, 0.38);
+            background: rgba(29, 78, 216, 0.18);
+            color: #93c5fd;
             cursor: pointer;
             flex-shrink: 0;
             white-space: nowrap;
         }
 
         .btn-restore-rev:hover {
-            background: rgba(56, 189, 248, 0.24);
+            background: rgba(29, 78, 216, 0.32);
         }
 
         /* Hub a 4 Card */
@@ -563,22 +609,23 @@
         .hub-card:active { transform: scale(0.97); }
 
         .hub-card.active {
-            border-color: var(--primary-glow);
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(15, 23, 42, 0.85));
-            box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+            border-color: var(--primary-royal);
+            background: linear-gradient(135deg, rgba(29, 78, 216, 0.28), rgba(13, 20, 36, 0.9));
+            box-shadow: 0 0 16px rgba(59, 130, 246, 0.22);
         }
 
         .hub-card .card-lock {
             position: absolute;
             top: 8px;
             right: 8px;
-            font-size: 10px;
-            padding: 2px 6px;
+            font-size: 9.5px;
+            padding: 2px 7px;
             border-radius: 8px;
-            background: rgba(245, 158, 11, 0.25);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.4);
-            font-weight: 700;
+            background: rgba(217, 119, 6, 0.22);
+            color: #fcd34d;
+            border: 1px solid rgba(245, 158, 11, 0.42);
+            font-weight: 800;
+            letter-spacing: 0.4px;
         }
 
         .hub-icon-wrapper {
@@ -590,13 +637,13 @@
             justify-content: center;
             margin-bottom: 10px;
             font-size: 22px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .hub-card.active .hub-icon-wrapper {
-            background: rgba(37, 99, 235, 0.35);
-            border-color: var(--primary-glow);
+            background: rgba(29, 78, 216, 0.38);
+            border-color: var(--primary-royal);
         }
 
         .hub-card h3 {
@@ -628,13 +675,43 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .drawer-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
         .drawer-title {
             font-size: 15px;
             font-weight: 700;
-            margin-bottom: 4px;
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+
+        .btn-drawer-close-x {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: var(--text-muted);
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.15s;
+        }
+
+        .btn-drawer-close-x:hover {
+            background: rgba(225, 29, 72, 0.2);
+            border-color: rgba(225, 29, 72, 0.45);
+            color: #fb7185;
         }
 
         .drawer-sub {
@@ -670,7 +747,7 @@
             padding: 11px 13px;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.12);
-            background: rgba(7, 10, 19, 0.85);
+            background: rgba(6, 9, 17, 0.88);
             color: var(--text-main);
             font-size: 13px;
             outline: none;
@@ -678,8 +755,8 @@
         }
 
         select:focus, textarea:focus, input:focus {
-            border-color: var(--primary-glow);
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+            border-color: var(--primary-royal);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
         }
 
         textarea {
@@ -688,7 +765,7 @@
             line-height: 1.45;
         }
 
-        /* Sub-Markers Inspector Pills (TITLE, SUBTITLE, DESC, IMG) */
+        /* Sub-Markers Inspector Pills */
         .submarkers-box {
             display: none;
             margin-top: 8px;
@@ -759,7 +836,7 @@
             padding: 7px 11px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.14);
-            background: rgba(7, 10, 19, 0.7);
+            background: rgba(6, 9, 17, 0.78);
             color: var(--text-muted);
             cursor: pointer;
             transition: all 0.15s;
@@ -767,24 +844,38 @@
         }
 
         .action-pill.selected {
-            background: rgba(37, 99, 235, 0.3);
-            border-color: var(--primary-glow);
+            background: rgba(29, 78, 216, 0.35);
+            border-color: var(--primary-royal);
             color: #ffffff;
         }
 
-        /* Upload File Personalizzato */
+        /* Doppio Tasto Carica Foto / Scatta Foto */
+        .photo-picker-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
         .file-upload-btn {
             position: relative;
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 11px 13px;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 10px;
             border-radius: 10px;
             border: 1px dashed rgba(255, 255, 255, 0.22);
             background: rgba(255, 255, 255, 0.03);
-            color: var(--text-muted);
+            color: #e2e8f0;
             font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
+            text-align: center;
+        }
+
+        .file-upload-btn:hover {
+            border-color: var(--primary-royal);
+            background: rgba(29, 78, 216, 0.12);
         }
 
         .file-upload-btn input[type="file"] {
@@ -798,8 +889,11 @@
         }
 
         .file-upload-name {
+            display: block;
+            margin-top: 6px;
+            font-size: 11px;
             font-weight: 600;
-            color: var(--primary-glow);
+            color: var(--primary-deep-accent);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -818,8 +912,8 @@
         }
 
         .existing-img-preview img {
-            width: 48px;
-            height: 48px;
+            width: 52px;
+            height: 52px;
             border-radius: 8px;
             object-fit: cover;
             background: rgba(0, 0, 0, 0.4);
@@ -840,12 +934,12 @@
             padding: 13px;
             border: none;
             border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #1e40af 100%);
             color: #ffffff;
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+            box-shadow: 0 4px 14px rgba(29, 78, 216, 0.35);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -864,10 +958,10 @@
         .btn-secondary-glass {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.35);
             border-radius: 10px;
-            background: rgba(56, 189, 248, 0.1);
-            color: var(--primary-glow);
+            background: rgba(29, 78, 216, 0.14);
+            color: #93c5fd;
             font-size: 12px;
             font-weight: 700;
             cursor: pointer;
@@ -887,10 +981,10 @@
             margin-top: 12px;
         }
 
-        /* Audit Summary & Full Report */
+        /* Audit Summary, Full Report & Prompt Correttivo */
         .audit-summary-card {
             background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(56, 189, 248, 0.25);
+            border: 1px solid rgba(59, 130, 246, 0.28);
             border-radius: 12px;
             padding: 12px 14px;
             font-size: 13px;
@@ -899,10 +993,43 @@
             color: #f1f5f9;
         }
 
+        .audit-fix-box {
+            display: none;
+            margin-top: 10px;
+            background: rgba(217, 119, 6, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .audit-fix-header {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #fcd34d;
+            margin-bottom: 6px;
+        }
+
+        .audit-fix-prompt-text {
+            background: rgba(6, 9, 17, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 9px 10px;
+            font-size: 12px;
+            color: #e2e8f0;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .audit-fix-actions {
+            display: flex;
+            gap: 8px;
+        }
+
         .audit-full-report {
             display: none;
             margin-top: 10px;
-            background: rgba(7, 10, 19, 0.85);
+            background: rgba(6, 9, 17, 0.88);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 10px;
             padding: 12px;
@@ -920,8 +1047,8 @@
             margin-bottom: 18px;
             padding: 16px;
             border-radius: 14px;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.88) 0%, rgba(15, 23, 42, 0.96) 100%);
-            border: 1px solid rgba(56, 189, 248, 0.38);
+            background: linear-gradient(135deg, rgba(23, 35, 58, 0.9) 0%, rgba(13, 20, 36, 0.96) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.42);
             text-align: center;
         }
 
@@ -941,7 +1068,7 @@
         .site-preview-link {
             display: inline-block;
             font-size: 12px;
-            color: var(--primary-glow);
+            color: var(--primary-deep-accent);
             text-decoration: underline;
             margin-bottom: 14px;
             font-weight: 600;
@@ -976,7 +1103,7 @@
             cursor: pointer;
         }
 
-        /* Modulo 3: Analytics Card Styling */
+        /* Modulo Statistiche Card Styling */
         .analytics-toolbar {
             display: flex;
             justify-content: space-between;
@@ -1003,7 +1130,7 @@
         .analytics-stat-num {
             font-size: 22px;
             font-weight: 800;
-            color: #38bdf8;
+            color: var(--primary-deep-accent);
             margin-top: 4px;
         }
 
@@ -1031,17 +1158,19 @@
             padding: 6px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             font-size: 12px;
+            gap: 8px;
         }
 
         .metric-list-row:last-child { border-bottom: none; }
 
         .metric-badge-count {
-            background: rgba(56, 189, 248, 0.16);
-            color: #38bdf8;
+            background: rgba(29, 78, 216, 0.24);
+            color: #93c5fd;
             font-weight: 700;
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 11px;
+            white-space: nowrap;
         }
 
         .privacy-badge {
@@ -1055,20 +1184,12 @@
             line-height: 1.4;
         }
 
-        /* Modulo 4: Store Intelligente & Sub-Tabs */
-        .store-quota-strip {
-            background: rgba(0, 0, 0, 0.28);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 10px;
-            padding: 8px 10px;
-            margin-bottom: 12px;
-        }
-
+        /* Modulo Store Intelligente & 2 Sub-Tabs (Catalogo + Regole) */
         .store-subtabs {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 6px;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0, 0, 0, 0.38);
             padding: 4px;
             border-radius: 10px;
             margin-bottom: 14px;
@@ -1080,15 +1201,15 @@
             border-radius: 8px;
             background: transparent;
             color: var(--text-muted);
-            font-size: 11px;
+            font-size: 11.5px;
             font-weight: 700;
             cursor: pointer;
         }
 
         .store-tab-btn.active {
-            background: rgba(37, 99, 235, 0.35);
+            background: rgba(29, 78, 216, 0.42);
             color: #ffffff;
-            border: 1px solid rgba(56, 189, 248, 0.35);
+            border: 1px solid rgba(59, 130, 246, 0.4);
         }
 
         .store-toolbar {
@@ -1103,8 +1224,8 @@
 
         .store-editor-card {
             display: none;
-            background: rgba(7, 10, 19, 0.88);
-            border: 1px solid rgba(56, 189, 248, 0.35);
+            background: rgba(6, 9, 17, 0.92);
+            border: 1px solid rgba(59, 130, 246, 0.4);
             border-radius: 12px;
             padding: 14px;
             margin-bottom: 14px;
@@ -1162,7 +1283,7 @@
         }
 
         .mb-featured { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-        .mb-new { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+        .mb-new { background: rgba(59, 130, 246, 0.22); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.42); }
         .mb-low { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
         .mb-hidden { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
 
@@ -1195,7 +1316,7 @@
         }
 
         .stock-btn-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
-        .stock-btn-red { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
+        .stock-btn-red { background: rgba(225, 29, 72, 0.2); color: #fb7185; border: 1px solid rgba(225, 29, 72, 0.4); }
 
         .inventory-kpi-grid {
             display: grid;
@@ -1216,7 +1337,7 @@
         }
 
         .notif-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
-        .notif-error { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.35); }
+        .notif-error { background: rgba(225, 29, 72, 0.15); color: #fb7185; border: 1px solid rgba(225, 29, 72, 0.35); }
 
         /* Modale Custom Glassmorphism */
         .glass-modal-overlay {
@@ -1236,7 +1357,7 @@
             width: 100%;
             max-width: 480px;
             background: var(--surface-glass-strong);
-            border: 1px solid rgba(56, 189, 248, 0.32);
+            border: 1px solid rgba(59, 130, 246, 0.35);
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
@@ -1285,7 +1406,7 @@
             border-radius: 12px;
             overflow: hidden;
             background: #000;
-            border: 1px solid rgba(56, 189, 248, 0.35);
+            border: 1px solid rgba(59, 130, 246, 0.38);
             margin-bottom: 10px;
             position: relative;
         }
@@ -1297,38 +1418,24 @@
             display: block;
         }
 
-        /* Pannello Amministratore Dedicato */
-        .admin-tenant-card {
-            background: rgba(0, 0, 0, 0.38);
-            border: 1px solid rgba(255, 255, 255, 0.09);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-        }
-
-        .admin-site-pill {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            border-radius: 8px;
-            padding: 8px;
-            margin-top: 8px;
-            font-size: 11px;
-        }
-
         /* Footer Istituzionale */
         .app-footer {
             margin-top: auto;
-            padding-top: 20px;
+            padding-top: 22px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             text-align: center;
-            font-size: 11px;
+            font-size: 11.5px;
             color: var(--text-hint);
         }
 
         .app-footer a {
-            color: var(--primary-glow);
+            color: #3b82f6;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
+        }
+
+        .app-footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -1337,19 +1444,19 @@
     <div class="app-container">
 
         <!-- ============================================================== -->
-        <!-- 1. SCHERMATA ACCESSO ZERO-GOOGLE (PASSKEY • DUAL-QR • 1° ACCESSO)-->
+        <!-- 1. SCHERMATA ACCESSO (PASSKEY • DUAL-QR • 1° ACCESSO)          -->
         <!-- ============================================================== -->
         <div id="auth-screen">
             <div class="auth-card">
                 <div class="auth-logo-row">
-                    <h1>SiteMaster Console v6.0</h1>
-                    <p>The Orbis Project — Architettura Blindata Zero-Google</p>
+                    <h1>SiteMaster Console Orbis</h1>
+                    <p>Benvenuti nell'applicazione intelligente per la gestione e la cura del tuo sito web</p>
                 </div>
 
                 <div class="auth-tabs">
                     <button type="button" class="auth-tab-btn active" id="tab-auth-passkey" onclick="switchAuthTab('passkey')">👆 Passkey</button>
                     <button type="button" class="auth-tab-btn" id="tab-auth-qr" onclick="switchAuthTab('qr')">📷 Accesso QR</button>
-                    <button type="button" class="auth-tab-btn" id="tab-auth-first" onclick="switchAuthTab('first')">🎟️ 1° Accesso</button>
+                    <button type="button" class="auth-tab-btn" id="tab-auth-first" onclick="switchAuthTab('first')">🔑 1° Accesso</button>
                 </div>
 
                 <!-- TAB 1: ACCESSO BIOMETRICO / PIN DISPOSITIVO -->
@@ -1362,7 +1469,7 @@
                     </button>
                 </div>
 
-                <!-- TAB 2: DUAL-QR BRIDGE (STILE WHATSAPP WEB) -->
+                <!-- TAB 2: DUAL-QR BRIDGE -->
                 <div id="auth-panel-qr" style="display: none;">
                     <div class="qr-mode-switch">
                         <button type="button" class="qr-mode-btn active" id="qr-mode-temp" onclick="selectQrAuthMode('temp_login')">
@@ -1376,7 +1483,7 @@
                     <div class="qr-stage-box">
                         <div class="qr-status-pill" id="qr-status-pill">⏳ In attesa di scansione...</div>
                         <p id="qr-mode-desc" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4; margin-bottom: 4px;">
-                            Inquadra questo QR dal tuo telefono già connesso. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.
+                            Inquadra questo QR dal dispositivo già connesso. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.
                         </p>
 
                         <div class="qr-svg-frame" id="qr-svg-container"></div>
@@ -1388,7 +1495,7 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: PRIMO ACCESSO BURN-AFTER-READING -->
+                <!-- TAB 3: PRIMO ACCESSO -->
                 <div id="auth-panel-first" style="display: none;">
                     <form id="first-access-form">
                         <div class="form-row">
@@ -1400,16 +1507,16 @@
                             <input type="password" id="first_password_input" autocomplete="off" placeholder="Inserisci password temporanea" required>
                         </div>
                         <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
-                            🔥 <b>Autodistruzione Credenziali:</b> Subito dopo l'ingresso potrai dare un nome a questo dispositivo e registrare la tua biometria o PIN. Da quel momento username e password verranno distrutti per sempre.
+                            🔐 <b>Attivazione Sicura:</b> Subito dopo l'ingresso potrai dare un nome a questo dispositivo e registrare la tua biometria o PIN. Da quel momento le credenziali temporanee verranno disattivate per sempre.
                         </p>
                         <button type="submit" class="btn-glow-primary" id="btn-first-access">
-                            <span>🔐 Accedi e Attiva Dispositivo</span>
+                            <span>🔑 Accedi e Attiva Dispositivo</span>
                         </button>
                     </form>
                 </div>
 
                 <div class="privacy-zero-note">
-                    🛡️ <b>Zero-Retention &amp; Zero-Google:</b> Nessuna email, numero di telefono o account esterno collegato. I tuoi dati restano esclusivamente nei tuoi dispositivi.
+                    🛡️ <b>Privacy &amp; Sicurezza:</b> Nessuna email, numero di telefono o account esterno collegato. I tuoi dati restano esclusivamente nei tuoi dispositivi.
                 </div>
             </div>
         </div>
@@ -1426,18 +1533,17 @@
             <!-- Header Istituzionale -->
             <header class="brand-header">
                 <div class="brand-titles">
-                    <h1 id="enterprise-name">SiteMaster Console</h1>
-                    <p id="user-domain-label">The Orbis Project — Smart Core</p>
+                    <h1 id="enterprise-name">SiteMaster Console Orbis</h1>
                 </div>
                 <div class="header-right-actions">
-                    <div id="tier-badge" class="tier-badge base">PIANO BASE</div>
-                    <button type="button" class="btn-header-icon" title="Scansiona QR da PC/Tablet" onclick="openQrScannerModal()">📷</button>
-                    <button type="button" class="btn-header-icon" title="Dispositivi &amp; Passkey (Max 4)" onclick="openPasskeyManagerModal()">🔑</button>
-                    <button type="button" class="btn-header-icon btn-logout" title="Disconnetti" onclick="logoutSession()">🚪</button>
+                    <div id="tier-badge" class="tier-badge base">BASE</div>
+                    <button type="button" class="btn-header-icon" title="Autorizza Nuovo Dispositivo con QR" onclick="openQrScannerModal()">📷</button>
+                    <button type="button" class="btn-header-icon" title="Dispositivi Autorizzati" onclick="openPasskeyManagerModal()">📱</button>
+                    <button type="button" class="btn-header-icon btn-logout" title="Esci" onclick="logoutSession()">✕</button>
                 </div>
             </header>
 
-            <!-- Selettore Multi-Sito (1 Utente = N Siti) -->
+            <!-- Selettore Multi-Sito (Solo nomi puliti dei siti) -->
             <div class="site-switcher-bar" id="site-switcher-bar">
                 <label for="site-switcher">🌐 Sito Attivo:</label>
                 <select id="site-switcher" onchange="onSwitchSite(this.value)"></select>
@@ -1452,7 +1558,7 @@
                 </button>
             </div>
 
-            <!-- Barra Telemetria, Quota Mensile & Macchina del Tempo GitHub -->
+            <!-- Barra Telemetria, Quote Mensili & Cronologia GitHub -->
             <div class="telemetry-card">
                 <div class="telemetry-grid">
                     <div class="tele-item">
@@ -1465,161 +1571,99 @@
                     </div>
                     <div class="tele-item">
                         <div class="tele-label">Dispositivi</div>
-                        <div class="tele-val" id="tele-devices" style="color: #38bdf8;">🔑 0 / 4</div>
+                        <div class="tele-val" id="tele-devices" style="color: var(--primary-deep-accent);">📱 0 / 4</div>
                     </div>
                 </div>
+
+                <!-- Contatore 1: Modifiche AI Mensili -->
                 <div class="progress-wrapper">
                     <div class="progress-meta">
-                        <span>Modifiche AI Mensili Consumate</span>
+                        <span>Modifiche AI Mensili</span>
                         <span id="progress-count-text">0 / 30</span>
                     </div>
                     <div class="progress-bar-bg">
                         <div id="progress-bar-fill" class="progress-bar-fill"></div>
                     </div>
                 </div>
+
+                <!-- Contatore 2: Rilevazioni Statistiche Mensili -->
+                <div class="progress-wrapper" style="margin-top: 10px;">
+                    <div class="progress-meta">
+                        <span>Rilevazioni Statistiche Mensili</span>
+                        <span id="tele-stats-count-text">0 / 10.000</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="tele-stats-bar-fill" class="progress-bar-fill" style="background: linear-gradient(90deg, #10b981, #3b82f6);"></div>
+                    </div>
+                </div>
+
                 <!-- Macchina del Tempo GitHub: Cronologia Modifiche & Ripristino -->
                 <div class="mini-log-toggle" onclick="toggleMiniAuditLog()">
-                    <span>🕒 Cronologia Modifiche &amp; Ripristino GitHub</span>
+                    <span>🕒 Cronologia Modifiche &amp; Ripristino</span>
                     <span id="mini-log-arrow">▼ Mostra</span>
                 </div>
                 <div class="mini-log-list" id="mini-log-list"></div>
             </div>
 
-            <!-- Hub 4 Colonne Principali -->
+            <!-- Hub a 4 Card (Ordine: Statistiche, Editor, Diagnostica, Store) -->
             <div class="hub-grid">
-                <div class="hub-card" id="card-hub-audit" onclick="openDrawer('audit')">
-                    <div class="hub-icon-wrapper">🛡️</div>
-                    <h3>Diagnostica IA</h3>
-                    <span>Check salute codice</span>
+                <!-- Card 1 (Alto-Sinistra): Statistiche Sito & Prodotti (Tutti i piani) -->
+                <div class="hub-card" id="card-hub-analytics" onclick="openDrawer('analytics')">
+                    <div class="hub-icon-wrapper">📊</div>
+                    <h3>Statistiche Sito</h3>
+                    <span>Visite, clic e prodotti</span>
                 </div>
 
+                <!-- Card 2 (Alto-Destra): Editor Sezioni (Tutti i piani) -->
                 <div class="hub-card" id="card-hub-edit" onclick="openDrawer('edit')">
                     <div class="hub-icon-wrapper">✏️</div>
                     <h3>Editor Sezioni</h3>
                     <span>Patch mirate al volo</span>
                 </div>
 
-                <div class="hub-card" id="card-hub-analytics" onclick="openDrawer('analytics')">
-                    <div id="lock-analytics" class="card-lock" style="display: none;">PRO</div>
-                    <div class="hub-icon-wrapper">📊</div>
-                    <h3>Statistiche Sito</h3>
-                    <span>Privacy-First Analytics</span>
+                <!-- Card 3 (Basso-Sinistra): Diagnostica IA (Piani Gold e Pro) -->
+                <div class="hub-card" id="card-hub-audit" onclick="openDrawer('audit')">
+                    <div id="lock-audit" class="card-lock" style="display: none;">GOLD</div>
+                    <div class="hub-icon-wrapper">🛡️</div>
+                    <h3>Diagnostica IA</h3>
+                    <span>Check salute codice</span>
                 </div>
 
+                <!-- Card 4 (Basso-Destra): Gestione Store (Solo Piano Pro) -->
                 <div class="hub-card" id="card-hub-store" onclick="openDrawer('store')">
-                    <div id="lock-store" class="card-lock" style="display: none;">STORE</div>
+                    <div id="lock-store" class="card-lock" style="display: none;">PRO</div>
                     <div class="hub-icon-wrapper">🛍️</div>
                     <h3>Gestione Store</h3>
-                    <span>Catalogo e metriche</span>
+                    <span>Catalogo e regole</span>
                 </div>
             </div>
 
             <!-- ============================================================== -->
-            <!-- DRAWER 1: DIAGNOSTICA IA / CHECK GIORNALIERO                   -->
-            <!-- ============================================================== -->
-            <div id="drawer-audit" class="panel-drawer">
-                <div class="drawer-title">🛡️ Diagnostica IA Quotidiana</div>
-                <p class="drawer-sub">Ispezione statica deterministica + Red Teaming Gemini Pro su sicurezza, mobile e reattività &lt;150ms.</p>
-
-                <button type="button" class="btn-glow-primary" id="btn-run-audit" onclick="triggerDailyAudit()">
-                    <span>Avvia Scansione Strutturale</span>
-                </button>
-
-                <div id="audit-report-container" style="display: none; margin-top: 14px;">
-                    <div class="audit-summary-card" id="audit-summary-content"></div>
-                    <button type="button" class="btn-secondary-glass" id="btn-toggle-full-audit" onclick="toggleFullAuditReport()">
-                        📄 Mostra Report Tecnico Completo
-                    </button>
-                    <div class="audit-full-report" id="audit-report-content"></div>
-                </div>
-
-                <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
-            </div>
-
-            <!-- ============================================================== -->
-            <!-- DRAWER 2: EDITOR CHIRURGICO PER SEZIONI & SOTTO-MARCATORI      -->
-            <!-- ============================================================== -->
-            <div id="drawer-edit" class="panel-drawer">
-                <div class="drawer-title">✏️ Editor Chirurgico per Sezioni</div>
-                <p class="drawer-sub">Seleziona pagina e sezione target. I blocchi Store sono isolati automaticamente dal Tagliafuoco.</p>
-
-                <form id="editor-form">
-                    <div class="form-row">
-                        <label for="target_page">Pagina del Sito</label>
-                        <select id="target_page" name="target_page" onchange="loadSiteSections(this.value)">
-                            <option value="index.html" selected>index.html</option>
-                        </select>
-                    </div>
-
-                    <div class="form-row">
-                        <label for="target_section">Sezione da modificare</label>
-                        <select id="target_section" name="target_section" onchange="renderSubMarkersPreview()" required>
-                            <option value="AUTO" selected>✨ Modifica Intelligente (Globale)</option>
-                        </select>
-
-                        <div class="submarkers-box" id="submarkers-box">
-                            <div class="submarkers-header">Sotto-marcatori rilevati nella sezione</div>
-                            <div class="submarkers-grid" id="submarkers-grid"></div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <label>Tipi di operazione (seleziona uno o più)</label>
-                        <div class="action-pills-grid" id="action-pills-grid">
-                            <div class="action-pill selected" data-val="Modifica Aperta" onclick="toggleActionPill(this)">💬 Testi</div>
-                            <div class="action-pill" data-val="Aggiornamento Prezzi" onclick="toggleActionPill(this)">🏷️ Prezzi / Tariffe</div>
-                            <div class="action-pill" data-val="Sostituzione Foto" onclick="toggleActionPill(this)">📸 Immagine WebP</div>
-                            <div class="action-pill" data-val="Restyling Grafico" onclick="toggleActionPill(this)">🎨 Colori / Dettagli</div>
-                            <div class="action-pill" data-val="Aggiornamento Link" onclick="toggleActionPill(this)">🔗 Link / CTA</div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <label for="instruction_text">Cosa desideri modificare?</label>
-                        <textarea id="instruction_text" name="instruction" placeholder="Es: Cambia il titolo hero in 'Esperienza Esclusiva' e aggiorna la descrizione..." required></textarea>
-                    </div>
-
-                    <div class="form-row">
-                        <label>Immagine da inserire (Opzionale — Max 12 MB, conversione WebP)</label>
-                        <div class="file-upload-btn">
-                            <span>📁 Scegli foto da ottimizzare...</span>
-                            <span id="chosen-file-label" class="file-upload-name"></span>
-                            <input type="file" id="image_input" accept="image/*" onchange="handleFileSelection(this, 'chosen-file-label')">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-glow-primary" id="btn-submit-edit">
-                        <span>🔐 Firma con Passkey &amp; Applica</span>
-                    </button>
-                </form>
-
-                <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
-            </div>
-
-            <!-- ============================================================== -->
-            <!-- DRAWER 3: STATISTICHE SITO (PRIVACY-FIRST ANALYTICS)           -->
+            <!-- DRAWER 1: STATISTICHE SITO & PRODOTTI (TUTTI I PIANI)          -->
             <!-- ============================================================== -->
             <div id="drawer-analytics" class="panel-drawer">
-                <div class="drawer-title">📊 Statistiche Sito (Privacy-First)</div>
-                <p class="drawer-sub">Metriche anonime di navigazione e clic pulsanti a zero cookie e zero IP (GDPR-Free).</p>
+                <div class="drawer-header-bar">
+                    <div class="drawer-title">📊 Statistiche Sito &amp; Prodotti</div>
+                    <button type="button" class="btn-drawer-close-x" title="Chiudi" onclick="closeAllDrawers()">✕</button>
+                </div>
+                <p class="drawer-sub">Metriche anonime di navigazione, interazioni e rendimento prodotti a zero cookie e zero IP.</p>
 
-                <div id="analytics-unlocked-content" style="display: none;">
+                <div id="analytics-unlocked-content">
                     <div class="analytics-toolbar">
                         <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Rilevazioni Mensili Incluse</span>
                         <button type="button" class="small-icon-btn" id="btn-refresh-analytics" onclick="loadAnalytics()">🔄 Aggiorna</button>
                     </div>
 
-                    <!-- Barra Soglia 1.000 Rilevazioni Mensili -->
-                    <div class="store-quota-strip">
+                    <div class="store-quota-strip" style="background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 10px; margin-bottom: 12px;">
                         <div class="progress-meta" style="margin-bottom: 4px;">
                             <span>Quota Rilevazioni Mensili</span>
-                            <span id="stats-quota-text">0 / 1000</span>
+                            <span id="stats-quota-text">0 / 10.000</span>
                         </div>
                         <div class="progress-bar-bg">
                             <div id="stats-quota-fill" class="progress-bar-fill"></div>
                         </div>
                         <div id="stats-limit-alert" style="display:none; font-size:11px; color:#fbbf24; margin-top:6px;">
-                            ⚠️ Soglia mensile di rilevazioni raggiunta. Richiedi l'estensione del pacchetto a The Orbis Project.
+                            ⚠️ Soglia mensile di rilevazioni raggiunta. Richiedi l'estensione a The Orbis Project.
                         </div>
                     </div>
 
@@ -1649,17 +1693,42 @@
                         <div id="analytics-tracks-list"></div>
                     </div>
 
+                    <!-- Sezione Dedicata ai Prodotti dello Store (Visibile quando il sito è Pro / ha un catalogo) -->
+                    <div id="analytics-products-wrapper" style="display: none;">
+                        <div class="inventory-kpi-grid">
+                            <div class="analytics-stat-box">
+                                <div class="tele-label">Prodotti Totali</div>
+                                <div class="analytics-stat-num" id="st-kpi-total">0</div>
+                            </div>
+                            <div class="analytics-stat-box">
+                                <div class="tele-label">Disponibili</div>
+                                <div class="analytics-stat-num text-emerald" id="st-kpi-avail">0</div>
+                            </div>
+                            <div class="analytics-stat-box">
+                                <div class="tele-label">Scorte Basse</div>
+                                <div class="analytics-stat-num text-amber" id="st-kpi-low">0</div>
+                            </div>
+                        </div>
+
+                        <div class="analytics-block">
+                            <div class="analytics-block-title">🏆 Top Prodotti (Clic &amp; Carrello)</div>
+                            <div id="st-top-products-list"></div>
+                        </div>
+
+                        <div class="analytics-block">
+                            <div class="analytics-block-title">📦 Rendimento Tutti i Prodotti</div>
+                            <div id="st-all-products-list" style="max-height: 210px; overflow-y: auto;"></div>
+                        </div>
+
+                        <div class="analytics-block">
+                            <div class="analytics-block-title">💤 Prodotti a Zero o Poche Interazioni</div>
+                            <div id="st-zero-products-list"></div>
+                        </div>
+                    </div>
+
                     <div class="privacy-badge">
                         🔒 <b>Garanzia Legale:</b> Rilevazione eseguita senza memorizzare indirizzi IP né rilasciare cookie. Nessun banner di consenso richiesto.
                     </div>
-                </div>
-
-                <div id="analytics-locked-content" style="display: none; text-align: center; padding: 18px 8px;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">🔒</div>
-                    <h4 style="font-size: 14px; margin-bottom: 4px;">Modulo Riservato al Piano Pro</h4>
-                    <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
-                        Il cruscotto Privacy-First Analytics è incluso nel Piano Pro. Contatta The Orbis Project per attivarlo.
-                    </p>
                 </div>
 
                 <div id="analytics-error-content" style="display: none; text-align: center; padding: 18px 8px;">
@@ -1668,38 +1737,141 @@
                     <p id="analytics-error-msg" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;"></p>
                     <button type="button" class="btn-secondary-glass" style="width: auto; padding: 8px 16px;" onclick="loadAnalytics()">🔄 Riprova</button>
                 </div>
-
-                <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
             </div>
 
             <!-- ============================================================== -->
-            <!-- DRAWER 4: GESTIONE STORE INTELLIGENTE & STATISTICHE PRODOTTI   -->
+            <!-- DRAWER 2: EDITOR SEZIONI (MODIFICA INTELLIGENTE / GUIDATA)     -->
             <!-- ============================================================== -->
-            <div id="drawer-store" class="panel-drawer">
-                <div class="drawer-title">🛍️ Store Intelligente &amp; Catalogo</div>
-                <p class="drawer-sub">Sincronizzazione deterministica su GitHub a zero token IA con badge e ordinamento automatico.</p>
+            <div id="drawer-edit" class="panel-drawer">
+                <div class="drawer-header-bar">
+                    <div class="drawer-title">✏️ Editor Sezioni</div>
+                    <button type="button" class="btn-drawer-close-x" title="Chiudi" onclick="closeAllDrawers()">✕</button>
+                </div>
+                <p class="drawer-sub">Scegli se lasciare agire l'intelligenza artificiale sull'intero sito oppure selezionare una singola sezione.</p>
 
-                <div id="store-unlocked-content" style="display: none;">
-                    <div class="store-quota-strip">
-                        <div class="progress-meta" style="margin-bottom: 4px;">
-                            <span>Operazioni Store Mensili (Zero Token IA)</span>
-                            <span id="store-progress-text">0 / 100</span>
-                        </div>
-                        <div class="progress-bar-bg">
-                            <div id="store-progress-fill" class="progress-bar-fill" style="background: linear-gradient(90deg, #10b981, #38bdf8);"></div>
+                <form id="editor-form">
+                    <div class="form-row">
+                        <label for="edit_mode_select">Modalità di Modifica</label>
+                        <select id="edit_mode_select" onchange="onEditModeChange(this.value)">
+                            <option value="intelligent" selected>✨ Modifica Intelligente</option>
+                            <option value="guided">🎯 Modifica Guidata</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row" id="guided-section-wrapper" style="display: none;">
+                        <label for="target_section">Sezione da modificare</label>
+                        <select id="target_section" name="target_section" onchange="renderSubMarkersPreview()">
+                        </select>
+
+                        <div class="submarkers-box" id="submarkers-box">
+                            <div class="submarkers-header">Elementi rilevati nella sezione</div>
+                            <div class="submarkers-grid" id="submarkers-grid"></div>
                         </div>
                     </div>
 
+                    <div class="form-row">
+                        <label>Tipi di operazione (seleziona uno o più)</label>
+                        <div class="action-pills-grid" id="action-pills-grid">
+                            <div class="action-pill selected" data-val="Modifica Aperta" onclick="toggleActionPill(this)">💬 Testi</div>
+                            <div class="action-pill" data-val="Aggiornamento Prezzi" onclick="toggleActionPill(this)">🏷️ Prezzi / Tariffe</div>
+                            <div class="action-pill" data-val="Sostituzione Foto" onclick="toggleActionPill(this)">📸 Immagine</div>
+                            <div class="action-pill" data-val="Animazioni" onclick="toggleActionPill(this)">✨ Animazioni</div>
+                            <div class="action-pill" data-val="Restyling Grafico" onclick="toggleActionPill(this)">🎨 Colori / Dettagli</div>
+                            <div class="action-pill" data-val="Aggiornamento Link" onclick="toggleActionPill(this)">🔗 Link / CTA</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="instruction_text">Spiega la tua modifica</label>
+                        <textarea id="instruction_text" name="instruction" placeholder="Es: Cambia il titolo principale in 'Esperienza Esclusiva' e aggiorna la descrizione..." required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Immagine da inserire (Opzionale)</label>
+                        <div class="photo-picker-grid">
+                            <div class="file-upload-btn">
+                                <span>📁 Carica Foto</span>
+                                <input type="file" id="image_input_gallery" accept="image/*" onchange="handleDualPhotoSelection(this, 'image_input_camera', 'chosen-file-label')">
+                            </div>
+                            <div class="file-upload-btn">
+                                <span>📷 Scatta Foto</span>
+                                <input type="file" id="image_input_camera" accept="image/*" capture="environment" onchange="handleDualPhotoSelection(this, 'image_input_gallery', 'chosen-file-label')">
+                            </div>
+                        </div>
+                        <span id="chosen-file-label" class="file-upload-name"></span>
+                    </div>
+
+                    <button type="submit" class="btn-glow-primary" id="btn-submit-edit">
+                        <span>Applica Modifiche</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- DRAWER 3: DIAGNOSTICA IA QUOTIDIANA (PIANI GOLD E PRO)         -->
+            <!-- ============================================================== -->
+            <div id="drawer-audit" class="panel-drawer">
+                <div class="drawer-header-bar">
+                    <div class="drawer-title">🛡️ Diagnostica IA Quotidiana</div>
+                    <button type="button" class="btn-drawer-close-x" title="Chiudi" onclick="closeAllDrawers()">✕</button>
+                </div>
+                <p class="drawer-sub">Ispezione strutturale e verifica di sicurezza, adattabilità mobile e reattività &lt;150ms.</p>
+
+                <div id="audit-unlocked-content">
+                    <button type="button" class="btn-glow-primary" id="btn-run-audit" onclick="triggerDailyAudit()">
+                        <span>Avvia Scansione Strutturale</span>
+                    </button>
+
+                    <div id="audit-report-container" style="display: none; margin-top: 14px;">
+                        <div class="audit-summary-card" id="audit-summary-content"></div>
+
+                        <!-- Box Prompt Correttivo (visibile se 🟡 MIGLIORABILE o 🔴 CRITICO) -->
+                        <div class="audit-fix-box" id="audit-fix-box">
+                            <div class="audit-fix-header">💡 Suggerimento di Ottimizzazione Pronto:</div>
+                            <div class="audit-fix-prompt-text" id="audit-fix-prompt-text"></div>
+                            <div class="audit-fix-actions">
+                                <button type="button" class="small-icon-btn" id="btn-copy-audit-prompt" onclick="copyAuditFixPrompt()" style="flex:1;">📋 Copia Prompt</button>
+                                <button type="button" class="small-icon-btn" onclick="applyAuditPromptInEditor()" style="flex:1; background: rgba(29,78,216,0.28); border-color: rgba(59,130,246,0.45); color:#93c5fd;">✏️ Apri nell'Editor</button>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-secondary-glass" id="btn-toggle-full-audit" onclick="toggleFullAuditReport()">
+                            📄 Mostra Report Tecnico Completo
+                        </button>
+                        <div class="audit-full-report" id="audit-report-content"></div>
+                    </div>
+                </div>
+
+                <div id="audit-locked-content" style="display: none; text-align: center; padding: 18px 8px;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">🔒</div>
+                    <h4 style="font-size: 14px; margin-bottom: 4px;">Modulo Riservato ai Piani Gold e Pro</h4>
+                    <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+                        La Diagnostica IA Quotidiana con verifica di sicurezza e suggerimenti automatici è inclusa nei piani Gold e Pro.
+                    </p>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- DRAWER 4: GESTIONE STORE (CATALOGO & REGOLE — PIANO PRO)       -->
+            <!-- ============================================================== -->
+            <div id="drawer-store" class="panel-drawer">
+                <div class="drawer-header-bar">
+                    <div class="drawer-title">🛍️ Gestione Store</div>
+                    <button type="button" class="btn-drawer-close-x" title="Chiudi" onclick="closeAllDrawers()">✕</button>
+                </div>
+                <p class="drawer-sub">Aggiorna prezzi, disponibilità, fotografie e regole automatiche della vetrina.</p>
+
+                <div id="store-unlocked-content" style="display: none;">
                     <div class="store-subtabs">
                         <button type="button" class="store-tab-btn active" id="stab-catalog" onclick="switchStoreTab('catalog')">📦 Catalogo</button>
-                        <button type="button" class="store-tab-btn" id="stab-stats" onclick="switchStoreTab('stats')">📈 Statistiche</button>
                         <button type="button" class="store-tab-btn" id="stab-settings" onclick="switchStoreTab('settings')">⚙️ Regole</button>
                     </div>
 
+                    <!-- TAB 4A: CATALOGO & EDITOR PRODOTTO -->
                     <div id="store-view-catalog">
                         <div class="store-toolbar">
                             <select id="store-location-filter" onchange="renderFilteredStoreItems()" style="flex: 1;">
-                                <option value="ALL">Tutte le pagine e sezioni</option>
+                                <option value="ALL">Tutte le sezioni del catalogo</option>
                             </select>
                             <button type="button" class="btn-glow-primary" style="width: auto; padding: 10px 14px;" onclick="openStoreItemForm(null)">
                                 <span>➕ Nuovo</span>
@@ -1707,7 +1879,7 @@
                         </div>
 
                         <div class="store-search-row">
-                            <input type="search" id="store-search-input" placeholder="🔍 Cerca articolo per nome, ID o descrizione..." oninput="renderFilteredStoreItems()">
+                            <input type="search" id="store-search-input" placeholder="🔍 Cerca articolo per nome o descrizione..." oninput="renderFilteredStoreItems()">
                         </div>
 
                         <div class="store-editor-card" id="store-item-editor">
@@ -1755,13 +1927,13 @@
                                         <input type="date" id="st_release_date">
                                     </div>
                                 </div>
-                                <div class="form-grid-2">
+                                <div class="form-grid-2" id="st-location-selectors-row">
                                     <div>
-                                        <label for="st_page">Pagina Destinazione</label>
+                                        <label for="st_page">Pagina</label>
                                         <select id="st_page" onchange="onStoreFormPageChange()"></select>
                                     </div>
                                     <div>
-                                        <label for="st_section">Sezione Store ID</label>
+                                        <label for="st_section">Sezione Vetrina</label>
                                         <select id="st_section"></select>
                                     </div>
                                 </div>
@@ -1777,10 +1949,10 @@
                                     <input type="text" id="st_description" placeholder="Caratteristiche principali...">
                                 </div>
                                 <div class="form-row">
-                                    <label>Foto Prodotto (Max 12 MB — WebP automatico)</label>
+                                    <label>Foto Prodotto (Opzionale)</label>
 
                                     <div class="existing-img-preview" id="st-existing-image-box">
-                                        <img id="st-existing-image-thumb" src="" alt="Anteprima prodotto">
+                                        <img id="st-existing-image-thumb" src="" alt="Anteprima prodotto" onerror="document.getElementById('st-existing-image-box').style.display='none';">
                                         <div class="existing-img-meta">
                                             <div style="color:#e2e8f0; font-weight:600;">Immagine attuale online</div>
                                             <div>Lascia vuoto per mantenerla, oppure caricane una nuova.</div>
@@ -1790,15 +1962,21 @@
                                         </div>
                                     </div>
 
-                                    <div class="file-upload-btn">
-                                        <span>📸 Carica immagine prodotto...</span>
-                                        <span id="st-chosen-file-label" class="file-upload-name"></span>
-                                        <input type="file" id="st_image" accept="image/*" onchange="handleFileSelection(this, 'st-chosen-file-label')">
+                                    <div class="photo-picker-grid">
+                                        <div class="file-upload-btn">
+                                            <span>📁 Carica Foto</span>
+                                            <input type="file" id="st_image" accept="image/*" onchange="handleDualPhotoSelection(this, 'st_image_camera', 'st-chosen-file-label')">
+                                        </div>
+                                        <div class="file-upload-btn">
+                                            <span>📷 Scatta Foto</span>
+                                            <input type="file" id="st_image_camera" accept="image/*" capture="environment" onchange="handleDualPhotoSelection(this, 'st_image', 'st-chosen-file-label')">
+                                        </div>
                                     </div>
+                                    <span id="st-chosen-file-label" class="file-upload-name"></span>
                                 </div>
                                 <div class="action-split">
                                     <button type="submit" class="btn-glow-primary" id="btn-save-store-item">
-                                        <span>🔐 Salva Prodotto</span>
+                                        <span>Salva Prodotto</span>
                                     </button>
                                     <button type="button" class="btn-outline-close" style="margin-top: 0; width: auto; padding: 0 14px;" onclick="closeStoreItemForm()">Annulla</button>
                                 </div>
@@ -1808,51 +1986,22 @@
                         <div class="catalog-list" id="store-items-container"></div>
                     </div>
 
-                    <div id="store-view-stats" style="display: none;">
-                        <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-                            <button type="button" class="small-icon-btn" onclick="loadStoreCatalog()">🔄 Aggiorna Metriche</button>
-                        </div>
-
-                        <div class="inventory-kpi-grid">
-                            <div class="analytics-stat-box">
-                                <div class="tele-label">Totale</div>
-                                <div class="analytics-stat-num" id="st-kpi-total">0</div>
-                            </div>
-                            <div class="analytics-stat-box">
-                                <div class="tele-label">Disponibili</div>
-                                <div class="analytics-stat-num text-emerald" id="st-kpi-avail">0</div>
-                            </div>
-                            <div class="analytics-stat-box">
-                                <div class="tele-label">Scorte Basse</div>
-                                <div class="analytics-stat-num text-amber" id="st-kpi-low">0</div>
-                            </div>
-                        </div>
-
-                        <div class="analytics-block">
-                            <div class="analytics-block-title">🏆 Top Prodotti (Clic &amp; Carrello)</div>
-                            <div id="st-top-products-list"></div>
-                        </div>
-
-                        <div class="analytics-block">
-                            <div class="analytics-block-title">💤 Prodotti a Zero Interazioni</div>
-                            <div id="st-zero-products-list"></div>
-                        </div>
-                    </div>
-
+                    <!-- TAB 4B: REGOLE AUTOMATICHE STORE -->
                     <div id="store-view-settings" style="display: none;">
                         <form id="store-settings-form">
                             <div class="form-row">
                                 <label for="set_sort_mode">Ordinamento Automatico Vetrina</label>
                                 <select id="set_sort_mode">
                                     <option value="priority_then_newest">⭐ Priorità + Più Recenti (Consigliato)</option>
-                                    <option value="newest">🆕 Più Recenti Prima</option>
+                                    <option value="date_desc">🆕 Data Inserimento (Più Recenti)</option>
+                                    <option value="date_asc">📅 Data Inserimento (Meno Recenti)</option>
                                     <option value="price_asc">💶 Prezzo Crescente</option>
                                     <option value="price_desc">💎 Prezzo Decrescente</option>
                                 </select>
                             </div>
                             <div class="form-grid-2">
                                 <div>
-                                    <label for="set_new_days">Durata Badge "Novità" (giorni)</label>
+                                    <label for="set_new_days">Durata "Novità" (giorni)</label>
                                     <input type="number" id="set_new_days" min="0" value="15">
                                 </div>
                                 <div>
@@ -1861,7 +2010,7 @@
                                 </div>
                             </div>
                             <button type="submit" class="btn-glow-primary" id="btn-save-store-settings">
-                                <span>🔐 Applica Regole al Sito</span>
+                                <span>Applica Regole al Sito</span>
                             </button>
                         </form>
                     </div>
@@ -1869,9 +2018,9 @@
 
                 <div id="store-locked-content" style="display: none; text-align: center; padding: 18px 8px;">
                     <div style="font-size: 32px; margin-bottom: 8px;">📦</div>
-                    <h4 style="font-size: 14px; margin-bottom: 4px;">Modulo Store Non Attivo</h4>
+                    <h4 style="font-size: 14px; margin-bottom: 4px;">Modulo Riservato al Piano Pro</h4>
                     <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
-                        La gestione e-commerce richiede il Piano Pro Store. Contatta The Orbis Project per attivare il catalogo.
+                        La gestione completa del catalogo e delle regole e-commerce è inclusa nel Piano Pro.
                     </p>
                 </div>
 
@@ -1881,8 +2030,6 @@
                     <p id="store-error-msg" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;"></p>
                     <button type="button" class="btn-secondary-glass" style="width: auto; padding: 8px 16px;" onclick="loadStoreCatalog()">🔄 Riprova</button>
                 </div>
-
-                <button type="button" class="btn-outline-close" onclick="closeAllDrawers()">✖️ Chiudi Sezione</button>
             </div>
 
             <!-- ============================================================== -->
@@ -1904,8 +2051,7 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            Sviluppato con Ingegneria Umanistica da <a href="https://www.theorbisproject.com" target="_blank" rel="noopener">The Orbis Project</a> • Roma &nbsp;|&nbsp;
-            <a href="#" onclick="openAdminConsoleModal(event)" style="color: var(--text-hint);">⚙️ Admin</a>
+            App di gestione siti intelligenti • Creata da <a href="https://www.theorbisproject.com" target="_blank" rel="noopener">The Orbis Project</a>
         </footer>
     </div>
 
@@ -1922,105 +2068,7 @@
     </div>
 
     <!-- ================================================================== -->
-    <!-- PANNELLO DI CONTROLLO AMMINISTRATORE (ADMIN SUITE)                 -->
-    <!-- ================================================================== -->
-    <div class="glass-modal-overlay" id="admin-panel-overlay">
-        <div class="glass-modal-card" style="max-width: 640px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <div class="glass-modal-title" style="margin-bottom:0;">⚙️ Pannello Controllo Amministratore</div>
-                <button type="button" class="small-icon-btn" onclick="closeAdminPanel()">✖️ Chiudi</button>
-            </div>
-
-            <!-- Login Admin -->
-            <div id="admin-login-box">
-                <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">
-                    Inserisci la chiave amministrativa (<code>ADMIN_SECRET_KEY</code>) per gestire clienti, credenziali temporanee, dispositivi e quote mensili.
-                </p>
-                <div class="form-row">
-                    <input type="password" id="admin-secret-input" placeholder="Chiave Amministrativa...">
-                </div>
-                <button type="button" class="btn-glow-primary" onclick="submitAdminLogin()">🔓 Entra nel Pannello Admin</button>
-            </div>
-
-            <!-- Dashboard Admin Sbloccata -->
-            <div id="admin-dashboard-box" style="display:none;">
-                <div style="display:flex; gap:8px; margin-bottom:14px;">
-                    <button type="button" class="small-icon-btn" onclick="loadAdminOverview()">🔄 Aggiorna Lista Clienti</button>
-                    <button type="button" class="small-icon-btn" onclick="toggleAdminNewForm()">➕ Nuovo Cliente / Sito</button>
-                    <button type="button" class="small-icon-btn" style="color:#fb7185; margin-left:auto;" onclick="logoutAdmin()">🚪 Esci Admin</button>
-                </div>
-
-                <!-- Form Censimento Nuovo Cliente / Sito -->
-                <div id="admin-new-tenant-box" style="display:none; background:rgba(0,0,0,0.4); border:1px solid rgba(56,189,248,0.3); border-radius:12px; padding:12px; margin-bottom:14px;">
-                    <div style="font-size:12px; font-weight:700; color:#38bdf8; margin-bottom:8px;">➕ Censisci Nuovo Cliente o Aggiungi Sito a Utente Esistente</div>
-                    <form id="admin-provision-form">
-                        <div class="form-grid-2">
-                            <div>
-                                <label>User ID (vuoto = auto)</label>
-                                <input type="text" id="adm_user_id" placeholder="Es: usr_admin">
-                            </div>
-                            <div>
-                                <label>Max Dispositivi</label>
-                                <input type="number" id="adm_max_devices" value="4" min="1" max="20">
-                            </div>
-                        </div>
-                        <div class="form-grid-2">
-                            <div>
-                                <label>Username Temporaneo</label>
-                                <input type="text" id="adm_temp_user" placeholder="Es: blu">
-                            </div>
-                            <div>
-                                <label>Password Temporanea</label>
-                                <input type="text" id="adm_temp_pass" placeholder="Es: rosso">
-                            </div>
-                        </div>
-                        <div class="form-grid-2">
-                            <div>
-                                <label>Site ID (es. lumina-cucina)</label>
-                                <input type="text" id="adm_site_id" required placeholder="es. lumina-cucina">
-                            </div>
-                            <div>
-                                <label>Nome Attività</label>
-                                <input type="text" id="adm_biz_name" required placeholder="Es: Lumina Roma">
-                            </div>
-                        </div>
-                        <div class="form-grid-2">
-                            <div>
-                                <label>Dominio Pubblico</label>
-                                <input type="text" id="adm_domain" placeholder="es. lumina.it">
-                            </div>
-                            <div>
-                                <label>Repo GitHub (utente/repo)</label>
-                                <input type="text" id="adm_repo" required placeholder="utente/lumina">
-                            </div>
-                        </div>
-                        <div class="form-grid-2">
-                            <div>
-                                <label>Piano</label>
-                                <select id="adm_tier">
-                                    <option value="pro" selected>PRO</option>
-                                    <option value="base">BASE</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label>Modulo Store E-Commerce</label>
-                                <select id="adm_has_store">
-                                    <option value="false">No (Sito Vetrina)</option>
-                                    <option value="true">Sì (Store Attivo)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-glow-primary">💾 Salva nel Database</button>
-                    </form>
-                </div>
-
-                <div id="admin-users-list"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================================================================== -->
-    <!-- SCRIPT CLIENT AUTONOMO v6.0                                        -->
+    <!-- SCRIPT CLIENT AUTONOMO                                             -->
     <!-- ================================================================== -->
     <script>
         const API_BASE_URL = "https://smith-anchor-untoasted.ngrok-free.dev";
@@ -2050,12 +2098,12 @@
         let cachedStoreLocations = {};
         let cachedModHistory = [];
         let cachedRollbackInfo = { count: 0, limit: 20 };
+        let currentAuditFixPrompt = "";
 
         let activeQrMode = "temp_login";
         let activeQrToken = "";
         let qrPollInterval = null;
         let activeScannerStream = null;
-        let adminSessionToken = sessionStorage.getItem("orbis_admin_token") || "";
 
         /* ============================================================== */
         /* 0. GENERATORE QR CODE SVG NATIVO (VERSION 4-L • ZERO CDN)      */
@@ -2212,20 +2260,34 @@
                         if (modules[r][c]) rects += `<rect x="${c}" y="${r}" width="1" height="1"/>`;
                     }
                 }
-                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${pxSize}" height="${pxSize}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#ffffff"/><g fill="#070a13">${rects}</g></svg>`;
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${pxSize}" height="${pxSize}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#ffffff"/><g fill="#060911">${rects}</g></svg>`;
             }
 
             return { generateSvg };
         })();
 
         /* ============================================================== */
-        /* 1. HELPER MODALI, PARSER ERRORI & NORMALIZZAZIONE URL          */
+        /* 1. HELPER MODALI, FORMATTAZIONE & NORMALIZZAZIONE URL          */
         /* ============================================================== */
         function normalizeSiteUrl(domain) {
             const clean = String(domain || "").trim();
             if (!clean) return "#";
             if (/^https?:\/\//i.test(clean)) return clean;
             return `https://${clean}`;
+        }
+
+        function resolveSiteAssetUrl(assetPath) {
+            const raw = String(assetPath || "").trim();
+            if (!raw) return "";
+            if (/^(https?:\/\/|data:)/i.test(raw)) return raw;
+            const base = normalizeSiteUrl(currentDomain).replace(/\/+$/, "");
+            const cleanRel = raw.replace(/^\.?\//, "");
+            if (!base || base === "#") return cleanRel;
+            return `${base}/${cleanRel}`;
+        }
+
+        function formatNumberIt(num) {
+            return Number(num || 0).toLocaleString("it-IT");
         }
 
         function detectDefaultDeviceLabel() {
@@ -2354,7 +2416,7 @@
         async function promptAndRegisterPasskey() {
             const suggestedName = detectDefaultDeviceLabel();
             const extraHtml = `
-                <div style="background:rgba(0,0,0,0.35); border:1px solid rgba(56,189,248,0.28); border-radius:10px; padding:10px;">
+                <div style="background:rgba(0,0,0,0.35); border:1px solid rgba(59,130,246,0.3); border-radius:10px; padding:10px;">
                     <label for="prompt-device-name-input" style="font-size:11px; color:var(--text-muted);">Nome identificativo di questo dispositivo</label>
                     <input type="text" id="prompt-device-name-input" value="${escapeHtml(suggestedName)}" placeholder="Es: Telefono, PC, Tablet">
                 </div>
@@ -2471,9 +2533,9 @@
                     `).join("");
 
                 const addSectionHtml = limitReached
-                    ? `<div style="background:rgba(244,63,94,0.14); border:1px solid rgba(244,63,94,0.35); border-radius:10px; padding:10px; font-size:11.5px; color:#fda4af; line-height:1.4;">
+                    ? `<div style="background:rgba(225,29,72,0.14); border:1px solid rgba(225,29,72,0.35); border-radius:10px; padding:10px; font-size:11.5px; color:#fda4af; line-height:1.4;">
                          🚫 <b>Limite di ${maxDev} dispositivi raggiunto (${count}/${maxDev}).</b><br>
-                         Per collegare un 5° dispositivo richiedi l'estensione del piano a The Orbis Project oppure rimuovi un vecchio dispositivo.
+                         Per collegare un altro dispositivo richiedi l'estensione del piano a The Orbis Project oppure rimuovi un vecchio dispositivo.
                        </div>`
                     : `<div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px; margin-top:8px;">
                          <label for="new-passkey-device-name" style="font-size:11px; color:var(--text-muted);">Registra questo dispositivo (${count}/${maxDev} slot usati)</label>
@@ -2481,7 +2543,7 @@
                        </div>`;
 
                 const modalPromise = showGlassModal({
-                    title: `🔑 Dispositivi Autorizzati (${count} / ${maxDev})`,
+                    title: `📱 Dispositivi Autorizzati (${count} / ${maxDev})`,
                     message: "Puoi rinominare i tuoi dispositivi (es. Telefono, PC, Tablet) o rimuovere quelli sostituiti. Per aggiungere un altro dispositivo a distanza usa 'Accesso QR → Aggiungi Dispositivo' al login.",
                     confirmText: limitReached ? "" : "➕ Registra Questo Dispositivo",
                     cancelText: "Chiudi",
@@ -2645,7 +2707,7 @@
                 return cachedActionProof.token;
             }
             if (sessionMode === "volatile") {
-                throw new Error("Sessione temporanea scaduta. Ripeti la scansione QR dal tuo telefono.");
+                throw new Error("Sessione temporanea scaduta. Ripeti la scansione QR dal dispositivo autorizzato.");
             }
             if (!window.PublicKeyCredential) {
                 throw new Error("Passkey WebAuthn non supportata su questo browser.");
@@ -2701,7 +2763,7 @@
         }
 
         /* ============================================================== */
-        /* 3. DUAL-QR BRIDGE & PRIMO ACCESSO BURN-AFTER-READING           */
+        /* 3. DUAL-QR BRIDGE & PRIMO ACCESSO                              */
         /* ============================================================== */
         function stopQrPolling() {
             if (qrPollInterval) {
@@ -2729,9 +2791,9 @@
 
             const descEl = document.getElementById("qr-mode-desc");
             if (mode === "temp_login") {
-                descEl.innerHTML = 'Inquadra questo QR dal tuo telefono già connesso. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.';
+                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.';
             } else {
-                descEl.innerHTML = 'Inquadra questo QR dal tuo telefono già connesso per <b>associare permanentemente</b> questo dispositivo (Max 4 dispositivi per account).';
+                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso per <b>associare permanentemente</b> questo dispositivo (Max 4 dispositivi per account).';
             }
             initQrAuthSession();
         }
@@ -2741,7 +2803,7 @@
             const container = document.getElementById("qr-svg-container");
             const pill = document.getElementById("qr-status-pill");
             pill.textContent = "⏳ Generazione codice QR...";
-            container.innerHTML = '<div style="color:#070a13; font-size:12px; font-weight:700;">Caricamento...</div>';
+            container.innerHTML = '<div style="color:#060911; font-size:12px; font-weight:700;">Caricamento...</div>';
 
             try {
                 const res = await fetch(`${API_BASE_URL}/api/v1/auth/qr/create`, {
@@ -2754,7 +2816,7 @@
                     activeQrToken = data.qr_token;
                     const qrPayload = `ORBIS_QR:${activeQrToken}`;
                     container.innerHTML = OrbisQrSvg.generateSvg(qrPayload, 180);
-                    pill.textContent = "📷 Inquadra con il telefono loggato";
+                    pill.textContent = "📷 Inquadra con il dispositivo loggato";
 
                     qrPollInterval = setInterval(pollQrAuthStatus, 2200);
                 } else {
@@ -2798,7 +2860,7 @@
             try {
                 await navigator.clipboard.writeText(payload);
                 const pill = document.getElementById("qr-status-pill");
-                pill.textContent = "📋 Codice copiato! Incollalo sul telefono";
+                pill.textContent = "📋 Codice copiato! Incollalo sul dispositivo connesso";
             } catch (_) {}
         }
 
@@ -2826,7 +2888,7 @@
                 } else {
                     await showGlassModal({
                         title: "🛑 Accesso Non Riuscito",
-                        message: data.message || "Credenziali non valide o già autodistrutte."
+                        message: data.message || "Credenziali non valide o già disattivate."
                     });
                 }
             } catch (err) {
@@ -2836,12 +2898,12 @@
                 });
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = "<span>🔐 Accedi e Attiva Dispositivo</span>";
+                btn.innerHTML = "<span>🔑 Accedi e Attiva Dispositivo</span>";
             }
         });
 
         /* ============================================================== */
-        /* 4. SCANNER QR PER TELEFONO LOGGATO (AUTORIZZA PC / TABLET)     */
+        /* 4. SCANNER QR PER DISPOSITIVO LOGGATO (AUTORIZZA NUOVO DEVICE) */
         /* ============================================================== */
         async function openQrScannerModal() {
             const extraHtml = `
@@ -2852,14 +2914,14 @@
                     Avvio fotocamera per inquadrare il QR Code...
                 </div>
                 <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
-                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Oppure incolla il codice copiato dal PC:</label>
+                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Oppure incolla il codice copiato dall'altro dispositivo:</label>
                     <input type="text" id="manual-qr-input" placeholder="ORBIS_QR:qr_...">
                 </div>
             `;
 
             const modalPromise = showGlassModal({
-                title: "📷 Autorizza Dispositivo Esterno",
-                message: "Inquadra il codice QR mostrato sullo schermo del computer o tablet. Ti verrà chiesta la conferma biometrica.",
+                title: "📷 Autorizza Nuovo Dispositivo",
+                message: "Inquadra il codice QR mostrato sullo schermo del nuovo dispositivo (telefono, tablet o computer). Ti verrà chiesta la conferma biometrica.",
                 confirmText: "✅ Autorizza Codice Incollato",
                 cancelText: "Annulla",
                 extraHtml
@@ -2919,7 +2981,7 @@
                     };
                     requestAnimationFrame(scanLoop);
                 } else {
-                    if (hintEl) hintEl.textContent = "Incolla il codice QR copiato dal PC nel campo qui sotto per autorizzare.";
+                    if (hintEl) hintEl.textContent = "Incolla il codice QR copiato dall'altro dispositivo nel campo qui sotto per autorizzare.";
                 }
             } catch (_) {
                 if (hintEl) hintEl.textContent = "Permesso fotocamera negato o assente: incolla il codice QR qui sotto.";
@@ -3090,7 +3152,7 @@
                         userSites.forEach(s => {
                             const opt = document.createElement("option");
                             opt.value = s.site_id;
-                            opt.textContent = `${s.business_name} (${s.domain || s.site_id})`;
+                            opt.textContent = s.business_name;
                             if (s.site_id === selectedSiteId) opt.selected = true;
                             switcherSelect.appendChild(opt);
                         });
@@ -3141,14 +3203,12 @@
             }
 
             const rowsHtml = cachedModHistory.map(item => {
-                const pagesText = Array.isArray(item.pages) ? item.pages.join(", ") : "index.html";
-                const secText = item.section && item.section !== "AUTO" ? ` • Sez: ${item.section}` : "";
                 const canRestore = Boolean(item.commit_sha);
                 return `
                     <div class="mini-log-row">
                         <div class="mini-log-main">
                             <div class="mini-log-desc">${escapeHtml(item.summary || "Aggiornamento sito")}</div>
-                            <div class="mini-log-meta">📅 ${escapeHtml(item.timestamp || "")} • 📄 ${escapeHtml(pagesText)}${escapeHtml(secText)} (${escapeHtml(item.short_sha || "")})</div>
+                            <div class="mini-log-meta">📅 ${escapeHtml(item.timestamp || "")}</div>
                         </div>
                         ${canRestore ? `<button type="button" class="btn-restore-rev" data-restore-sha="${escapeHtml(item.commit_sha)}" data-restore-time="${escapeHtml(item.timestamp || "")}">⏪ Ripristina</button>` : ""}
                     </div>
@@ -3166,8 +3226,8 @@
 
         async function triggerHistoricalRestore(commitSha, timestampLabel) {
             const confirmed = await showGlassModal({
-                title: "⏪ Macchina del Tempo GitHub",
-                message: `Vuoi riportare il sito esattamente allo stato salvato il ${timestampLabel} (${commitSha.slice(0, 7)})?\nVerrà consumato 1 ripristino mensile (${cachedRollbackInfo.count}/${cachedRollbackInfo.limit}).`,
+                title: "⏪ Ripristino Versione Precedente",
+                message: `Vuoi riportare il sito esattamente allo stato salvato il ${timestampLabel}?\nVerrà consumato 1 ripristino mensile (${cachedRollbackInfo.count}/${cachedRollbackInfo.limit}).`,
                 confirmText: "Sì, Ripristina Versione",
                 cancelText: "Annulla",
                 isDanger: true
@@ -3191,7 +3251,7 @@
                     document.getElementById("rollback-box").style.display = "none";
                     await Promise.all([
                         fetchUserStatus(),
-                        loadSiteSections(document.getElementById("target_page").value)
+                        loadSiteSections("index.html")
                     ]);
                 } else {
                     showNotification(`⚠️ ${data.message}`, false);
@@ -3209,6 +3269,29 @@
             arrow.innerText = isOpen ? "▼ Mostra" : "▲ Nascondi";
         }
 
+        function renderAuditResultsBox(summaryText, reportText, fixPrompt) {
+            const container = document.getElementById("audit-report-container");
+            const summaryEl = document.getElementById("audit-summary-content");
+            const fullEl = document.getElementById("audit-report-content");
+            const fixBox = document.getElementById("audit-fix-box");
+            const fixTextEl = document.getElementById("audit-fix-prompt-text");
+
+            currentAuditFixPrompt = (fixPrompt || "").trim();
+            summaryEl.innerText = summaryText || reportText;
+            fullEl.innerText = reportText || "";
+            fullEl.style.display = "none";
+            document.getElementById("btn-toggle-full-audit").innerText = "📄 Mostra Report Tecnico Completo";
+
+            if (currentAuditFixPrompt && !summaryText.includes("🟢")) {
+                fixTextEl.innerText = currentAuditFixPrompt;
+                fixBox.style.display = "block";
+            } else {
+                fixBox.style.display = "none";
+            }
+
+            container.style.display = "block";
+        }
+
         async function fetchUserStatus() {
             if (!selectedSiteId) return;
             try {
@@ -3216,45 +3299,51 @@
                 const data = await parseApiJson(res);
 
                 if (data.status === "success") {
-                    document.getElementById("enterprise-name").innerText = data.business_name || "SiteMaster Console";
+                    document.getElementById("enterprise-name").innerText = data.business_name || "SiteMaster Console Orbis";
                     currentDomain = data.domain || "";
-                    document.getElementById("user-domain-label").innerText = currentDomain
-                        ? `${currentDomain} • ID: ${data.site_id}`
-                        : `The Orbis Project • ID: ${data.site_id}`;
 
                     currentTier = (data.tier || "base").toLowerCase();
+                    if (!["base", "gold", "pro"].includes(currentTier)) currentTier = "base";
                     requirePasskey2FA = Boolean(data.require_passkey_2fa);
 
                     const tierBadge = document.getElementById("tier-badge");
-                    tierBadge.innerText = `PIANO ${currentTier.toUpperCase()}`;
+                    tierBadge.innerText = currentTier.toUpperCase();
                     tierBadge.className = `tier-badge ${currentTier}`;
 
                     document.getElementById("passkey-setup-banner").style.display = data.requires_passkey_setup ? "block" : "none";
-                    document.getElementById("tele-devices").innerText = `🔑 ${data.devices_count ?? 0} / ${data.max_devices ?? 4}`;
+                    document.getElementById("tele-devices").innerText = `📱 ${data.devices_count ?? 0} / ${data.max_devices ?? 4}`;
+
+                    const canAudit = Boolean(data.modules_unlocked?.daily_audit);
+                    const canStore = Boolean(data.modules_unlocked?.store_manager);
 
                     const teleAudit = document.getElementById("tele-audit");
-                    teleAudit.innerText = data.audit_done ? "🟢 Eseguito" : "🔴 Da fare";
-                    teleAudit.className = `tele-val ${data.audit_done ? "text-emerald" : "text-rose"}`;
+                    if (!canAudit) {
+                        teleAudit.innerText = "🔒 Gold / Pro";
+                        teleAudit.className = "tele-val text-amber";
+                    } else {
+                        teleAudit.innerText = data.audit_done ? "🟢 Eseguito" : "🔴 Da fare";
+                        teleAudit.className = `tele-val ${data.audit_done ? "text-emerald" : "text-rose"}`;
+                    }
 
-                    if (data.last_audit_summary) {
-                        document.getElementById("audit-summary-content").innerText = data.last_audit_summary;
-                        document.getElementById("audit-report-content").innerText = data.last_audit_report || "";
-                        document.getElementById("audit-report-container").style.display = "block";
+                    if (data.last_audit_summary && canAudit) {
+                        renderAuditResultsBox(data.last_audit_summary, data.last_audit_report || "", data.last_audit_fix_prompt || "");
                     } else {
                         document.getElementById("audit-report-container").style.display = "none";
                     }
 
+                    // Contatore Modifiche AI Mensili
                     const count = data.mod_count || 0;
                     const limit = data.mod_limit || 30;
                     document.getElementById("progress-count-text").innerText = `${count} / ${limit}`;
-                    const pct = Math.min(100, Math.round((count / limit) * 100));
+                    const pct = Math.min(100, Math.round((count / Math.max(1, limit)) * 100));
                     document.getElementById("progress-bar-fill").style.width = `${pct}%`;
 
-                    const stCount = data.store_mod_count || 0;
-                    const stLimit = data.store_mod_limit || 100;
-                    document.getElementById("store-progress-text").innerText = `${stCount} / ${stLimit}`;
-                    const stPct = Math.min(100, Math.round((stCount / stLimit) * 100));
-                    document.getElementById("store-progress-fill").style.width = `${stPct}%`;
+                    // Contatore Rilevazioni Statistiche Mensili (0 / 10.000)
+                    const statsViews = data.stats_views_month || 0;
+                    const statsLimit = data.stats_limit || 10000;
+                    document.getElementById("tele-stats-count-text").innerText = `${formatNumberIt(statsViews)} / ${formatNumberIt(statsLimit)}`;
+                    const statsPct = Math.min(100, Math.round((statsViews / Math.max(1, statsLimit)) * 100));
+                    document.getElementById("tele-stats-bar-fill").style.width = `${statsPct}%`;
 
                     cachedModHistory = data.mod_history || [];
                     cachedRollbackInfo = {
@@ -3263,8 +3352,15 @@
                     };
                     renderSiteHistoryList();
 
-                    document.getElementById("lock-analytics").style.display = data.modules_unlocked?.privacy_analytics ? "none" : "block";
-                    document.getElementById("lock-store").style.display = data.modules_unlocked?.store_manager ? "none" : "block";
+                    // Lucchetti piani: Base = Statistiche + Editor | Gold = + Diagnostica | Pro = + Store
+                    document.getElementById("lock-audit").style.display = canAudit ? "none" : "block";
+                    document.getElementById("lock-store").style.display = canStore ? "none" : "block";
+
+                    document.getElementById("audit-unlocked-content").style.display = canAudit ? "block" : "none";
+                    document.getElementById("audit-locked-content").style.display = canAudit ? "none" : "block";
+
+                    document.getElementById("store-unlocked-content").style.display = canStore ? "block" : "none";
+                    document.getElementById("store-locked-content").style.display = canStore ? "none" : "block";
 
                     if (data.has_pending_rollback) {
                         activateRollbackBanner();
@@ -3304,18 +3400,16 @@
                 targetCard.classList.add("active");
 
                 if (type === "analytics") loadAnalytics();
-                if (type === "store") loadStoreCatalog();
+                if (type === "store" && currentTier === "pro") loadStoreCatalog();
             }
         }
 
         /* ============================================================== */
-        /* 7. DRAWER 1: DIAGNOSTICA IA (PROATTIVA ZERO-TOKEN)             */
+        /* 7. DRAWER 3: DIAGNOSTICA IA & PROMPT CORRETTIVO                */
         /* ============================================================== */
         async function triggerDailyAudit() {
+            if (currentTier === "base") return;
             const btn = document.getElementById("btn-run-audit");
-            const container = document.getElementById("audit-report-container");
-            const summaryEl = document.getElementById("audit-summary-content");
-            const fullEl = document.getElementById("audit-report-content");
 
             btn.disabled = true;
             btn.innerHTML = "<span>⏳ Ispezione Strutturale in corso...</span>";
@@ -3331,11 +3425,7 @@
                 const data = await parseApiJson(res);
 
                 if (data.status === "success") {
-                    container.style.display = "block";
-                    summaryEl.innerText = data.summary || data.details;
-                    fullEl.innerText = data.details || "";
-                    fullEl.style.display = "none";
-                    document.getElementById("btn-toggle-full-audit").innerText = "📄 Mostra Report Tecnico Completo";
+                    renderAuditResultsBox(data.summary || data.details, data.details || "", data.fix_prompt || "");
                     fetchUserStatus();
                 } else {
                     showNotification(`⚠️ ${data.message}`, false);
@@ -3356,12 +3446,43 @@
             btn.innerText = isHidden ? "🔼 Nascondi Report Tecnico Completo" : "📄 Mostra Report Tecnico Completo";
         }
 
+        async function copyAuditFixPrompt() {
+            if (!currentAuditFixPrompt) return;
+            try {
+                await navigator.clipboard.writeText(currentAuditFixPrompt);
+                const btn = document.getElementById("btn-copy-audit-prompt");
+                btn.innerText = "✅ Copiato!";
+                setTimeout(() => { btn.innerText = "📋 Copia Prompt"; }, 2000);
+            } catch (_) {}
+        }
+
+        function applyAuditPromptInEditor() {
+            if (!currentAuditFixPrompt) return;
+            const promptText = currentAuditFixPrompt;
+            openDrawer("edit");
+            document.getElementById("edit_mode_select").value = "intelligent";
+            onEditModeChange("intelligent");
+            const textarea = document.getElementById("instruction_text");
+            textarea.value = promptText;
+            textarea.focus();
+        }
+
         /* ============================================================== */
-        /* 8. DRAWER 2: EDITOR CHIRURGICO SEZIONI & SOTTO-MARCATORI       */
+        /* 8. DRAWER 2: EDITOR SEZIONI (INTELLIGENTE VS GUIDATA)          */
         /* ============================================================== */
+        function onEditModeChange(mode) {
+            const guidedWrapper = document.getElementById("guided-section-wrapper");
+            if (mode === "guided") {
+                guidedWrapper.style.display = "block";
+                renderSubMarkersPreview();
+            } else {
+                guidedWrapper.style.display = "none";
+                document.getElementById("submarkers-box").style.display = "none";
+            }
+        }
+
         async function loadSiteSections(targetFile = "index.html") {
             if (!selectedSiteId) return;
-            const pageSelect = document.getElementById("target_page");
             const sectionSelect = document.getElementById("target_section");
 
             try {
@@ -3370,32 +3491,32 @@
                 const data = await parseApiJson(res);
 
                 if (data.status === "success") {
-                    if (Array.isArray(data.files) && data.files.length > 0) {
-                        pageSelect.innerHTML = "";
-                        data.files.forEach(f => {
+                    // Filtriamo via "AUTO" così nella Modifica Guidata compaiono solo i nomi puliti delle sezioni
+                    cachedSectionsData = (data.sections || []).filter(sec => sec.id !== "AUTO");
+                    sectionSelect.innerHTML = "";
+
+                    if (cachedSectionsData.length === 0) {
+                        const opt = document.createElement("option");
+                        opt.value = "AUTO";
+                        opt.textContent = "Intera pagina";
+                        sectionSelect.appendChild(opt);
+                    } else {
+                        cachedSectionsData.forEach((sec, idx) => {
                             const opt = document.createElement("option");
-                            opt.value = f;
-                            opt.textContent = `📄 ${f}`;
-                            if (f === (data.current_file || targetFile)) opt.selected = true;
-                            pageSelect.appendChild(opt);
+                            opt.value = sec.id;
+                            opt.textContent = sec.label;
+                            if (idx === 0) opt.selected = true;
+                            sectionSelect.appendChild(opt);
                         });
                     }
 
-                    cachedSectionsData = data.sections || [];
-                    sectionSelect.innerHTML = "";
-                    cachedSectionsData.forEach(sec => {
-                        const opt = document.createElement("option");
-                        opt.value = sec.id;
-                        opt.textContent = sec.label;
-                        if (sec.id === "AUTO") opt.selected = true;
-                        sectionSelect.appendChild(opt);
-                    });
-
-                    renderSubMarkersPreview();
+                    if (document.getElementById("edit_mode_select").value === "guided") {
+                        renderSubMarkersPreview();
+                    }
                 }
             } catch (err) {
                 console.error("Errore caricamento sezioni:", err);
-                sectionSelect.innerHTML = '<option value="AUTO" selected>✨ Modifica Intelligente (Globale)</option>';
+                sectionSelect.innerHTML = '<option value="AUTO">Intera pagina</option>';
                 document.getElementById("submarkers-box").style.display = "none";
             }
         }
@@ -3446,28 +3567,37 @@
             return pills.map(p => p.getAttribute("data-val")).join(", ") || "Modifica Aperta";
         }
 
-        function handleFileSelection(input, labelElementId) {
+        function handleDualPhotoSelection(activeInput, otherInputId, labelElementId) {
             const label = document.getElementById(labelElementId);
-            if (!input.files || !input.files[0]) {
+            const otherInput = document.getElementById(otherInputId);
+            if (otherInput) otherInput.value = "";
+
+            if (!activeInput.files || !activeInput.files[0]) {
                 label.innerText = "";
                 return;
             }
-            const file = input.files[0];
+            const file = activeInput.files[0];
             if (!file.type.startsWith("image/")) {
-                input.value = "";
+                activeInput.value = "";
                 label.innerText = "";
-                showNotification("⚠️ Seleziona un file immagine valido (JPG, PNG, WebP).", false);
+                showNotification("⚠️ Seleziona un file immagine valido.", false);
                 return;
             }
             if (file.size > MAX_IMAGE_BYTES) {
-                const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
-                input.value = "";
+                activeInput.value = "";
                 label.innerText = "";
-                showNotification(`⚠️ Immagine troppo pesante (${sizeMb} MB). Il limite massimo è 12 MB.`, false);
+                showNotification("⚠️ Immagine troppo grande. Scegli una foto fino a 12 MB.", false);
                 return;
             }
-            const sizeKb = Math.round(file.size / 1024);
-            label.innerText = `(${file.name} • ${sizeKb} KB)`;
+            label.innerText = `📎 Foto selezionata: ${file.name}`;
+        }
+
+        function getSelectedPhotoFile(idA, idB) {
+            const a = document.getElementById(idA);
+            const b = document.getElementById(idB);
+            if (a && a.files && a.files[0]) return a.files[0];
+            if (b && b.files && b.files[0]) return b.files[0];
+            return null;
         }
 
         document.getElementById("editor-form").addEventListener("submit", async (e) => {
@@ -3476,27 +3606,29 @@
             const rollbackBox = document.getElementById("rollback-box");
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = "<span>🔐 Verifica Passkey in corso...</span>";
+            submitBtn.innerHTML = "<span>⏳ Verifica in corso...</span>";
             rollbackBox.style.display = "none";
 
             try {
                 const actionProof = await obtainActionProof();
-                submitBtn.innerHTML = "<span>⏳ Elaborazione Gemini Pro su GitHub...</span>";
+                submitBtn.innerHTML = "<span>⏳ Applicazione modifiche al sito...</span>";
 
-                const targetPage = document.getElementById("target_page").value;
-                const targetSection = document.getElementById("target_section").value;
+                const editMode = document.getElementById("edit_mode_select").value;
+                const targetSection = editMode === "guided"
+                    ? (document.getElementById("target_section").value || "AUTO")
+                    : "AUTO";
 
                 const formData = new FormData();
                 formData.append("site_id", selectedSiteId);
-                formData.append("target_page", targetPage);
+                formData.append("target_page", "index.html");
                 formData.append("target_section", targetSection);
                 formData.append("action_types", getSelectedActionTypes());
                 formData.append("instruction", document.getElementById("instruction_text").value);
                 if (actionProof) formData.append("action_proof", actionProof);
 
-                const fileInput = document.getElementById("image_input");
-                if (fileInput.files[0]) {
-                    formData.append("image", fileInput.files[0]);
+                const selectedPhoto = getSelectedPhotoFile("image_input_gallery", "image_input_camera");
+                if (selectedPhoto) {
+                    formData.append("image", selectedPhoto);
                 }
 
                 const res = await apiFetch("/api/v1/update-site", {
@@ -3510,11 +3642,12 @@
                     activateRollbackBanner(data.cache_buster_param);
 
                     document.getElementById("instruction_text").value = "";
-                    fileInput.value = "";
+                    document.getElementById("image_input_gallery").value = "";
+                    document.getElementById("image_input_camera").value = "";
                     document.getElementById("chosen-file-label").innerText = "";
                     await Promise.all([
                         fetchUserStatus(),
-                        loadSiteSections(targetPage)
+                        loadSiteSections("index.html")
                     ]);
                 } else {
                     showNotification(`🛑 ${data.message || "Errore durante l'applicazione."}`, false);
@@ -3523,7 +3656,7 @@
                 showNotification(`❌ ${err.message}`, false);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = "<span>🔐 Firma con Passkey &amp; Applica</span>";
+                submitBtn.innerHTML = "<span>Applica Modifiche</span>";
             }
         });
 
@@ -3546,7 +3679,7 @@
         async function triggerRollback() {
             const confirmed = await showGlassModal({
                 title: "🔄 Ripristino Versione Precedente",
-                message: "Vuoi annullare l'ultima modifica pubblicata e ripristinare il codice precedente su GitHub?",
+                message: "Vuoi annullare l'ultima modifica pubblicata e ripristinare il codice precedente?",
                 confirmText: "Sì, Esegui Rollback",
                 cancelText: "Annulla",
                 isDanger: true
@@ -3569,7 +3702,7 @@
                     document.getElementById("rollback-box").style.display = "none";
                     await Promise.all([
                         fetchUserStatus(),
-                        loadSiteSections(document.getElementById("target_page").value)
+                        loadSiteSections("index.html")
                     ]);
                 } else {
                     showNotification(`⚠️ ${data.message}`, false);
@@ -3580,21 +3713,14 @@
         }
 
         /* ============================================================== */
-        /* 9. DRAWER 3: STATISTICHE SITO (SOGLIA 1.000/MESE)              */
+        /* 9. DRAWER 1: STATISTICHE SITO & PRODOTTI (UNIFICATE)           */
         /* ============================================================== */
         async function loadAnalytics() {
             const unlocked = document.getElementById("analytics-unlocked-content");
-            const locked = document.getElementById("analytics-locked-content");
             const errBox = document.getElementById("analytics-error-content");
             const refreshBtn = document.getElementById("btn-refresh-analytics");
 
             errBox.style.display = "none";
-
-            if (currentTier !== "pro") {
-                unlocked.style.display = "none";
-                locked.style.display = "block";
-                return;
-            }
 
             if (refreshBtn) {
                 refreshBtn.disabled = true;
@@ -3607,10 +3733,10 @@
 
                 if (data.status === "success") {
                     const viewsMonth = data.views_month || 0;
-                    const statsLimit = data.stats_limit || 1000;
-                    document.getElementById("stat-views-today").innerText = data.views_today || 0;
-                    document.getElementById("stat-views-month").innerText = viewsMonth;
-                    document.getElementById("stats-quota-text").innerText = `${viewsMonth} / ${statsLimit}`;
+                    const statsLimit = data.stats_limit || 10000;
+                    document.getElementById("stat-views-today").innerText = formatNumberIt(data.views_today || 0);
+                    document.getElementById("stat-views-month").innerText = formatNumberIt(viewsMonth);
+                    document.getElementById("stats-quota-text").innerText = `${formatNumberIt(viewsMonth)} / ${formatNumberIt(statsLimit)}`;
                     const pct = Math.min(100, Math.round((viewsMonth / Math.max(1, statsLimit)) * 100));
                     document.getElementById("stats-quota-fill").style.width = `${pct}%`;
                     document.getElementById("stats-limit-alert").style.display = data.stats_limit_reached ? "block" : "none";
@@ -3618,29 +3744,71 @@
                     renderKeyValueMetricList("analytics-pages-list", data.pages || {}, "Nessuna pagina ancora registrata");
                     renderKeyValueMetricList("analytics-sections-list", data.sections || {}, "Nessuna sezione rilevata (>2s)");
 
+                    // Etichette pulsanti pulite (solo il nome, senza ID tra parentesi)
                     const tracksContainer = document.getElementById("analytics-tracks-list");
                     const tracks = data.tracked_elements || [];
                     if (tracks.length === 0) {
-                        tracksContainer.innerHTML = '<div style="font-size:12px; color:var(--text-hint);">Nessun elemento con data-orbis-track rilevato.</div>';
+                        tracksContainer.innerHTML = '<div style="font-size:12px; color:var(--text-hint);">Nessuna interazione registrata finora.</div>';
                     } else {
                         tracksContainer.innerHTML = tracks.map(t => `
                             <div class="metric-list-row">
-                                <span><b>${escapeHtml(t.label)}</b> <span style="color:var(--text-hint); font-size:10px;">(${escapeHtml(t.id)})</span></span>
+                                <span><b>${escapeHtml(t.label)}</b></span>
                                 <span class="metric-badge-count">${t.count} clic</span>
                             </div>
                         `).join("");
                     }
 
+                    // Sezione Prodotti dello Store unificata nelle Statistiche
+                    const prodWrapper = document.getElementById("analytics-products-wrapper");
+                    if (data.store_stats) {
+                        const st = data.store_stats;
+                        document.getElementById("st-kpi-total").innerText = st.total_items || 0;
+                        document.getElementById("st-kpi-avail").innerText = st.available_count || 0;
+                        document.getElementById("st-kpi-low").innerText = st.low_stock_count || 0;
+
+                        const topEl = document.getElementById("st-top-products-list");
+                        const tops = st.top_products || [];
+                        topEl.innerHTML = tops.length === 0
+                            ? '<div style="font-size:12px; color:var(--text-hint);">Nessuna interazione prodotto ancora registrata.</div>'
+                            : tops.map(p => `
+                                <div class="metric-list-row">
+                                    <span><b>${escapeHtml(p.name)}</b></span>
+                                    <span class="metric-badge-count">👆 ${p.clicks} • 🛒 ${p.cart_adds}</span>
+                                </div>
+                            `).join("");
+
+                        const allEl = document.getElementById("st-all-products-list");
+                        const allProds = st.all_products || [];
+                        allEl.innerHTML = allProds.length === 0
+                            ? '<div style="font-size:12px; color:var(--text-hint);">Nessun prodotto presente nel catalogo.</div>'
+                            : allProds.map(p => `
+                                <div class="metric-list-row">
+                                    <span>${escapeHtml(p.name)}</span>
+                                    <span class="metric-badge-count">👆 ${p.clicks} • 🛒 ${p.cart_adds}</span>
+                                </div>
+                            `).join("");
+
+                        const zeroEl = document.getElementById("st-zero-products-list");
+                        const zeros = st.low_zero_products || [];
+                        zeroEl.innerHTML = zeros.length === 0
+                            ? '<div style="font-size:12px; color:#34d399;">Ottimo! Tutti gli articoli visibili stanno ricevendo interazioni.</div>'
+                            : zeros.map(z => `
+                                <div class="metric-list-row">
+                                    <span>${escapeHtml(z.name)}</span>
+                                    <span style="font-size:11px; color:#fb7185;">👆 ${z.clicks} • 🛒 ${z.cart_adds}</span>
+                                </div>
+                            `).join("");
+
+                        prodWrapper.style.display = "block";
+                    } else {
+                        prodWrapper.style.display = "none";
+                    }
+
                     unlocked.style.display = "block";
-                    locked.style.display = "none";
-                } else {
-                    unlocked.style.display = "none";
-                    locked.style.display = "block";
                 }
             } catch (err) {
                 console.error("Errore analytics:", err);
                 unlocked.style.display = "none";
-                locked.style.display = "none";
                 document.getElementById("analytics-error-msg").innerText = err.message || "Impossibile caricare le statistiche.";
                 errBox.style.display = "block";
             } finally {
@@ -3667,16 +3835,17 @@
         }
 
         /* ============================================================== */
-        /* 10. DRAWER 4: STORE INTELLIGENTE & STATISTICHE PRODOTTI        */
+        /* 10. DRAWER 4: STORE INTELLIGENTE (CATALOGO & REGOLE)           */
         /* ============================================================== */
         function switchStoreTab(tabName) {
-            ["catalog", "stats", "settings"].forEach(t => {
+            ["catalog", "settings"].forEach(t => {
                 document.getElementById(`stab-${t}`).classList.toggle("active", t === tabName);
                 document.getElementById(`store-view-${t}`).style.display = t === tabName ? "block" : "none";
             });
         }
 
         async function loadStoreCatalog() {
+            if (currentTier !== "pro") return;
             const unlocked = document.getElementById("store-unlocked-content");
             const locked = document.getElementById("store-locked-content");
             const errBox = document.getElementById("store-error-content");
@@ -3688,17 +3857,18 @@
                 const data = await parseApiJson(res);
 
                 if (data.status === "success") {
+                    if (data.site_domain) currentDomain = data.site_domain;
                     cachedStoreItems = data.items || [];
                     cachedStoreLocations = data.store_locations || {};
 
                     const locFilter = document.getElementById("store-location-filter");
                     const prevFilter = locFilter.value;
-                    locFilter.innerHTML = '<option value="ALL">Tutte le pagine e sezioni</option>';
+                    locFilter.innerHTML = '<option value="ALL">Tutte le sezioni del catalogo</option>';
                     Object.entries(cachedStoreLocations).forEach(([pagePath, blocks]) => {
                         blocks.forEach(b => {
                             const opt = document.createElement("option");
                             opt.value = `${pagePath}::${b.id}`;
-                            opt.textContent = `📄 ${pagePath} → ${b.label} (${b.id})`;
+                            opt.textContent = b.label;
                             locFilter.appendChild(opt);
                         });
                     });
@@ -3712,7 +3882,6 @@
                         document.getElementById("set_low_thresh").value = data.settings.low_stock_threshold ?? 2;
                     }
 
-                    renderStoreStats(data.store_stats || {});
                     renderFilteredStoreItems();
 
                     unlocked.style.display = "block";
@@ -3734,34 +3903,6 @@
             }
         }
 
-        function renderStoreStats(stats) {
-            document.getElementById("st-kpi-total").innerText = stats.total_items || 0;
-            document.getElementById("st-kpi-avail").innerText = stats.available_count || 0;
-            document.getElementById("st-kpi-low").innerText = stats.low_stock_count || 0;
-
-            const topEl = document.getElementById("st-top-products-list");
-            const tops = stats.top_products || [];
-            topEl.innerHTML = tops.length === 0
-                ? '<div style="font-size:12px; color:var(--text-hint);">Nessuna interazione prodotto ancora registrata.</div>'
-                : tops.map(p => `
-                    <div class="metric-list-row">
-                        <span><b>${escapeHtml(p.name)}</b></span>
-                        <span class="metric-badge-count">👆 ${p.clicks} • 🛒 ${p.cart_adds}</span>
-                    </div>
-                `).join("");
-
-            const zeroEl = document.getElementById("st-zero-products-list");
-            const zeros = stats.zero_click_products || [];
-            zeroEl.innerHTML = zeros.length === 0
-                ? '<div style="font-size:12px; color:#34d399;">Ottimo! Tutti gli articoli visibili hanno ricevuto interazioni.</div>'
-                : zeros.map(z => `
-                    <div class="metric-list-row">
-                        <span>${escapeHtml(z.name)} <span style="color:var(--text-hint); font-size:10px;">(${escapeHtml(z.section)})</span></span>
-                        <span style="font-size:11px; color:#fb7185;">0 clic</span>
-                    </div>
-                `).join("");
-        }
-
         function renderFilteredStoreItems() {
             const container = document.getElementById("store-items-container");
             const filterVal = document.getElementById("store-location-filter").value;
@@ -3779,7 +3920,6 @@
             if (searchQuery) {
                 filtered = filtered.filter(it =>
                     (it.name || "").toLowerCase().includes(searchQuery) ||
-                    (it.id || "").toLowerCase().includes(searchQuery) ||
                     (it.description || "").toLowerCase().includes(searchQuery)
                 );
             }
@@ -3811,7 +3951,7 @@
                     <div class="catalog-item-top">
                         <div class="catalog-info">
                             <h4>${escapeHtml(item.name)}</h4>
-                            <div class="catalog-meta-line">ID: ${escapeHtml(item.id)} • ${priceLabel} • 👆 ${item.clicks || 0} / 🛒 ${item.cart_adds || 0}</div>
+                            <div class="catalog-meta-line">${priceLabel} • 👆 ${item.clicks || 0} / 🛒 ${item.cart_adds || 0}</div>
                             <div class="store-badges-row">${badges.join("")}</div>
                         </div>
                         <button type="button" class="small-icon-btn" data-action="edit" data-id="${escapeHtml(item.id)}">✏️ Modifica</button>
@@ -3863,7 +4003,7 @@
             pages.forEach(p => {
                 const opt = document.createElement("option");
                 opt.value = p;
-                opt.textContent = `📄 ${p}`;
+                opt.textContent = p;
                 if (p === targetPage) opt.selected = true;
                 pageSelect.appendChild(opt);
             });
@@ -3879,7 +4019,7 @@
             if (blocks.length === 0) {
                 const opt = document.createElement("option");
                 opt.value = targetSection || "default";
-                opt.textContent = targetSection || "default";
+                opt.textContent = "Catalogo Principale";
                 opt.selected = true;
                 secSelect.appendChild(opt);
                 return;
@@ -3889,7 +4029,7 @@
             blocks.forEach(b => {
                 const opt = document.createElement("option");
                 opt.value = b.id;
-                opt.textContent = `${b.label} (${b.id})`;
+                opt.textContent = b.label;
                 if (b.id.toLowerCase() === (targetSection || "").toLowerCase()) {
                     opt.selected = true;
                     foundMatch = true;
@@ -3900,7 +4040,7 @@
             if (!foundMatch && targetSection) {
                 const fallbackOpt = document.createElement("option");
                 fallbackOpt.value = targetSection;
-                fallbackOpt.textContent = targetSection;
+                fallbackOpt.textContent = "Catalogo Principale";
                 fallbackOpt.selected = true;
                 secSelect.appendChild(fallbackOpt);
             }
@@ -3952,9 +4092,9 @@
                 document.getElementById("st_hidden").value = String(Boolean(item.hidden));
                 document.getElementById("st_description").value = item.description || "";
 
-                const existingImgUrl = item.image_url || item.image || item.img || "";
-                if (existingImgUrl) {
-                    imgThumb.src = existingImgUrl;
+                const rawImgPath = item.image_url || item.image || item.img || "";
+                if (rawImgPath && !rawImgPath.includes("placeholder.webp")) {
+                    imgThumb.src = resolveSiteAssetUrl(rawImgPath);
                     imgPreviewBox.style.display = "flex";
                 }
             }
@@ -3985,7 +4125,7 @@
 
             const btn = document.getElementById("btn-save-store-item");
             btn.disabled = true;
-            btn.innerHTML = "<span>🔐 Firma Passkey &amp; Sincronizzazione...</span>";
+            btn.innerHTML = "<span>⏳ Salvataggio prodotto in corso...</span>";
 
             try {
                 const actionProof = await obtainActionProof();
@@ -4012,9 +4152,9 @@
                 }
                 if (actionProof) formData.append("action_proof", actionProof);
 
-                const imgInput = document.getElementById("st_image");
-                if (imgInput.files[0]) {
-                    formData.append("image", imgInput.files[0]);
+                const selectedStoreImg = getSelectedPhotoFile("st_image", "st_image_camera");
+                if (selectedStoreImg) {
+                    formData.append("image", selectedStoreImg);
                 }
 
                 const res = await apiFetch("/api/v1/store/save-item", {
@@ -4037,7 +4177,7 @@
                 showNotification(`❌ ${err.message}`, false);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = "<span>🔐 Salva Prodotto</span>";
+                btn.innerHTML = "<span>Salva Prodotto</span>";
             }
         });
 
@@ -4101,7 +4241,7 @@
         async function deleteStoreItem(itemId) {
             const confirmed = await showGlassModal({
                 title: "🗑️ Elimina Articolo",
-                message: "Eliminare definitivamente questo articolo dal catalogo e dalla pagina del sito?",
+                message: "Eliminare definitivamente questo articolo dal catalogo e dal sito?",
                 confirmText: "Elimina",
                 cancelText: "Annulla",
                 isDanger: true
@@ -4136,7 +4276,7 @@
             e.preventDefault();
             const btn = document.getElementById("btn-save-store-settings");
             btn.disabled = true;
-            btn.innerHTML = "<span>🔐 Firma Passkey &amp; Riordino Sito...</span>";
+            btn.innerHTML = "<span>⏳ Applicazione regole al sito...</span>";
 
             try {
                 const actionProof = await obtainActionProof();
@@ -4163,246 +4303,7 @@
                 showNotification(`❌ ${err.message}`, false);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = "<span>🔐 Applica Regole al Sito</span>";
-            }
-        });
-
-        /* ============================================================== */
-        /* 11. PANNELLO DI CONTROLLO AMMINISTRATORE (ADMIN SUITE)         */
-        /* ============================================================== */
-        function openAdminConsoleModal(e) {
-            if (e) e.preventDefault();
-            document.getElementById("admin-panel-overlay").style.display = "flex";
-            if (adminSessionToken) {
-                document.getElementById("admin-login-box").style.display = "none";
-                document.getElementById("admin-dashboard-box").style.display = "block";
-                loadAdminOverview();
-            } else {
-                document.getElementById("admin-login-box").style.display = "block";
-                document.getElementById("admin-dashboard-box").style.display = "none";
-            }
-        }
-
-        function closeAdminPanel() {
-            document.getElementById("admin-panel-overlay").style.display = "none";
-        }
-
-        function toggleAdminNewForm() {
-            const box = document.getElementById("admin-new-tenant-box");
-            box.style.display = box.style.display === "block" ? "none" : "block";
-        }
-
-        function logoutAdmin() {
-            adminSessionToken = "";
-            sessionStorage.removeItem("orbis_admin_token");
-            document.getElementById("admin-login-box").style.display = "block";
-            document.getElementById("admin-dashboard-box").style.display = "none";
-        }
-
-        async function adminFetch(endpoint, options = {}) {
-            const headers = {
-                ...DEFAULT_HEADERS,
-                ...(options.headers || {}),
-                "Authorization": `Bearer ${adminSessionToken}`
-            };
-            const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
-            if (res.status === 403) {
-                logoutAdmin();
-                throw new Error("Sessione amministrativa scaduta o chiave errata.");
-            }
-            return res;
-        }
-
-        async function submitAdminLogin() {
-            const secret = document.getElementById("admin-secret-input").value.trim();
-            if (!secret) return;
-            try {
-                const res = await fetch(`${API_BASE_URL}/api/v1/admin/login`, {
-                    method: "POST",
-                    headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
-                    body: JSON.stringify({ admin_secret: secret })
-                });
-                const data = await parseApiJson(res);
-                if (data.status === "success" && data.admin_token) {
-                    adminSessionToken = data.admin_token;
-                    sessionStorage.setItem("orbis_admin_token", adminSessionToken);
-                    document.getElementById("admin-secret-input").value = "";
-                    document.getElementById("admin-login-box").style.display = "none";
-                    document.getElementById("admin-dashboard-box").style.display = "block";
-                    await loadAdminOverview();
-                }
-            } catch (err) {
-                await showGlassModal({ title: "🛑 Accesso Admin Negato", message: err.message });
-            }
-        }
-
-        async function loadAdminOverview() {
-            const listEl = document.getElementById("admin-users-list");
-            listEl.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">Caricamento clienti e siti...</div>';
-
-            try {
-                const res = await adminFetch("/api/v1/admin/overview");
-                const data = await parseApiJson(res);
-                const users = data.users || [];
-
-                if (users.length === 0) {
-                    listEl.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">Nessun cliente censito nel database.</div>';
-                    return;
-                }
-
-                listEl.innerHTML = users.map(u => {
-                    const devsText = (u.devices || []).map(d => d.device_name).join(", ") || "Nessuno";
-                    const sitesHtml = (u.sites || []).map(s => `
-                        <div class="admin-site-pill">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                                <strong style="color:#fff;">🌐 ${escapeHtml(s.business_name)} (${escapeHtml(s.site_id)})</strong>
-                                <span style="color:#38bdf8; font-weight:700;">${escapeHtml(s.tier.toUpperCase())}${s.has_store ? " + STORE" : ""}</span>
-                            </div>
-                            <div style="color:var(--text-muted); margin-bottom:6px;">
-                                Mod AI: <b>${s.mod_count}/${s.mod_limit}</b> • Ripristini: <b>${s.rollback_count}/${s.rollback_limit}</b> • Stats: <b>${s.views_month}/${s.stats_limit}</b>
-                            </div>
-                            <div style="display:flex; flex-wrap:wrap; gap:5px;">
-                                <button type="button" class="small-icon-btn" data-adm-act="reset-mod" data-uid="${escapeHtml(u.user_id)}" data-sid="${escapeHtml(s.site_id)}">🔄 Azzera Modifiche</button>
-                                <button type="button" class="small-icon-btn" data-adm-act="reset-rb" data-uid="${escapeHtml(u.user_id)}" data-sid="${escapeHtml(s.site_id)}">⏪ Azzera Ripristini</button>
-                                <button type="button" class="small-icon-btn" data-adm-act="reset-stats" data-uid="${escapeHtml(u.user_id)}" data-sid="${escapeHtml(s.site_id)}">📊 Azzera Stats</button>
-                            </div>
-                        </div>
-                    `).join("");
-
-                    return `
-                        <div class="admin-tenant-card">
-                            <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
-                                <div style="font-size:13px; font-weight:800; color:#38bdf8;">👤 ${escapeHtml(u.user_id)}</div>
-                                <span style="font-size:11px; color:${u.pending_activation ? "#fbbf24" : "#34d399"}; font-weight:700;">
-                                    ${u.pending_activation ? `🎟️ In attesa 1° accesso (${escapeHtml(u.temp_username)})` : `🔑 Attivo (${u.devices.length}/${u.max_devices} disp.)`}
-                                </span>
-                            </div>
-                            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Dispositivi: ${escapeHtml(devsText)}</div>
-                            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
-                                <button type="button" class="small-icon-btn" data-adm-act="add-slot" data-uid="${escapeHtml(u.user_id)}" data-cur-max="${u.max_devices}">➕ Slot Dispositivo (${u.max_devices}→${u.max_devices + 1})</button>
-                                <button type="button" class="small-icon-btn" style="color:#fbbf24;" data-adm-act="reset-creds" data-uid="${escapeHtml(u.user_id)}">🔐 Reset Credenziali (Emergenza)</button>
-                            </div>
-                            ${sitesHtml}
-                        </div>
-                    `;
-                }).join("");
-            } catch (err) {
-                listEl.innerHTML = `<div style="font-size:12px; color:#fb7185;">${escapeHtml(err.message)}</div>`;
-            }
-        }
-
-        document.getElementById("admin-users-list").addEventListener("click", async (e) => {
-            const btn = e.target.closest("button[data-adm-act]");
-            if (!btn) return;
-            const act = btn.dataset.admAct;
-            const uid = btn.dataset.uid;
-            const sid = btn.dataset.sid || null;
-
-            try {
-                if (act === "reset-mod" || act === "reset-rb" || act === "reset-stats") {
-                    const payload = { user_id: uid, site_id: sid };
-                    if (act === "reset-mod") payload.reset_mod_count = true;
-                    if (act === "reset-rb") payload.reset_rollback_count = true;
-                    if (act === "reset-stats") payload.reset_stats_count = true;
-
-                    const res = await adminFetch("/api/v1/admin/update-quotas", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    });
-                    const data = await parseApiJson(res);
-                    await showGlassModal({ title: "✅ Aggiornato", message: data.message });
-                    await loadAdminOverview();
-                } else if (act === "add-slot") {
-                    const nextMax = parseInt(btn.dataset.curMax || "4", 10) + 1;
-                    const res = await adminFetch("/api/v1/admin/update-quotas", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ user_id: uid, max_devices: nextMax })
-                    });
-                    const data = await parseApiJson(res);
-                    await showGlassModal({ title: "✅ Slot Dispositivi Aumentato", message: `Nuovo limite: ${nextMax} dispositivi.` });
-                    await loadAdminOverview();
-                } else if (act === "reset-creds") {
-                    const extraHtml = `
-                        <div class="form-row">
-                            <label>Nuovo Username Temporaneo</label>
-                            <input type="text" id="adm-reset-u" placeholder="Es: blu">
-                        </div>
-                        <div class="form-row" style="margin-bottom:0;">
-                            <label>Nuova Password Temporanea</label>
-                            <input type="text" id="adm-reset-p" placeholder="Es: rosso">
-                        </div>
-                    `;
-                    const ok = await showGlassModal({
-                        title: `🔐 Reset Credenziali (${uid})`,
-                        message: "Verranno scollegati i vecchi dispositivi e impostate nuove credenziali temporanee, lasciando intatti siti, modifiche mensili e statistiche.",
-                        confirmText: "Conferma Reset",
-                        cancelText: "Annulla",
-                        isDanger: true,
-                        extraHtml
-                    });
-                    if (!ok) return;
-
-                    const nu = (document.getElementById("adm-reset-u")?.value || "").trim();
-                    const np = (document.getElementById("adm-reset-p")?.value || "").trim();
-                    if (!nu || !np) return;
-
-                    const res = await adminFetch("/api/v1/admin/reset-credentials", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            user_id: uid,
-                            temp_username: nu,
-                            temp_password: np,
-                            clear_passkeys: true
-                        })
-                    });
-                    const data = await parseApiJson(res);
-                    await showGlassModal({
-                        title: "✅ Credenziali Rigenerate",
-                        message: `Comunica al cliente:\nUsername: ${data.temp_username}\nPassword: ${data.temp_password}`
-                    });
-                    await loadAdminOverview();
-                }
-            } catch (err) {
-                await showGlassModal({ title: "❌ Errore Admin", message: err.message });
-            }
-        });
-
-        document.getElementById("admin-provision-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const payload = {
-                user_id: document.getElementById("adm_user_id").value.trim() || null,
-                max_devices: parseInt(document.getElementById("adm_max_devices").value || "4", 10),
-                temp_username: document.getElementById("adm_temp_user").value.trim() || null,
-                temp_password: document.getElementById("adm_temp_pass").value.trim() || null,
-                sites: [{
-                    site_id: document.getElementById("adm_site_id").value.trim(),
-                    business_name: document.getElementById("adm_biz_name").value.trim(),
-                    domain: document.getElementById("adm_domain").value.trim(),
-                    repo_name: document.getElementById("adm_repo").value.trim(),
-                    tier: document.getElementById("adm_tier").value,
-                    has_store: document.getElementById("adm_has_store").value === "true"
-                }]
-            };
-
-            try {
-                const res = await adminFetch("/api/v1/admin/provision-tenant", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-                const data = await parseApiJson(res);
-                document.getElementById("admin-provision-form").reset();
-                document.getElementById("admin-new-tenant-box").style.display = "none";
-                await showGlassModal({
-                    title: "✅ Cliente / Sito Salvato",
-                    message: `Account: ${data.user_id}\nUsername temp: ${data.temp_username}\nPassword temp: ${data.temp_password}`
-                });
-                await loadAdminOverview();
-            } catch (err) {
-                await showGlassModal({ title: "❌ Errore Salvataggio", message: err.message });
+                btn.innerHTML = "<span>Applica Regole al Sito</span>";
             }
         });
 
@@ -4415,7 +4316,7 @@
         }
 
         /* ============================================================== */
-        /* 12. AVVIO APPLICAZIONE                                         */
+        /* 11. AVVIO APPLICAZIONE                                         */
         /* ============================================================== */
         window.addEventListener("DOMContentLoaded", () => {
             if (sessionToken) {
