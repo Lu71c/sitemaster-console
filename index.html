@@ -1391,11 +1391,18 @@
             overflow-y: auto;
         }
 
+        .glass-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
         .glass-modal-title {
             font-size: 15px;
             font-weight: 800;
             color: #ffffff;
-            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -1427,10 +1434,10 @@
             margin-bottom: 6px;
         }
 
-        /* Mirino Fotocamera Quadrato 1:1 con Guida QR Centrale */
+        /* Mirino Fotocamera Quadrato 1:1 Pulito */
         .scanner-video-box {
             width: 100%;
-            max-width: 260px;
+            max-width: 280px;
             aspect-ratio: 1 / 1;
             margin: 0 auto 12px auto;
             border-radius: 16px;
@@ -1445,30 +1452,6 @@
             height: 100%;
             object-fit: cover;
             display: block;
-        }
-
-        .qr-guide-reticle {
-            position: absolute;
-            inset: 18%;
-            border: 2px solid rgba(96, 165, 250, 0.85);
-            border-radius: 12px;
-            box-shadow: 0 0 0 999px rgba(6, 9, 17, 0.42);
-            pointer-events: none;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            padding-bottom: 6px;
-        }
-
-        .qr-guide-reticle span {
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: #ffffff;
-            background: rgba(29, 78, 216, 0.78);
-            padding: 2px 8px;
-            border-radius: 6px;
-            text-transform: uppercase;
         }
 
         /* Footer Istituzionale */
@@ -2120,7 +2103,10 @@
     <!-- ================================================================== -->
     <div class="glass-modal-overlay" id="glass-modal-overlay">
         <div class="glass-modal-card">
-            <div class="glass-modal-title" id="glass-modal-title">Conferma Operazione</div>
+            <div class="glass-modal-header">
+                <div class="glass-modal-title" id="glass-modal-title">Conferma Operazione</div>
+                <button type="button" class="btn-drawer-close-x" id="glass-modal-close-x" style="display:none;" title="Chiudi">✕</button>
+            </div>
             <div class="glass-modal-body" id="glass-modal-body"></div>
             <div id="glass-modal-extra" style="margin-bottom: 14px; display: none;"></div>
             <div class="glass-modal-actions" id="glass-modal-actions"></div>
@@ -2168,7 +2154,7 @@
         let pendingExternalQrParam = "";
 
         /* ============================================================== */
-        /* 0. GENERATORE QR CODE SVG NATIVO (VERSION 6-L • FINO A 134 B)  */
+        /* 0. GENERATORE QR CODE SVG NATIVO (VERSION 4-L • 33x33 CRISP)   */
         /* ============================================================== */
         const OrbisQrSvg = (() => {
             const GF_EXP = new Uint8Array(512);
@@ -2216,12 +2202,12 @@
 
             function generateSvg(text, pxSize = 184) {
                 const utf8 = new TextEncoder().encode(text);
-                if (utf8.length > 134) throw new Error("Payload QR troppo lungo.");
+                if (utf8.length > 78) throw new Error("Payload QR troppo lungo.");
 
-                // Versione 6-L: 41x41 moduli, 136 data codewords, 36 EC codewords
-                const size = 41;
-                const dataCap = 136;
-                const ecCap = 36;
+                // Versione 4-L: 33x33 moduli (ad alta leggibilità e singolo alignment pattern a 26,26)
+                const size = 33;
+                const dataCap = 80;
+                const ecCap = 20;
 
                 const bits = [];
                 const pushBits = (val, len) => {
@@ -2276,12 +2262,10 @@
                     setFunc(i, 6, i % 2 === 0);
                 }
 
-                // Alignment pattern a (34, 34) per Versione 6
-                const alignCenter = size - 7;
                 for (let dr = -2; dr <= 2; dr++) {
                     for (let dc = -2; dc <= 2; dc++) {
                         const dark = Math.max(Math.abs(dr), Math.abs(dc)) !== 1;
-                        setFunc(alignCenter + dr, alignCenter + dc, dark);
+                        setFunc(26 + dr, 26 + dc, dark);
                     }
                 }
 
@@ -2350,22 +2334,26 @@
             let txt = String(rawInput || "").trim();
             if (!txt) return "";
 
-            // 1. Se è un link completo (es. https://lu71c.github.io/.../?qr=qr_xxx)
             if (/^https?:\/\//i.test(txt) || txt.includes("?qr=") || txt.includes("&qr=")) {
                 try {
                     const parsedUrl = new URL(txt.startsWith("http") ? txt : `https://dummy.local/${txt}`);
                     const qParam = parsedUrl.searchParams.get("qr");
-                    if (qParam) return qParam.trim();
+                    if (qParam) {
+                        const cleanedParam = qParam.trim();
+                        const compactParam = cleanedParam.replace(/[\s-]+/g, "");
+                        if (compactParam.length <= 10 && /^[A-Za-z0-9]+$/.test(compactParam)) {
+                            return compactParam.toUpperCase();
+                        }
+                        return cleanedParam;
+                    }
                 } catch (_) {
                     const m = txt.match(/[?&]qr=([^&#]+)/i);
-                    if (m) return decodeURIComponent(m[1]).trim();
+                    if (m) return decodeURIComponent(m[1]).trim().toUpperCase();
                 }
             }
 
-            // 2. Prefisso ORBIS_QR:
             txt = txt.replace(/^ORBIS_QR:/i, "").trim();
 
-            // 3. Se è il codice breve da 8 caratteri (con o senza trattino/spazio)
             const compact = txt.replace(/[\s-]+/g, "");
             if (compact.length <= 10 && /^[A-Za-z0-9]+$/.test(compact)) {
                 return compact.toUpperCase();
@@ -2409,16 +2397,31 @@
             }
         }
 
-        function showGlassModal({ title, message, confirmText = "OK", cancelText = "", isDanger = false, extraHtml = "" }) {
+        function showGlassModal({ title, message, confirmText = "OK", cancelText = "", isDanger = false, extraHtml = "", showCloseX = false }) {
             return new Promise((resolve) => {
                 const overlay = document.getElementById("glass-modal-overlay");
                 const titleEl = document.getElementById("glass-modal-title");
+                const closeXEl = document.getElementById("glass-modal-close-x");
                 const bodyEl = document.getElementById("glass-modal-body");
                 const extraEl = document.getElementById("glass-modal-extra");
                 const actionsEl = document.getElementById("glass-modal-actions");
 
                 titleEl.textContent = title;
                 bodyEl.textContent = message;
+
+                const closeWith = (val) => {
+                    stopCameraScanner();
+                    overlay.style.display = "none";
+                    resolve(val);
+                };
+
+                if (showCloseX) {
+                    closeXEl.style.display = "inline-flex";
+                    closeXEl.onclick = () => closeWith(false);
+                } else {
+                    closeXEl.style.display = "none";
+                    closeXEl.onclick = null;
+                }
 
                 if (extraHtml) {
                     extraEl.innerHTML = extraHtml;
@@ -2429,12 +2432,6 @@
                 }
 
                 actionsEl.innerHTML = "";
-
-                const closeWith = (val) => {
-                    stopCameraScanner();
-                    overlay.style.display = "none";
-                    resolve(val);
-                };
 
                 if (cancelText) {
                     const btnCancel = document.createElement("button");
@@ -2456,6 +2453,7 @@
                     actionsEl.appendChild(btnConfirm);
                 }
 
+                actionsEl.style.display = (cancelText || confirmText) ? "flex" : "none";
                 overlay.style.display = "flex";
             });
         }
@@ -2496,7 +2494,7 @@
         }
 
         /* ============================================================== */
-        /* 2. WEBAUTHN PASSKEY (NOME DISPOSITIVO, RINOMINA & BIOMETRIA)   */
+        /* 2. WEBAUTHN PASSKEY (VINCOLO LOCALE + RINOMINA & BIOMETRIA)    */
         /* ============================================================== */
         function b64urlToUint8Array(b64url) {
             const padding = "=".repeat((4 - (b64url.length % 4)) % 4);
@@ -2528,7 +2526,7 @@
             `;
             const confirmed = await showGlassModal({
                 title: "📱 Associa Questo Dispositivo",
-                message: "Scegli un nome semplice per riconoscere questo dispositivo (es. Telefono, PC, Tablet), poi conferma con impronta, volto o PIN.",
+                message: "Scegli un nome semplice per riconoscere questo dispositivo, poi conferma con impronta, volto o PIN.",
                 confirmText: "👆 Conferma e Registra",
                 cancelText: "Annulla",
                 extraHtml
@@ -2595,6 +2593,8 @@
                         sessionStorage.removeItem("orbis_session_mode");
                         localStorage.setItem("orbis_session_token", sessionToken);
                         localStorage.setItem("orbis_session_mode", "persistent");
+                        localStorage.setItem("orbis_device_authorized", "1");
+                        localStorage.setItem("orbis_bound_cred_id", credential.id);
                         if (currentUserId) localStorage.setItem("orbis_user_id", currentUserId);
                     }
                     if (verData.action_proof) {
@@ -2618,10 +2618,9 @@
                 const devices = data.devices || [];
                 const count = data.count || devices.length;
                 const maxDev = data.max_devices || 5;
-                const limitReached = count >= maxDev;
 
                 const listHtml = devices.length === 0
-                    ? '<div style="font-size:12px; color:#fbbf24; margin-bottom:10px;">Nessun dispositivo registrato al momento.</div>'
+                    ? '<div style="font-size:12px; color:#fbbf24;">Nessun dispositivo registrato al momento.</div>'
                     : devices.map(d => `
                         <div class="device-row">
                             <div style="min-width:0; flex:1;">
@@ -2637,22 +2636,13 @@
                         </div>
                     `).join("");
 
-                const addSectionHtml = limitReached
-                    ? `<div style="background:rgba(225,29,72,0.14); border:1px solid rgba(225,29,72,0.35); border-radius:10px; padding:10px; font-size:11.5px; color:#fda4af; line-height:1.4;">
-                         🚫 <b>Limite di ${maxDev} dispositivi raggiunto (${count}/${maxDev}).</b><br>
-                         Per collegare un altro dispositivo richiedi l'estensione del piano a The Orbis Project oppure rimuovi un vecchio dispositivo.
-                       </div>`
-                    : `<div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px; margin-top:8px;">
-                         <label for="new-passkey-device-name" style="font-size:11px; color:var(--text-muted);">Registra questo dispositivo (${count}/${maxDev} slot usati)</label>
-                         <input type="text" id="new-passkey-device-name" value="${escapeHtml(detectDefaultDeviceLabel())}" placeholder="Es: Telefono, PC, Tablet">
-                       </div>`;
-
                 const modalPromise = showGlassModal({
                     title: `📱 Dispositivi Autorizzati (${count} / ${maxDev})`,
-                    message: "Puoi rinominare i tuoi dispositivi (es. Telefono, PC, Tablet) o rimuovere quelli sostituiti. Per aggiungere un altro dispositivo usa 'Accesso QR → Aggiungi Dispositivo' sul nuovo device.",
-                    confirmText: limitReached ? "" : "➕ Registra Questo Dispositivo",
-                    cancelText: "Chiudi",
-                    extraHtml: `<div id="devices-modal-list">${listHtml}</div>` + addSectionHtml
+                    message: "Puoi rinominare i tuoi dispositivi o rimuovere quelli sostituiti.",
+                    confirmText: "",
+                    cancelText: "",
+                    showCloseX: true,
+                    extraHtml: `<div id="devices-modal-list">${listHtml}</div>`
                 });
 
                 const listContainer = document.getElementById("devices-modal-list");
@@ -2670,12 +2660,7 @@
                     });
                 }
 
-                const confirmed = await modalPromise;
-                if (confirmed && !limitReached) {
-                    const nameInput = document.getElementById("new-passkey-device-name");
-                    const label = nameInput ? nameInput.value : detectDefaultDeviceLabel();
-                    await registerNewPasskey(label);
-                }
+                await modalPromise;
             } catch (err) {
                 showNotification(`❌ ${err.message}`, false);
             }
@@ -2683,7 +2668,7 @@
 
         async function renameDevicePasskey(credentialId, currentName) {
             const extraHtml = `
-                <input type="text" id="rename-device-input" value="${escapeHtml(currentName)}" placeholder="Es: Telefono, PC, Tablet">
+                <input type="text" id="rename-device-input" value="${escapeHtml(currentName)}" placeholder="Nome dispositivo">
             `;
             const confirmed = await showGlassModal({
                 title: "✏️ Rinomina Dispositivo",
@@ -2692,10 +2677,16 @@
                 cancelText: "Annulla",
                 extraHtml
             });
-            if (!confirmed) return;
+            if (!confirmed) {
+                openPasskeyManagerModal();
+                return;
+            }
 
             const newName = (document.getElementById("rename-device-input")?.value || "").trim();
-            if (!newName) return;
+            if (!newName) {
+                openPasskeyManagerModal();
+                return;
+            }
 
             try {
                 const res = await apiFetch("/api/v1/auth/passkeys/rename", {
@@ -2726,6 +2717,10 @@
                 const data = await parseApiJson(res);
                 document.getElementById("glass-modal-overlay").style.display = "none";
                 if (data.status === "success") {
+                    if (localStorage.getItem("orbis_bound_cred_id") === credentialId) {
+                        localStorage.removeItem("orbis_device_authorized");
+                        localStorage.removeItem("orbis_bound_cred_id");
+                    }
                     showNotification(`✅ ${data.message}`, true);
                     fetchUserStatus();
                 } else {
@@ -2737,6 +2732,15 @@
         }
 
         async function loginWithPasskey() {
+            // Impedisce l'accesso "fantasma" da dispositivi non registrati (anche se Google/Apple sincronizzano la Passkey sul cloud o in incognito)
+            if (localStorage.getItem("orbis_device_authorized") !== "1") {
+                await showGlassModal({
+                    title: "🔒 Dispositivo Non Associato",
+                    message: "Questo dispositivo non è ancora registrato sull'account.\nUsa 'Accesso QR → Aggiungi Dispositivo' da un dispositivo già autorizzato oppure '1° Accesso'."
+                });
+                return;
+            }
+
             if (!window.PublicKeyCredential) {
                 await showGlassModal({
                     title: "❌ Passkey Non Supportata",
@@ -2791,11 +2795,14 @@
                 });
                 const verData = await parseApiJson(verRes);
                 if (verData.status === "success") {
+                    localStorage.setItem("orbis_bound_cred_id", assertion.id);
                     completeAuthSuccess(verData);
                 } else {
+                    localStorage.removeItem("orbis_device_authorized");
+                    localStorage.removeItem("orbis_bound_cred_id");
                     await showGlassModal({
                         title: "🛑 Accesso Negato",
-                        message: verData.message || "Dispositivo non riconosciuto."
+                        message: verData.message || "Dispositivo non riconosciuto o chiave revocata."
                     });
                 }
             } catch (err) {
@@ -2924,9 +2931,13 @@
                     activeQrShortCode = data.short_code || "";
                     shortCodeEl.textContent = formatShortCodeDisplay(activeQrShortCode);
 
-                    // URL HTTPS diretto: anche la fotocamera nativa dello smartphone aprirà il browser invece delle Note/Memo
-                    const directQrUrl = `${getConsoleBaseUrl()}?qr=${encodeURIComponent(activeQrToken)}`;
-                    container.innerHTML = OrbisQrSvg.generateSvg(directQrUrl, 184);
+                    // Link HTTPS breve con il codice a 8 caratteri: entra nella matrice 33x33 ad alta leggibilità e apre direttamente il browser
+                    const shortQrUrl = `${getConsoleBaseUrl()}?qr=${encodeURIComponent(activeQrShortCode)}`;
+                    const qrContent = (new TextEncoder().encode(shortQrUrl).length <= 78)
+                        ? shortQrUrl
+                        : `ORBIS_QR:${activeQrShortCode}`;
+
+                    container.innerHTML = OrbisQrSvg.generateSvg(qrContent, 184);
                     pill.textContent = "📷 Inquadra o usa il Codice Rapido";
 
                     qrPollInterval = setInterval(pollQrAuthStatus, 2200);
@@ -3014,16 +3025,15 @@
         });
 
         /* ============================================================== */
-        /* 4. SCANNER QR QUADRATO & AUTORIZZAZIONE CON CODICE RAPIDO      */
+        /* 4. SCANNER QR QUADRATO 1:1 & AUTORIZZAZIONE CON CODICE RAPIDO  */
         /* ============================================================== */
         async function openQrScannerModal() {
             const extraHtml = `
                 <div class="scanner-video-box" id="qr-video-wrapper" style="display:none;">
                     <video id="qr-scanner-video" playsinline muted></video>
-                    <div class="qr-guide-reticle"><span>Inquadra QR</span></div>
                 </div>
                 <div id="qr-scanner-hint" style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px; text-align:center;">
-                    Avvio mirino fotocamera QR...
+                    Avvio fotocamera...
                 </div>
                 <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
                     <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Oppure inserisci il Codice Rapido (es. A1B2-C3D4):</label>
@@ -3062,7 +3072,7 @@
 
             try {
                 activeScannerStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment", width: { ideal: 640 }, height: { ideal: 640 } }
+                    video: { facingMode: "environment" }
                 });
                 if (!videoEl || !videoWrapper) {
                     stopCameraScanner();
@@ -3073,7 +3083,7 @@
                 videoWrapper.style.display = "block";
 
                 if ("BarcodeDetector" in window) {
-                    if (hintEl) hintEl.textContent = "🎯 Centra il QR Code nel riquadro luminoso";
+                    if (hintEl) hintEl.textContent = "Inquadra il QR Code dell'altro dispositivo";
                     const detector = new BarcodeDetector({ formats: ["qr_code"] });
                     const scanLoop = async () => {
                         if (!activeScannerStream) return;
@@ -3183,13 +3193,17 @@
             }
         }
 
-        function logoutSession(reasonMessage = "") {
+        function logoutSession(reasonMessage = "", clearDeviceBinding = false) {
             stopQrPolling();
             sessionToken = "";
             sessionMode = "persistent";
             cachedActionProof = { token: "", expiresAt: 0 };
             localStorage.removeItem("orbis_session_token");
             localStorage.removeItem("orbis_session_mode");
+            if (clearDeviceBinding) {
+                localStorage.removeItem("orbis_device_authorized");
+                localStorage.removeItem("orbis_bound_cred_id");
+            }
             sessionStorage.clear();
             document.getElementById("volatile-session-banner").style.display = "none";
             document.getElementById("console-screen").style.display = "none";
@@ -3215,7 +3229,7 @@
                     const j = await res.json();
                     if (j && j.detail) reason = j.detail;
                 } catch (_) {}
-                logoutSession(reason);
+                logoutSession(reason, true);
                 throw new Error(reason);
             }
             if (res.status === 403) {
