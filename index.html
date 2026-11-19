@@ -55,7 +55,7 @@
             flex-direction: column;
         }
 
-        /* Espansione armoniosa su Tablet (Verticale e Orizzontale) */
+        /* Espansione armoniosa su Tablet e PC */
         @media (min-width: 768px) {
             body {
                 padding: 28px 32px;
@@ -121,10 +121,9 @@
         .auth-logo-row h1 {
             font-size: 22px;
             font-weight: 800;
-            letter-spacing: -0.4px;
-            background: linear-gradient(135deg, #cbd5e1 0%, #3b82f6 55%, #1d4ed8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.3px;
+            color: var(--primary-deep-accent);
+            text-shadow: 0 0 22px rgba(59, 130, 246, 0.35);
         }
 
         .auth-logo-row p {
@@ -324,21 +323,50 @@
         }
 
         .brand-titles h1 {
-            font-size: clamp(13.5px, 3.8vw, 18px);
+            font-size: 18px;
             font-weight: 800;
             letter-spacing: -0.3px;
-            background: linear-gradient(135deg, #cbd5e1 0%, #3b82f6 65%, #1d4ed8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary-deep-accent);
+            text-shadow: 0 0 18px rgba(59, 130, 246, 0.32);
             line-height: 1.25;
-            word-break: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .header-right-actions {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             flex-shrink: 0;
+        }
+
+        /* Ottimizzazione compatta SOLO su smartphone affinché il titolo stia su una riga */
+        @media (max-width: 600px) {
+            .brand-header {
+                padding: 10px 10px;
+                gap: 6px;
+            }
+            .brand-titles h1 {
+                font-size: 12px;
+                letter-spacing: -0.25px;
+            }
+            .header-right-actions {
+                gap: 4px;
+            }
+            .tier-badge {
+                font-size: 9px;
+                padding: 4px 7px;
+                letter-spacing: 0.4px;
+            }
+            .btn-header-icon {
+                padding: 5px 6px;
+                font-size: 11px;
+            }
+            .btn-logout {
+                padding: 5px 7px;
+                font-size: 11.5px;
+            }
         }
 
         .tier-badge {
@@ -381,6 +409,9 @@
             cursor: pointer;
             transition: all 0.15s;
             line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-header-icon:hover {
@@ -410,7 +441,7 @@
             border-color: #f43f5e;
         }
 
-        /* Selettore Multi-Sito (1 Utente = N Siti) */
+        /* Selettore Multi-Sito (Sempre visibile anche con 1 solo sito) */
         .site-switcher-bar {
             display: none;
             margin-bottom: 14px;
@@ -1461,6 +1492,14 @@
             display: block;
         }
 
+        /* Box QR di Invito mostrato su PC */
+        .host-invite-qr-panel {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+        }
+
         /* Footer Istituzionale */
         .app-footer {
             margin-top: auto;
@@ -1583,17 +1622,26 @@
             <!-- Header Istituzionale -->
             <header class="brand-header">
                 <div class="brand-titles">
-                    <h1 id="enterprise-name">SiteMaster Console Orbis</h1>
+                    <h1 id="console-main-title">SiteMaster Console Orbis</h1>
                 </div>
                 <div class="header-right-actions">
                     <div id="tier-badge" class="tier-badge base">BASE</div>
                     <button type="button" class="btn-header-icon btn-header-pair" title="Collega Nuovo Dispositivo" onclick="openQrScannerModal()">➕📱</button>
-                    <button type="button" class="btn-header-icon" title="Dispositivi Autorizzati" onclick="openPasskeyManagerModal()">📱</button>
+                    <button type="button" class="btn-header-icon" title="Dispositivi Autorizzati" aria-label="Dispositivi Autorizzati" onclick="openPasskeyManagerModal()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                    </button>
                     <button type="button" class="btn-header-icon btn-logout" title="Esci" onclick="logoutSession()">✕</button>
                 </div>
             </header>
 
-            <!-- Selettore Multi-Sito (Solo nomi puliti dei siti) -->
+            <!-- Selettore Sito Attivo (Sempre visibile) -->
             <div class="site-switcher-bar" id="site-switcher-bar">
                 <label for="site-switcher">🌐 Sito Attivo:</label>
                 <select id="site-switcher" onchange="onSwitchSite(this.value)"></select>
@@ -2159,6 +2207,7 @@
         let qrPollInterval = null;
         let activeScannerStream = null;
         let pendingExternalQrParam = "";
+        let pendingPairInviteCode = "";
 
         /* ============================================================== */
         /* 0. GENERATORE QR CODE SVG NATIVO (VERSION 4-L • 33x33 CRISP)   */
@@ -2340,10 +2389,10 @@
             let txt = String(rawInput || "").trim();
             if (!txt) return "";
 
-            if (/^https?:\/\//i.test(txt) || txt.includes("?qr=") || txt.includes("&qr=")) {
+            if (/^https?:\/\//i.test(txt) || txt.includes("?qr=") || txt.includes("&qr=") || txt.includes("?pair=") || txt.includes("&pair=")) {
                 try {
                     const parsedUrl = new URL(txt.startsWith("http") ? txt : `https://dummy.local/${txt}`);
-                    const qParam = parsedUrl.searchParams.get("qr");
+                    const qParam = parsedUrl.searchParams.get("qr") || parsedUrl.searchParams.get("pair");
                     if (qParam) {
                         const cleanedParam = qParam.trim();
                         const compactParam = cleanedParam.replace(/[\s-]+/g, "");
@@ -2353,7 +2402,7 @@
                         return cleanedParam;
                     }
                 } catch (_) {
-                    const m = txt.match(/[?&]qr=([^&#]+)/i);
+                    const m = txt.match(/[?&](?:qr|pair)=([^&#]+)/i);
                     if (m) return decodeURIComponent(m[1]).trim().toUpperCase();
                 }
             }
@@ -2671,7 +2720,7 @@
                     `).join("");
 
                 const modalPromise = showGlassModal({
-                    title: `📱 Dispositivi Autorizzati (${count} / ${maxDev})`,
+                    title: `📋 Dispositivi Autorizzati (${count} / ${maxDev})`,
                     message: "Puoi rinominare i tuoi dispositivi o rimuovere quelli sostituiti.",
                     confirmText: "",
                     cancelText: "",
@@ -3065,7 +3114,7 @@
         });
 
         /* ============================================================== */
-        /* 4. SCANNER QR (SOLO CAMERA POSTERIORE) & CODICE RAPIDO         */
+        /* 4. SCANNER QR (SOLO CAMERA POSTERIORE) & QR INVITO BIDIREZIONALE*/
         /* ============================================================== */
         async function openQrScannerModal() {
             const extraHtml = `
@@ -3076,8 +3125,19 @@
                     Verifica fotocamera posteriore...
                 </div>
                 <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
-                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Codice Rapido a 8 caratteri (es. A1B2-C3D4):</label>
+                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Inserisci il Codice Rapido a 8 caratteri del nuovo dispositivo:</label>
                     <input type="text" id="manual-qr-input" placeholder="Es: A1B2-C3D4" style="text-transform:uppercase; font-family:monospace; letter-spacing:1.5px; font-weight:700;">
+                </div>
+                <div id="host-invite-qr-panel" class="host-invite-qr-panel" style="display:none;">
+                    <div style="font-size:11.5px; color:#93c5fd; font-weight:700; margin-bottom:4px;">📷 Oppure inquadra questo QR dal nuovo telefono</div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">Apri la fotocamera del telefono e inquadra il codice qui sotto per avviare subito la registrazione:</div>
+                    <div class="qr-svg-frame" id="host-invite-qr-svg" style="min-width:168px; min-height:168px; padding:10px;"></div>
+                    <div>
+                        <div class="qr-short-code-box" style="margin-bottom:4px;">
+                            <div class="qr-short-code-label">Codice Invito Alternativo</div>
+                            <div class="qr-short-code-val" id="host-invite-short-code">---- ----</div>
+                        </div>
+                    </div>
                 </div>
                 <div style="text-align:center; margin-top:8px;">
                     <button type="button" id="btn-enable-fallback-cam" class="small-icon-btn" style="display:none;" onclick="startLiveQrCamera(true)">📷 Attiva Fotocamera</button>
@@ -3086,7 +3146,7 @@
 
             const modalPromise = showGlassModal({
                 title: "➕📱 Collega Nuovo Dispositivo",
-                message: "Sul nuovo dispositivo apri «Accesso QR → Aggiungi Dispositivo» e inserisci qui il Codice Rapido a 8 caratteri (oppure inquadra il QR se usi uno smartphone o tablet).",
+                message: "Inserisci il Codice Rapido mostrato sul nuovo dispositivo oppure inquadra il QR Code.",
                 confirmText: "✅ Autorizza Codice",
                 cancelText: "Annulla",
                 extraHtml
@@ -3103,6 +3163,38 @@
             }
         }
 
+        async function renderHostInviteQrOnPc() {
+            const panel = document.getElementById("host-invite-qr-panel");
+            const svgBox = document.getElementById("host-invite-qr-svg");
+            const codeBox = document.getElementById("host-invite-short-code");
+            if (!panel || !svgBox || !codeBox) return;
+
+            panel.style.display = "block";
+            svgBox.innerHTML = '<div style="color:#060911; font-size:11px; font-weight:700;">Generazione QR...</div>';
+
+            try {
+                const actionProof = await obtainActionProof();
+                const res = await apiFetch("/api/v1/auth/qr/create-invite", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action_proof: actionProof })
+                });
+                const data = await parseApiJson(res);
+                if (data.status === "success" && data.short_code) {
+                    const pairUrl = `${getConsoleBaseUrl()}?pair=${encodeURIComponent(data.short_code)}`;
+                    const qrContent = (new TextEncoder().encode(pairUrl).length <= 78)
+                        ? pairUrl
+                        : `ORBIS_PAIR:${data.short_code}`;
+                    svgBox.innerHTML = OrbisQrSvg.generateSvg(qrContent, 152);
+                    codeBox.textContent = formatShortCodeDisplay(data.short_code);
+                } else {
+                    panel.style.display = "none";
+                }
+            } catch (_) {
+                panel.style.display = "none";
+            }
+        }
+
         async function startLiveQrCamera(forceAnyCamera = false) {
             const videoWrapper = document.getElementById("qr-video-wrapper");
             const videoEl = document.getElementById("qr-scanner-video");
@@ -3111,15 +3203,15 @@
             const codeInput = document.getElementById("manual-qr-input");
 
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                if (hintEl) hintEl.textContent = "Inserisci il Codice Rapido a 8 caratteri mostrato sull'altro dispositivo.";
+                if (hintEl) hintEl.textContent = "Digita il Codice Rapido a 8 caratteri oppure inquadra il QR dal nuovo telefono.";
                 if (codeInput) codeInput.focus();
+                renderHostInviteQrOnPc();
                 return;
             }
 
             try {
                 // Richiede esclusivamente la fotocamera posteriore (environment).
-                // Sui PC fissi e portatili dotati solo di webcam frontale, il browser rifiuta subito
-                // SENZA accendere la webcam né la spia luminosa.
+                // Sui PC dotati solo di webcam frontale, il browser rifiuta subito senza accendere la spia della webcam.
                 const constraints = forceAnyCamera
                     ? { video: true }
                     : { video: { facingMode: { exact: "environment" } } };
@@ -3159,12 +3251,15 @@
                 }
             } catch (_) {
                 if (hintEl) {
-                    hintEl.textContent = "Inserisci il Codice Rapido a 8 caratteri mostrato sul nuovo dispositivo.";
+                    hintEl.textContent = "Digita il Codice Rapido del nuovo dispositivo oppure inquadra il QR qui sotto dal telefono.";
                 }
                 if (manualCamBtn && !forceAnyCamera) {
                     manualCamBtn.style.display = "inline-block";
                 }
                 if (codeInput) codeInput.focus();
+                if (!forceAnyCamera) {
+                    renderHostInviteQrOnPc();
+                }
             }
         }
 
@@ -3196,6 +3291,30 @@
                 }
             } catch (err) {
                 showNotification(`❌ ${err.message}`, false);
+            }
+        }
+
+        async function redeemHostInvitePairCode(pairCode) {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/v1/auth/qr/claim-invite`, {
+                    method: "POST",
+                    headers: { ...DEFAULT_HEADERS, "Content-Type": "application/json" },
+                    body: JSON.stringify({ pair_code: pairCode })
+                });
+                const data = await parseApiJson(res);
+                if (data.status === "success") {
+                    completeAuthSuccess(data);
+                } else {
+                    await showGlassModal({
+                        title: "⚠️ Invito Scaduto o Non Valido",
+                        message: data.message || "Il codice QR è scaduto. Riapri 'Collega Nuovo Dispositivo' sull'altro schermo."
+                    });
+                }
+            } catch (err) {
+                await showGlassModal({
+                    title: "❌ Errore Connessione",
+                    message: err.message || "Impossibile verificare l'invito di abbinamento."
+                });
             }
         }
 
@@ -3364,9 +3483,7 @@
                             const storage = (sessionMode === "volatile" || sessionMode === "onboarding") ? sessionStorage : localStorage;
                             storage.setItem("orbis_selected_site_id", selectedSiteId);
                         }
-                    }
 
-                    if (userSites.length > 1) {
                         switcherSelect.innerHTML = "";
                         userSites.forEach(s => {
                             const opt = document.createElement("option");
@@ -3518,7 +3635,7 @@
                 const data = await parseApiJson(res);
 
                 if (data.status === "success") {
-                    document.getElementById("enterprise-name").innerText = data.business_name || "SiteMaster Console Orbis";
+                    document.getElementById("console-main-title").innerText = "SiteMaster Console Orbis";
                     currentDomain = data.domain || "";
 
                     currentTier = (data.tier || "base").toLowerCase();
@@ -4534,14 +4651,25 @@
         window.addEventListener("DOMContentLoaded", () => {
             const urlParams = new URLSearchParams(window.location.search);
             const qrFromUrl = urlParams.get("qr");
+            const pairFromUrl = urlParams.get("pair");
+
             if (qrFromUrl) {
                 pendingExternalQrParam = qrFromUrl.trim();
+                window.history.replaceState({}, document.title, getConsoleBaseUrl());
+            }
+            if (pairFromUrl) {
+                pendingPairInviteCode = pairFromUrl.trim();
                 window.history.replaceState({}, document.title, getConsoleBaseUrl());
             }
 
             if (sessionMode === "onboarding" || sessionMode === "device_pairing") {
                 sessionToken = "";
                 sessionStorage.clear();
+            }
+
+            if (pendingPairInviteCode) {
+                redeemHostInvitePairCode(pendingPairInviteCode);
+                return;
             }
 
             if (sessionToken) {
