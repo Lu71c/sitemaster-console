@@ -223,10 +223,36 @@
             background: #ffffff;
             padding: 12px;
             border-radius: 12px;
-            margin: 8px auto 12px;
+            margin: 8px auto 10px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
             min-width: 196px;
             min-height: 196px;
+        }
+
+        .qr-short-code-box {
+            margin: 8px auto 12px;
+            padding: 9px 12px;
+            border-radius: 10px;
+            background: rgba(29, 78, 216, 0.14);
+            border: 1px dashed rgba(59, 130, 246, 0.45);
+            display: inline-block;
+            min-width: 220px;
+        }
+
+        .qr-short-code-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
+
+        .qr-short-code-val {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #93c5fd;
         }
 
         .qr-status-pill {
@@ -247,7 +273,7 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .privacy-zero-note {
@@ -1401,21 +1427,48 @@
             margin-bottom: 6px;
         }
 
+        /* Mirino Fotocamera Quadrato 1:1 con Guida QR Centrale */
         .scanner-video-box {
             width: 100%;
-            border-radius: 12px;
+            max-width: 260px;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto 12px auto;
+            border-radius: 16px;
             overflow: hidden;
             background: #000;
-            border: 1px solid rgba(59, 130, 246, 0.38);
-            margin-bottom: 10px;
+            border: 2px solid rgba(59, 130, 246, 0.45);
             position: relative;
         }
 
         .scanner-video-box video {
             width: 100%;
-            max-height: 240px;
+            height: 100%;
             object-fit: cover;
             display: block;
+        }
+
+        .qr-guide-reticle {
+            position: absolute;
+            inset: 18%;
+            border: 2px solid rgba(96, 165, 250, 0.85);
+            border-radius: 12px;
+            box-shadow: 0 0 0 999px rgba(6, 9, 17, 0.42);
+            pointer-events: none;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 6px;
+        }
+
+        .qr-guide-reticle span {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #ffffff;
+            background: rgba(29, 78, 216, 0.78);
+            padding: 2px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
         }
 
         /* Footer Istituzionale */
@@ -1469,7 +1522,7 @@
                     </button>
                 </div>
 
-                <!-- TAB 2: DUAL-QR BRIDGE -->
+                <!-- TAB 2: DUAL-QR BRIDGE + CODICE RAPIDO MONOUSO -->
                 <div id="auth-panel-qr" style="display: none;">
                     <div class="qr-mode-switch">
                         <button type="button" class="qr-mode-btn active" id="qr-mode-temp" onclick="selectQrAuthMode('temp_login')">
@@ -1483,13 +1536,20 @@
                     <div class="qr-stage-box">
                         <div class="qr-status-pill" id="qr-status-pill">⏳ In attesa di scansione...</div>
                         <p id="qr-mode-desc" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4; margin-bottom: 4px;">
-                            Inquadra questo QR dal dispositivo già connesso. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.
+                            Inquadra questo QR dal dispositivo già connesso oppure inserisci il codice rapido qui sotto. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.
                         </p>
 
                         <div class="qr-svg-frame" id="qr-svg-container"></div>
 
+                        <div>
+                            <div class="qr-short-code-box">
+                                <div class="qr-short-code-label">Codice Rapido Monouso (per PC senza fotocamera)</div>
+                                <div class="qr-short-code-val" id="qr-short-code-display">---- ----</div>
+                            </div>
+                        </div>
+
                         <div class="qr-token-fallback-row">
-                            <button type="button" class="small-icon-btn" onclick="copyCurrentQrCode()">📋 Copia Codice QR</button>
+                            <button type="button" class="small-icon-btn" onclick="copyCurrentQrCode()">📋 Copia Codice</button>
                             <button type="button" class="small-icon-btn" onclick="initQrAuthSession()">🔄 Rigenera</button>
                         </div>
                     </div>
@@ -1537,7 +1597,7 @@
                 </div>
                 <div class="header-right-actions">
                     <div id="tier-badge" class="tier-badge base">BASE</div>
-                    <button type="button" class="btn-header-icon" title="Autorizza Nuovo Dispositivo con QR" onclick="openQrScannerModal()">📷</button>
+                    <button type="button" class="btn-header-icon" title="Autorizza Nuovo Dispositivo con QR o Codice" onclick="openQrScannerModal()">📷</button>
                     <button type="button" class="btn-header-icon" title="Dispositivi Autorizzati" onclick="openPasskeyManagerModal()">📱</button>
                     <button type="button" class="btn-header-icon btn-logout" title="Esci" onclick="logoutSession()">✕</button>
                 </div>
@@ -1571,7 +1631,7 @@
                     </div>
                     <div class="tele-item">
                         <div class="tele-label">Dispositivi</div>
-                        <div class="tele-val" id="tele-devices" style="color: var(--primary-deep-accent);">📱 0 / 4</div>
+                        <div class="tele-val" id="tele-devices" style="color: var(--primary-deep-accent);">📱 0 / 5</div>
                     </div>
                 </div>
 
@@ -1693,7 +1753,7 @@
                         <div id="analytics-tracks-list"></div>
                     </div>
 
-                    <!-- Sezione Dedicata ai Prodotti dello Store (Visibile quando il sito è Pro / ha un catalogo) -->
+                    <!-- Sezione Dedicata ai Prodotti dello Store -->
                     <div id="analytics-products-wrapper" style="display: none;">
                         <div class="inventory-kpi-grid">
                             <div class="analytics-stat-box">
@@ -1815,7 +1875,7 @@
                     <div class="drawer-title">🛡️ Diagnostica IA Quotidiana</div>
                     <button type="button" class="btn-drawer-close-x" title="Chiudi" onclick="closeAllDrawers()">✕</button>
                 </div>
-                <p class="drawer-sub">Ispezione strutturale e verifica di sicurezza, adattabilità mobile e reattività &lt;150ms.</p>
+                <p class="drawer-sub">Ispezione strutturale completa su HTML, CSS e JavaScript con verifica di sicurezza e reattività &lt;150ms.</p>
 
                 <div id="audit-unlocked-content">
                     <button type="button" class="btn-glow-primary" id="btn-run-audit" onclick="triggerDailyAudit()">
@@ -1825,7 +1885,7 @@
                     <div id="audit-report-container" style="display: none; margin-top: 14px;">
                         <div class="audit-summary-card" id="audit-summary-content"></div>
 
-                        <!-- Box Prompt Correttivo (visibile se 🟡 MIGLIORABILE o 🔴 CRITICO) -->
+                        <!-- Box Prompt Correttivo -->
                         <div class="audit-fix-box" id="audit-fix-box">
                             <div class="audit-fix-header">💡 Suggerimento di Ottimizzazione Pronto:</div>
                             <div class="audit-fix-prompt-text" id="audit-fix-prompt-text"></div>
@@ -2102,11 +2162,13 @@
 
         let activeQrMode = "temp_login";
         let activeQrToken = "";
+        let activeQrShortCode = "";
         let qrPollInterval = null;
         let activeScannerStream = null;
+        let pendingExternalQrParam = "";
 
         /* ============================================================== */
-        /* 0. GENERATORE QR CODE SVG NATIVO (VERSION 4-L • ZERO CDN)      */
+        /* 0. GENERATORE QR CODE SVG NATIVO (VERSION 6-L • FINO A 134 B)  */
         /* ============================================================== */
         const OrbisQrSvg = (() => {
             const GF_EXP = new Uint8Array(512);
@@ -2152,13 +2214,14 @@
                 return rem;
             }
 
-            function generateSvg(text, pxSize = 180) {
+            function generateSvg(text, pxSize = 184) {
                 const utf8 = new TextEncoder().encode(text);
-                if (utf8.length > 78) throw new Error("Payload QR troppo lungo.");
+                if (utf8.length > 134) throw new Error("Payload QR troppo lungo.");
 
-                const size = 33;
-                const dataCap = 80;
-                const ecCap = 20;
+                // Versione 6-L: 41x41 moduli, 136 data codewords, 36 EC codewords
+                const size = 41;
+                const dataCap = 136;
+                const ecCap = 36;
 
                 const bits = [];
                 const pushBits = (val, len) => {
@@ -2213,10 +2276,12 @@
                     setFunc(i, 6, i % 2 === 0);
                 }
 
+                // Alignment pattern a (34, 34) per Versione 6
+                const alignCenter = size - 7;
                 for (let dr = -2; dr <= 2; dr++) {
                     for (let dc = -2; dc <= 2; dc++) {
                         const dark = Math.max(Math.abs(dr), Math.abs(dc)) !== 1;
-                        setFunc(26 + dr, 26 + dc, dark);
+                        setFunc(alignCenter + dr, alignCenter + dc, dark);
                     }
                 }
 
@@ -2269,6 +2334,46 @@
         /* ============================================================== */
         /* 1. HELPER MODALI, FORMATTAZIONE & NORMALIZZAZIONE URL          */
         /* ============================================================== */
+        function getConsoleBaseUrl() {
+            return `${window.location.origin}${window.location.pathname}`;
+        }
+
+        function formatShortCodeDisplay(rawCode) {
+            const clean = String(rawCode || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+            if (clean.length === 8) {
+                return `${clean.slice(0, 4)}-${clean.slice(4)}`;
+            }
+            return clean || "---- ----";
+        }
+
+        function extractQrTokenFromAnyInput(rawInput) {
+            let txt = String(rawInput || "").trim();
+            if (!txt) return "";
+
+            // 1. Se è un link completo (es. https://lu71c.github.io/.../?qr=qr_xxx)
+            if (/^https?:\/\//i.test(txt) || txt.includes("?qr=") || txt.includes("&qr=")) {
+                try {
+                    const parsedUrl = new URL(txt.startsWith("http") ? txt : `https://dummy.local/${txt}`);
+                    const qParam = parsedUrl.searchParams.get("qr");
+                    if (qParam) return qParam.trim();
+                } catch (_) {
+                    const m = txt.match(/[?&]qr=([^&#]+)/i);
+                    if (m) return decodeURIComponent(m[1]).trim();
+                }
+            }
+
+            // 2. Prefisso ORBIS_QR:
+            txt = txt.replace(/^ORBIS_QR:/i, "").trim();
+
+            // 3. Se è il codice breve da 8 caratteri (con o senza trattino/spazio)
+            const compact = txt.replace(/[\s-]+/g, "");
+            if (compact.length <= 10 && /^[A-Za-z0-9]+$/.test(compact)) {
+                return compact.toUpperCase();
+            }
+
+            return txt;
+        }
+
         function normalizeSiteUrl(domain) {
             const clean = String(domain || "").trim();
             if (!clean) return "#";
@@ -2512,7 +2617,7 @@
                 const data = await parseApiJson(res);
                 const devices = data.devices || [];
                 const count = data.count || devices.length;
-                const maxDev = data.max_devices || 4;
+                const maxDev = data.max_devices || 5;
                 const limitReached = count >= maxDev;
 
                 const listHtml = devices.length === 0
@@ -2544,7 +2649,7 @@
 
                 const modalPromise = showGlassModal({
                     title: `📱 Dispositivi Autorizzati (${count} / ${maxDev})`,
-                    message: "Puoi rinominare i tuoi dispositivi (es. Telefono, PC, Tablet) o rimuovere quelli sostituiti. Per aggiungere un altro dispositivo a distanza usa 'Accesso QR → Aggiungi Dispositivo' al login.",
+                    message: "Puoi rinominare i tuoi dispositivi (es. Telefono, PC, Tablet) o rimuovere quelli sostituiti. Per aggiungere un altro dispositivo usa 'Accesso QR → Aggiungi Dispositivo' sul nuovo device.",
                     confirmText: limitReached ? "" : "➕ Registra Questo Dispositivo",
                     cancelText: "Chiudi",
                     extraHtml: `<div id="devices-modal-list">${listHtml}</div>` + addSectionHtml
@@ -2763,7 +2868,7 @@
         }
 
         /* ============================================================== */
-        /* 3. DUAL-QR BRIDGE & PRIMO ACCESSO                              */
+        /* 3. DUAL-QR BRIDGE + CODICE RAPIDO & PRIMO ACCESSO              */
         /* ============================================================== */
         function stopQrPolling() {
             if (qrPollInterval) {
@@ -2791,9 +2896,9 @@
 
             const descEl = document.getElementById("qr-mode-desc");
             if (mode === "temp_login") {
-                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.';
+                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso oppure inserisci il codice rapido qui sotto. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.';
             } else {
-                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso per <b>associare permanentemente</b> questo dispositivo (Max 4 dispositivi per account).';
+                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso (oppure digita il codice rapido su PC) per <b>associare permanentemente</b> questo dispositivo (Max 5 dispositivi).';
             }
             initQrAuthSession();
         }
@@ -2802,7 +2907,9 @@
             stopQrPolling();
             const container = document.getElementById("qr-svg-container");
             const pill = document.getElementById("qr-status-pill");
+            const shortCodeEl = document.getElementById("qr-short-code-display");
             pill.textContent = "⏳ Generazione codice QR...";
+            shortCodeEl.textContent = "---- ----";
             container.innerHTML = '<div style="color:#060911; font-size:12px; font-weight:700;">Caricamento...</div>';
 
             try {
@@ -2814,9 +2921,13 @@
                 const data = await parseApiJson(res);
                 if (data.status === "success" && data.qr_token) {
                     activeQrToken = data.qr_token;
-                    const qrPayload = `ORBIS_QR:${activeQrToken}`;
-                    container.innerHTML = OrbisQrSvg.generateSvg(qrPayload, 180);
-                    pill.textContent = "📷 Inquadra con il dispositivo loggato";
+                    activeQrShortCode = data.short_code || "";
+                    shortCodeEl.textContent = formatShortCodeDisplay(activeQrShortCode);
+
+                    // URL HTTPS diretto: anche la fotocamera nativa dello smartphone aprirà il browser invece delle Note/Memo
+                    const directQrUrl = `${getConsoleBaseUrl()}?qr=${encodeURIComponent(activeQrToken)}`;
+                    container.innerHTML = OrbisQrSvg.generateSvg(directQrUrl, 184);
+                    pill.textContent = "📷 Inquadra o usa il Codice Rapido";
 
                     qrPollInterval = setInterval(pollQrAuthStatus, 2200);
                 } else {
@@ -2842,12 +2953,12 @@
                     completeAuthSuccess(data.auth);
                 } else if (data.status === "expired") {
                     stopQrPolling();
-                    pill.textContent = "⌛ QR Scaduto — Premi Rigenera";
+                    pill.textContent = "⌛ Scaduto — Premi Rigenera";
                 } else if (data.status === "error") {
                     stopQrPolling();
                     pill.textContent = "🚫 Operazione Bloccata";
                     await showGlassModal({
-                        title: data.code === "DEVICE_LIMIT_REACHED" ? "🚫 Limite 4 Dispositivi Raggiunto" : "⚠️ Accesso Negato",
+                        title: data.code === "DEVICE_LIMIT_REACHED" ? "🚫 Limite 5 Dispositivi Raggiunto" : "⚠️ Accesso Negato",
                         message: data.message || "Impossibile completare l'abbinamento."
                     });
                 }
@@ -2855,10 +2966,10 @@
         }
 
         async function copyCurrentQrCode() {
-            if (!activeQrToken) return;
-            const payload = `ORBIS_QR:${activeQrToken}`;
+            const textToCopy = activeQrShortCode ? formatShortCodeDisplay(activeQrShortCode) : activeQrToken;
+            if (!textToCopy) return;
             try {
-                await navigator.clipboard.writeText(payload);
+                await navigator.clipboard.writeText(textToCopy);
                 const pill = document.getElementById("qr-status-pill");
                 pill.textContent = "📋 Codice copiato! Incollalo sul dispositivo connesso";
             } catch (_) {}
@@ -2903,26 +3014,27 @@
         });
 
         /* ============================================================== */
-        /* 4. SCANNER QR PER DISPOSITIVO LOGGATO (AUTORIZZA NUOVO DEVICE) */
+        /* 4. SCANNER QR QUADRATO & AUTORIZZAZIONE CON CODICE RAPIDO      */
         /* ============================================================== */
         async function openQrScannerModal() {
             const extraHtml = `
                 <div class="scanner-video-box" id="qr-video-wrapper" style="display:none;">
                     <video id="qr-scanner-video" playsinline muted></video>
+                    <div class="qr-guide-reticle"><span>Inquadra QR</span></div>
                 </div>
-                <div id="qr-scanner-hint" style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px;">
-                    Avvio fotocamera per inquadrare il QR Code...
+                <div id="qr-scanner-hint" style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px; text-align:center;">
+                    Avvio mirino fotocamera QR...
                 </div>
                 <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
-                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Oppure incolla il codice copiato dall'altro dispositivo:</label>
-                    <input type="text" id="manual-qr-input" placeholder="ORBIS_QR:qr_...">
+                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Oppure inserisci il Codice Rapido (es. A1B2-C3D4):</label>
+                    <input type="text" id="manual-qr-input" placeholder="Es: A1B2-C3D4" style="text-transform:uppercase; font-family:monospace; letter-spacing:1.5px; font-weight:700;">
                 </div>
             `;
 
             const modalPromise = showGlassModal({
                 title: "📷 Autorizza Nuovo Dispositivo",
-                message: "Inquadra il codice QR mostrato sullo schermo del nuovo dispositivo (telefono, tablet o computer). Ti verrà chiesta la conferma biometrica.",
-                confirmText: "✅ Autorizza Codice Incollato",
+                message: "Inquadra il QR Code mostrato dal nuovo dispositivo oppure digita il Codice Rapido a 8 caratteri.",
+                confirmText: "✅ Autorizza Codice",
                 cancelText: "Annulla",
                 extraHtml
             });
@@ -2944,13 +3056,13 @@
             const hintEl = document.getElementById("qr-scanner-hint");
 
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                if (hintEl) hintEl.textContent = "Fotocamera non disponibile su questo browser: incolla il codice QR qui sotto.";
+                if (hintEl) hintEl.textContent = "Fotocamera non presente: inserisci il Codice Rapido a 8 caratteri qui sotto.";
                 return;
             }
 
             try {
                 activeScannerStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" }
+                    video: { facingMode: "environment", width: { ideal: 640 }, height: { ideal: 640 } }
                 });
                 if (!videoEl || !videoWrapper) {
                     stopCameraScanner();
@@ -2961,18 +3073,18 @@
                 videoWrapper.style.display = "block";
 
                 if ("BarcodeDetector" in window) {
-                    if (hintEl) hintEl.textContent = "🎯 Inquadra il QR Code nello schermo...";
+                    if (hintEl) hintEl.textContent = "🎯 Centra il QR Code nel riquadro luminoso";
                     const detector = new BarcodeDetector({ formats: ["qr_code"] });
                     const scanLoop = async () => {
                         if (!activeScannerStream) return;
                         try {
                             const codes = await detector.detect(videoEl);
                             if (codes && codes.length > 0 && codes[0].rawValue) {
-                                const raw = codes[0].rawValue.trim();
-                                if (raw.startsWith("ORBIS_QR:")) {
+                                const extracted = extractQrTokenFromAnyInput(codes[0].rawValue);
+                                if (extracted && (extracted.startsWith("qr_") || extracted.length === 8)) {
                                     stopCameraScanner();
                                     document.getElementById("glass-modal-overlay").style.display = "none";
-                                    await processScannedQrPayload(raw);
+                                    await processScannedQrPayload(extracted);
                                     return;
                                 }
                             }
@@ -2981,17 +3093,17 @@
                     };
                     requestAnimationFrame(scanLoop);
                 } else {
-                    if (hintEl) hintEl.textContent = "Incolla il codice QR copiato dall'altro dispositivo nel campo qui sotto per autorizzare.";
+                    if (hintEl) hintEl.textContent = "Inserisci il Codice Rapido a 8 caratteri mostrato sull'altro dispositivo.";
                 }
             } catch (_) {
-                if (hintEl) hintEl.textContent = "Permesso fotocamera negato o assente: incolla il codice QR qui sotto.";
+                if (hintEl) hintEl.textContent = "Fotocamera non disponibile: inserisci il Codice Rapido a 8 caratteri qui sotto.";
             }
         }
 
         async function processScannedQrPayload(rawPayload) {
-            const cleaned = rawPayload.replace(/^ORBIS_QR:/i, "").trim();
+            const cleaned = extractQrTokenFromAnyInput(rawPayload);
             if (!cleaned) {
-                showNotification("⚠️ Codice QR non valido.", false);
+                showNotification("⚠️ Codice QR o codice rapido non valido.", false);
                 return;
             }
 
@@ -3010,8 +3122,8 @@
                     showNotification(`✅ ${data.message}`, true);
                 } else {
                     await showGlassModal({
-                        title: data.code === "DEVICE_LIMIT_REACHED" ? "🚫 Limite 4 Dispositivi Raggiunto" : "⚠️ Autorizzazione Negata",
-                        message: data.message || "Impossibile autorizzare il codice QR."
+                        title: data.code === "DEVICE_LIMIT_REACHED" ? "🚫 Limite 5 Dispositivi Raggiunto" : "⚠️ Autorizzazione Negata",
+                        message: data.message || "Impossibile autorizzare il codice."
                     });
                 }
             } catch (err) {
@@ -3064,10 +3176,14 @@
 
             if (authData.mode === "add_device") {
                 setTimeout(() => promptAndRegisterPasskey(), 350);
+            } else if (pendingExternalQrParam) {
+                const qrToProcess = pendingExternalQrParam;
+                pendingExternalQrParam = "";
+                setTimeout(() => processScannedQrPayload(qrToProcess), 350);
             }
         }
 
-        function logoutSession() {
+        function logoutSession(reasonMessage = "") {
             stopQrPolling();
             sessionToken = "";
             sessionMode = "persistent";
@@ -3078,6 +3194,12 @@
             document.getElementById("volatile-session-banner").style.display = "none";
             document.getElementById("console-screen").style.display = "none";
             document.getElementById("auth-screen").style.display = "flex";
+            if (reasonMessage) {
+                showGlassModal({
+                    title: "🔒 Sessione Terminata",
+                    message: reasonMessage
+                });
+            }
         }
 
         async function apiFetch(endpoint, options = {}) {
@@ -3088,8 +3210,13 @@
             };
             const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
             if (res.status === 401) {
-                logoutSession();
-                throw new Error("Sessione scaduta. Effettua nuovamente l'accesso.");
+                let reason = "Sessione scaduta o dispositivo rimosso dall'account. Effettua nuovamente l'accesso.";
+                try {
+                    const j = await res.json();
+                    if (j && j.detail) reason = j.detail;
+                } catch (_) {}
+                logoutSession(reason);
+                throw new Error(reason);
             }
             if (res.status === 403) {
                 if (sessionMode !== "volatile") {
@@ -3120,11 +3247,17 @@
             }
 
             await loadUserSitesList();
-            if (selectedSiteId) {
+            if (selectedSiteId && sessionToken) {
                 await Promise.all([
                     fetchUserStatus(),
                     loadSiteSections("index.html")
                 ]);
+            }
+
+            if (pendingExternalQrParam && sessionToken) {
+                const qrToProcess = pendingExternalQrParam;
+                pendingExternalQrParam = "";
+                setTimeout(() => processScannedQrPayload(qrToProcess), 350);
             }
         }
 
@@ -3311,7 +3444,7 @@
                     tierBadge.className = `tier-badge ${currentTier}`;
 
                     document.getElementById("passkey-setup-banner").style.display = data.requires_passkey_setup ? "block" : "none";
-                    document.getElementById("tele-devices").innerText = `📱 ${data.devices_count ?? 0} / ${data.max_devices ?? 4}`;
+                    document.getElementById("tele-devices").innerText = `📱 ${data.devices_count ?? 0} / ${data.max_devices ?? 5}`;
 
                     const canAudit = Boolean(data.modules_unlocked?.daily_audit);
                     const canStore = Boolean(data.modules_unlocked?.store_manager);
@@ -3491,7 +3624,6 @@
                 const data = await parseApiJson(res);
 
                 if (data.status === "success") {
-                    // Filtriamo via "AUTO" così nella Modifica Guidata compaiono solo i nomi puliti delle sezioni
                     cachedSectionsData = (data.sections || []).filter(sec => sec.id !== "AUTO");
                     sectionSelect.innerHTML = "";
 
@@ -3744,7 +3876,6 @@
                     renderKeyValueMetricList("analytics-pages-list", data.pages || {}, "Nessuna pagina ancora registrata");
                     renderKeyValueMetricList("analytics-sections-list", data.sections || {}, "Nessuna sezione rilevata (>2s)");
 
-                    // Etichette pulsanti pulite (solo il nome, senza ID tra parentesi)
                     const tracksContainer = document.getElementById("analytics-tracks-list");
                     const tracks = data.tracked_elements || [];
                     if (tracks.length === 0) {
@@ -3758,7 +3889,6 @@
                         `).join("");
                     }
 
-                    // Sezione Prodotti dello Store unificata nelle Statistiche
                     const prodWrapper = document.getElementById("analytics-products-wrapper");
                     if (data.store_stats) {
                         const st = data.store_stats;
@@ -4316,11 +4446,26 @@
         }
 
         /* ============================================================== */
-        /* 11. AVVIO APPLICAZIONE                                         */
+        /* 11. AVVIO APPLICAZIONE & RILEVAZIONE QR DA FOTOCAMERA ESTERNA  */
         /* ============================================================== */
         window.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const qrFromUrl = urlParams.get("qr");
+            if (qrFromUrl) {
+                pendingExternalQrParam = qrFromUrl.trim();
+                window.history.replaceState({}, document.title, getConsoleBaseUrl());
+            }
+
             if (sessionToken) {
                 enterConsoleMode(false);
+            } else if (pendingExternalQrParam) {
+                showGlassModal({
+                    title: "📷 Richiesta Autorizzazione Dispositivo",
+                    message: "Accedi prima con la tua Passkey su questo dispositivo per autorizzare l'altro schermo.",
+                    confirmText: "👆 Accedi con Passkey"
+                }).then((ok) => {
+                    if (ok) loginWithPasskey();
+                });
             }
         });
     </script>
