@@ -388,6 +388,13 @@
             border-color: rgba(59, 130, 246, 0.4);
         }
 
+        .btn-header-pair {
+            background: rgba(29, 78, 216, 0.18);
+            border-color: rgba(59, 130, 246, 0.38);
+            color: #93c5fd;
+            font-weight: 700;
+        }
+
         .btn-logout {
             background: rgba(225, 29, 72, 0.14);
             border: 1px solid rgba(225, 29, 72, 0.42);
@@ -1526,7 +1533,7 @@
 
                         <div>
                             <div class="qr-short-code-box">
-                                <div class="qr-short-code-label">Codice Rapido Monouso (per PC senza fotocamera)</div>
+                                <div class="qr-short-code-label">Codice Rapido Monouso</div>
                                 <div class="qr-short-code-val" id="qr-short-code-display">---- ----</div>
                             </div>
                         </div>
@@ -1580,7 +1587,7 @@
                 </div>
                 <div class="header-right-actions">
                     <div id="tier-badge" class="tier-badge base">BASE</div>
-                    <button type="button" class="btn-header-icon" title="Autorizza Nuovo Dispositivo con QR o Codice" onclick="openQrScannerModal()">📷</button>
+                    <button type="button" class="btn-header-icon btn-header-pair" title="Collega Nuovo Dispositivo" onclick="openQrScannerModal()">➕📱</button>
                     <button type="button" class="btn-header-icon" title="Dispositivi Autorizzati" onclick="openPasskeyManagerModal()">📱</button>
                     <button type="button" class="btn-header-icon btn-logout" title="Esci" onclick="logoutSession()">✕</button>
                 </div>
@@ -2940,7 +2947,7 @@
             if (mode === "temp_login") {
                 descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso oppure inserisci il codice rapido qui sotto. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.';
             } else {
-                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso (oppure digita il codice rapido su PC) per <b>associare permanentemente</b> questo dispositivo (Max 5 dispositivi).';
+                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso oppure inserisci il codice rapido qui sotto per <b>associare permanentemente</b> questo dispositivo (Max 5 dispositivi).';
             }
             initQrAuthSession();
         }
@@ -3058,7 +3065,7 @@
         });
 
         /* ============================================================== */
-        /* 4. SCANNER QR QUADRATO 1:1 & AUTORIZZAZIONE CON CODICE RAPIDO  */
+        /* 4. SCANNER QR (SOLO CAMERA POSTERIORE) & CODICE RAPIDO         */
         /* ============================================================== */
         async function openQrScannerModal() {
             const extraHtml = `
@@ -3066,23 +3073,26 @@
                     <video id="qr-scanner-video" playsinline muted></video>
                 </div>
                 <div id="qr-scanner-hint" style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px; text-align:center;">
-                    Avvio fotocamera...
+                    Verifica fotocamera posteriore...
                 </div>
                 <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
-                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Oppure inserisci il Codice Rapido (es. A1B2-C3D4):</label>
+                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Codice Rapido a 8 caratteri (es. A1B2-C3D4):</label>
                     <input type="text" id="manual-qr-input" placeholder="Es: A1B2-C3D4" style="text-transform:uppercase; font-family:monospace; letter-spacing:1.5px; font-weight:700;">
+                </div>
+                <div style="text-align:center; margin-top:8px;">
+                    <button type="button" id="btn-enable-fallback-cam" class="small-icon-btn" style="display:none;" onclick="startLiveQrCamera(true)">📷 Attiva Fotocamera</button>
                 </div>
             `;
 
             const modalPromise = showGlassModal({
-                title: "📷 Autorizza Nuovo Dispositivo",
-                message: "Inquadra il QR Code mostrato dal nuovo dispositivo oppure digita il Codice Rapido a 8 caratteri.",
+                title: "➕📱 Collega Nuovo Dispositivo",
+                message: "Sul nuovo dispositivo apri «Accesso QR → Aggiungi Dispositivo» e inserisci qui il Codice Rapido a 8 caratteri (oppure inquadra il QR se usi uno smartphone o tablet).",
                 confirmText: "✅ Autorizza Codice",
                 cancelText: "Annulla",
                 extraHtml
             });
 
-            startLiveQrCamera();
+            startLiveQrCamera(false);
 
             const confirmedManual = await modalPromise;
             if (confirmedManual) {
@@ -3093,20 +3103,28 @@
             }
         }
 
-        async function startLiveQrCamera() {
+        async function startLiveQrCamera(forceAnyCamera = false) {
             const videoWrapper = document.getElementById("qr-video-wrapper");
             const videoEl = document.getElementById("qr-scanner-video");
             const hintEl = document.getElementById("qr-scanner-hint");
+            const manualCamBtn = document.getElementById("btn-enable-fallback-cam");
+            const codeInput = document.getElementById("manual-qr-input");
 
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                if (hintEl) hintEl.textContent = "Fotocamera non presente: inserisci il Codice Rapido a 8 caratteri qui sotto.";
+                if (hintEl) hintEl.textContent = "Inserisci il Codice Rapido a 8 caratteri mostrato sull'altro dispositivo.";
+                if (codeInput) codeInput.focus();
                 return;
             }
 
             try {
-                activeScannerStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" }
-                });
+                // Richiede esclusivamente la fotocamera posteriore (environment).
+                // Sui PC fissi e portatili dotati solo di webcam frontale, il browser rifiuta subito
+                // SENZA accendere la webcam né la spia luminosa.
+                const constraints = forceAnyCamera
+                    ? { video: true }
+                    : { video: { facingMode: { exact: "environment" } } };
+
+                activeScannerStream = await navigator.mediaDevices.getUserMedia(constraints);
                 if (!videoEl || !videoWrapper) {
                     stopCameraScanner();
                     return;
@@ -3114,9 +3132,10 @@
                 videoEl.srcObject = activeScannerStream;
                 await videoEl.play();
                 videoWrapper.style.display = "block";
+                if (manualCamBtn) manualCamBtn.style.display = "none";
 
                 if ("BarcodeDetector" in window) {
-                    if (hintEl) hintEl.textContent = "Inquadra il QR Code dell'altro dispositivo";
+                    if (hintEl) hintEl.textContent = "Inquadra il QR Code oppure digita il Codice Rapido qui sotto";
                     const detector = new BarcodeDetector({ formats: ["qr_code"] });
                     const scanLoop = async () => {
                         if (!activeScannerStream) return;
@@ -3139,7 +3158,13 @@
                     if (hintEl) hintEl.textContent = "Inserisci il Codice Rapido a 8 caratteri mostrato sull'altro dispositivo.";
                 }
             } catch (_) {
-                if (hintEl) hintEl.textContent = "Fotocamera non disponibile: inserisci il Codice Rapido a 8 caratteri qui sotto.";
+                if (hintEl) {
+                    hintEl.textContent = "Inserisci il Codice Rapido a 8 caratteri mostrato sul nuovo dispositivo.";
+                }
+                if (manualCamBtn && !forceAnyCamera) {
+                    manualCamBtn.style.display = "inline-block";
+                }
+                if (codeInput) codeInput.focus();
             }
         }
 
