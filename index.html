@@ -1595,7 +1595,7 @@
             <!-- Banner Registrazione Passkey Obbligatoria -->
             <div class="passkey-setup-banner" id="passkey-setup-banner">
                 <h4>🔐 Completa l'Attivazione di Questo Dispositivo</h4>
-                <p>Dai un nome a questo dispositivo (es. Telefono, PC, Tablet) e registra la tua impronta digitale, riconoscimento facciale o PIN per blindare l'account.</p>
+                <p>Dai un nome a questo dispositivo e registra la tua impronta digitale, riconoscimento facciale o PIN per blindare l'account.</p>
                 <button type="button" class="btn-glow-primary" onclick="promptAndRegisterPasskey()">
                     <span>👆 Assegna Nome &amp; Registra Passkey</span>
                 </button>
@@ -2204,7 +2204,6 @@
                 const utf8 = new TextEncoder().encode(text);
                 if (utf8.length > 78) throw new Error("Payload QR troppo lungo.");
 
-                // Versione 4-L: 33x33 moduli (ad alta leggibilità e singolo alignment pattern a 26,26)
                 const size = 33;
                 const dataCap = 80;
                 const ecCap = 20;
@@ -2516,7 +2515,7 @@
             return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
         }
 
-        async function promptAndRegisterPasskey() {
+        async function promptAndRegisterPasskey(isBlockingOnboarding = false) {
             const suggestedName = detectDefaultDeviceLabel();
             const extraHtml = `
                 <div style="background:rgba(0,0,0,0.35); border:1px solid rgba(59,130,246,0.3); border-radius:10px; padding:10px;">
@@ -2526,29 +2525,43 @@
             `;
             const confirmed = await showGlassModal({
                 title: "📱 Associa Questo Dispositivo",
-                message: "Scegli un nome semplice per riconoscere questo dispositivo, poi conferma con impronta, volto o PIN.",
+                message: "Scegli un nome semplice per riconoscere questo dispositivo, poi conferma con impronta, volto o PIN per completare l'accesso.",
                 confirmText: "👆 Conferma e Registra",
                 cancelText: "Annulla",
                 extraHtml
             });
-            if (!confirmed) return;
+            if (!confirmed) {
+                if (isBlockingOnboarding) {
+                    logoutSession("Registrazione dispositivo annullata. Ripeti l'accesso per associare questo dispositivo.", true);
+                }
+                return;
+            }
             const chosenName = (document.getElementById("prompt-device-name-input")?.value || "").trim() || suggestedName;
-            await registerNewPasskey(chosenName);
+            await registerNewPasskey(chosenName, isBlockingOnboarding);
         }
 
-        async function registerNewPasskey(customLabel = "") {
+        async function registerNewPasskey(customLabel = "", isBlockingOnboarding = false) {
             if (!window.PublicKeyCredential) {
-                showNotification("❌ Questo browser o dispositivo non supporta le Passkey WebAuthn.", false);
+                const msg = "Questo browser o dispositivo non supporta le Passkey WebAuthn.";
+                if (isBlockingOnboarding) {
+                    logoutSession(msg, true);
+                } else {
+                    showNotification(`❌ ${msg}`, false);
+                }
                 return;
             }
             try {
                 const optRes = await apiFetch("/api/v1/auth/passkey/register-options", { method: "POST" });
                 const optData = await parseApiJson(optRes);
                 if (optData.status !== "success") {
-                    await showGlassModal({
-                        title: optData.code === "DEVICE_LIMIT_REACHED" ? "🚫 Limite Dispositivi Raggiunto" : "⚠️ Attenzione",
-                        message: optData.message || "Impossibile registrare questo dispositivo."
-                    });
+                    if (isBlockingOnboarding) {
+                        logoutSession(optData.message || "Impossibile registrare questo dispositivo.", true);
+                    } else {
+                        await showGlassModal({
+                            title: optData.code === "DEVICE_LIMIT_REACHED" ? "🚫 Limite Dispositivi Raggiunto" : "⚠️ Attenzione",
+                            message: optData.message || "Impossibile registrare questo dispositivo."
+                        });
+                    }
                     return;
                 }
 
@@ -2601,13 +2614,27 @@
                         cachedActionProof = { token: verData.action_proof, expiresAt: Date.now() + 50000 };
                     }
                     document.getElementById("passkey-setup-banner").style.display = "none";
-                    showNotification(`✅ ${verData.message}`, true);
-                    fetchUserStatus();
+
+                    if (isBlockingOnboarding) {
+                        await enterConsoleMode(false);
+                        showNotification(`✅ ${verData.message}`, true);
+                    } else {
+                        showNotification(`✅ ${verData.message}`, true);
+                        fetchUserStatus();
+                    }
                 } else {
-                    showNotification(`❌ ${verData.message}`, false);
+                    if (isBlockingOnboarding) {
+                        logoutSession(verData.message || "Registrazione dispositivo non riuscita.", true);
+                    } else {
+                        showNotification(`❌ ${verData.message}`, false);
+                    }
                 }
             } catch (err) {
-                showNotification(`⚠️ Registrazione Passkey annullata: ${err.message}`, false);
+                if (isBlockingOnboarding) {
+                    logoutSession(`Registrazione Passkey non completata (${err.message}). Riprova per attivare il dispositivo.`, true);
+                } else {
+                    showNotification(`⚠️ Registrazione Passkey annullata: ${err.message}`, false);
+                }
             }
         }
 
@@ -2732,7 +2759,6 @@
         }
 
         async function loginWithPasskey() {
-            // Impedisce l'accesso "fantasma" da dispositivi non registrati (anche se Google/Apple sincronizzano la Passkey sul cloud o in incognito)
             if (localStorage.getItem("orbis_device_authorized") !== "1") {
                 await showGlassModal({
                     title: "🔒 Dispositivo Non Associato",
@@ -2773,6 +2799,15 @@
                 }
 
                 const assertion = await navigator.credentials.get({ publicKey: pubKey });
+                const boundCredId = localStorage.getItem("orbis_bound_cred_id") || "";
+                if (boundCredId && assertion.id !== boundCredId) {
+                    await showGlassModal({
+                        title: "🛑 Chiave di Altro Dispositivo",
+                        message: "Hai selezionato una Passkey appartenente a un altro dispositivo sincronizzato sul cloud. Associa prima questo dispositivo tramite 'Accesso QR → Aggiungi Dispositivo'."
+                    });
+                    return;
+                }
+
                 const serialized = {
                     id: assertion.id,
                     rawId: bufferToB64url(assertion.rawId),
@@ -2931,7 +2966,6 @@
                     activeQrShortCode = data.short_code || "";
                     shortCodeEl.textContent = formatShortCodeDisplay(activeQrShortCode);
 
-                    // Link HTTPS breve con il codice a 8 caratteri: entra nella matrice 33x33 ad alta leggibilità e apre direttamente il browser
                     const shortQrUrl = `${getConsoleBaseUrl()}?qr=${encodeURIComponent(activeQrShortCode)}`;
                     const qrContent = (new TextEncoder().encode(shortQrUrl).length <= 78)
                         ? shortQrUrl
@@ -2960,7 +2994,7 @@
 
                 if (data.status === "approved" && data.auth) {
                     stopQrPolling();
-                    pill.textContent = "✅ Autorizzato! Accesso in corso...";
+                    pill.textContent = "✅ Autorizzato! Completa registrazione...";
                     completeAuthSuccess(data.auth);
                 } else if (data.status === "expired") {
                     stopQrPolling();
@@ -3006,7 +3040,6 @@
                     document.getElementById("first_username_input").value = "";
                     document.getElementById("first_password_input").value = "";
                     completeAuthSuccess(data);
-                    setTimeout(() => promptAndRegisterPasskey(), 350);
                 } else {
                     await showGlassModal({
                         title: "🛑 Accesso Non Riuscito",
@@ -3142,7 +3175,7 @@
         }
 
         /* ============================================================== */
-        /* 5. GESTIONE SESSIONE (VOLATILE VS PERSISTENTE) & API FETCH     */
+        /* 5. GESTIONE SESSIONE (BLOCCO PRE-PASSKEY) & API FETCH          */
         /* ============================================================== */
         function completeAuthSuccess(authData) {
             stopQrPolling();
@@ -3151,7 +3184,23 @@
             userSites = authData.sites || [];
             sessionMode = authData.session_mode || "persistent";
 
-            const isVolatile = (sessionMode === "volatile" || sessionMode === "onboarding");
+            const isOnboardingOrPairing = (
+                sessionMode === "onboarding" ||
+                sessionMode === "device_pairing" ||
+                authData.mode === "add_device" ||
+                Boolean(authData.requires_passkey_setup)
+            );
+
+            // Se è 1° Accesso o Aggiungi Dispositivo, NON entrare nella Console finché la Passkey non è registrata e salvata!
+            if (isOnboardingOrPairing) {
+                sessionStorage.setItem("orbis_session_token", sessionToken);
+                sessionStorage.setItem("orbis_session_mode", sessionMode);
+                if (currentUserId) sessionStorage.setItem("orbis_user_id", currentUserId);
+                setTimeout(() => promptAndRegisterPasskey(true), 200);
+                return;
+            }
+
+            const isVolatile = (sessionMode === "volatile");
             const storage = isVolatile ? sessionStorage : localStorage;
 
             if (isVolatile) {
@@ -3182,11 +3231,9 @@
                 }
             }
 
-            enterConsoleMode(Boolean(authData.requires_passkey_setup));
+            enterConsoleMode(false);
 
-            if (authData.mode === "add_device") {
-                setTimeout(() => promptAndRegisterPasskey(), 350);
-            } else if (pendingExternalQrParam) {
+            if (pendingExternalQrParam) {
                 const qrToProcess = pendingExternalQrParam;
                 pendingExternalQrParam = "";
                 setTimeout(() => processScannedQrPayload(qrToProcess), 350);
@@ -3210,7 +3257,7 @@
             document.getElementById("auth-screen").style.display = "flex";
             if (reasonMessage) {
                 showGlassModal({
-                    title: "🔒 Sessione Terminata",
+                    title: "🔒 Accesso Richiesto",
                     message: reasonMessage
                 });
             }
@@ -3478,14 +3525,12 @@
                         document.getElementById("audit-report-container").style.display = "none";
                     }
 
-                    // Contatore Modifiche AI Mensili
                     const count = data.mod_count || 0;
                     const limit = data.mod_limit || 30;
                     document.getElementById("progress-count-text").innerText = `${count} / ${limit}`;
                     const pct = Math.min(100, Math.round((count / Math.max(1, limit)) * 100));
                     document.getElementById("progress-bar-fill").style.width = `${pct}%`;
 
-                    // Contatore Rilevazioni Statistiche Mensili (0 / 10.000)
                     const statsViews = data.stats_views_month || 0;
                     const statsLimit = data.stats_limit || 10000;
                     document.getElementById("tele-stats-count-text").innerText = `${formatNumberIt(statsViews)} / ${formatNumberIt(statsLimit)}`;
@@ -3499,7 +3544,6 @@
                     };
                     renderSiteHistoryList();
 
-                    // Lucchetti piani: Base = Statistiche + Editor | Gold = + Diagnostica | Pro = + Store
                     document.getElementById("lock-audit").style.display = canAudit ? "none" : "block";
                     document.getElementById("lock-store").style.display = canStore ? "none" : "block";
 
@@ -4470,8 +4514,17 @@
                 window.history.replaceState({}, document.title, getConsoleBaseUrl());
             }
 
+            if (sessionMode === "onboarding" || sessionMode === "device_pairing") {
+                sessionToken = "";
+                sessionStorage.clear();
+            }
+
             if (sessionToken) {
-                enterConsoleMode(false);
+                if (sessionMode === "persistent" && localStorage.getItem("orbis_device_authorized") !== "1") {
+                    logoutSession("", true);
+                } else {
+                    enterConsoleMode(false);
+                }
             } else if (pendingExternalQrParam) {
                 showGlassModal({
                     title: "📷 Richiesta Autorizzazione Dispositivo",
