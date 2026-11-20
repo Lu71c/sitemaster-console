@@ -555,7 +555,7 @@
             margin-top: 8px;
             flex-direction: column;
             gap: 6px;
-            max-height: 240px;
+            max-height: 260px;
             overflow-y: auto;
         }
 
@@ -583,6 +583,11 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        .mini-log-row.init-row {
+            border-color: rgba(16, 185, 129, 0.24);
+            background: rgba(16, 185, 129, 0.06);
+        }
+
         .mini-log-main {
             flex: 1;
             min-width: 0;
@@ -590,15 +595,41 @@
 
         .mini-log-desc {
             color: #f1f5f9;
-            font-weight: 600;
+            font-weight: 700;
             line-height: 1.3;
-            word-break: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .mini-log-meta {
             color: var(--text-hint);
             font-size: 10px;
             margin-top: 3px;
+        }
+
+        .history-row-actions {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .btn-info-rev {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 8px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.06);
+            color: #e2e8f0;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .btn-info-rev:hover {
+            border-color: var(--primary-royal);
+            color: #93c5fd;
         }
 
         .btn-restore-rev {
@@ -610,7 +641,6 @@
             background: rgba(29, 78, 216, 0.18);
             color: #93c5fd;
             cursor: pointer;
-            flex-shrink: 0;
             white-space: nowrap;
         }
 
@@ -860,7 +890,7 @@
             text-overflow: ellipsis;
         }
 
-        /* Multi-Select Action Pills */
+        /* Multi-Select Action Pills (Solo Modifica Guidata, 0 o più selezioni) */
         .action-pills-grid {
             display: flex;
             flex-wrap: wrap;
@@ -1495,10 +1525,7 @@
             text-decoration: underline;
         }
 
-        /* Ottimizzazione compatta SOLO su smartphone:
-           - Titolo sempre su una riga
-           - Sottotitoli card su una riga
-           - Spaziatura verticale calibrata affinché il footer sia subito visibile */
+        /* Ottimizzazione compatta SOLO su smartphone */
         @media (max-width: 600px) {
             body {
                 padding: 12px;
@@ -1910,10 +1937,11 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <label>Tipi di operazione (seleziona uno o più)</label>
+                    <!-- Visibile SOLO in Modifica Guidata, 0 o più selezioni -->
+                    <div class="form-row" id="action-pills-wrapper" style="display: none;">
+                        <label>Tipi di operazione (facoltativo, anche nessuna selezione)</label>
                         <div class="action-pills-grid" id="action-pills-grid">
-                            <div class="action-pill selected" data-val="Modifica Aperta" onclick="toggleActionPill(this)">💬 Testi</div>
+                            <div class="action-pill" data-val="Modifica Testi" onclick="toggleActionPill(this)">💬 Testi</div>
                             <div class="action-pill" data-val="Aggiornamento Prezzi" onclick="toggleActionPill(this)">🏷️ Prezzi / Tariffe</div>
                             <div class="action-pill" data-val="Sostituzione Foto" onclick="toggleActionPill(this)">📸 Immagine</div>
                             <div class="action-pill" data-val="Animazioni" onclick="toggleActionPill(this)">✨ Animazioni</div>
@@ -1956,7 +1984,7 @@
                     <div class="drawer-title">🛡️ Diagnostica IA Quotidiana</div>
                     <button type="button" class="btn-drawer-close-x" title="Chiudi" onclick="closeAllDrawers()">✕</button>
                 </div>
-                <p class="drawer-sub">Ispezione strutturale completa su HTML, CSS e JavaScript con verifica di sicurezza e reattività &lt;150ms.</p>
+                <p class="drawer-sub">Ispezione strutturale completa su HTML, CSS, JavaScript e immagini con verifica di sicurezza e reattività &lt;150ms.</p>
 
                 <div id="audit-unlocked-content">
                     <button type="button" class="btn-glow-primary" id="btn-run-audit" onclick="triggerDailyAudit()">
@@ -3200,8 +3228,6 @@
                 extraHtml
             });
 
-            // Prova ad aprire la fotocamera posteriore (su smartphone/tablet si apre subito;
-            // su PC rifiuta silenziosamente senza accendere la webcam e attiva subito il QR Code).
             startLiveQrCamera(false);
 
             const confirmedManual = await modalPromise;
@@ -3220,13 +3246,11 @@
             const hintEl = document.getElementById("qr-scanner-hint");
 
             if (qrModalViewMode === "qr") {
-                // Passa da QR Code a Telecamera (su PC chiede autorizzazione per attivare la webcam al posto del QR)
                 qrModalViewMode = "camera";
                 if (qrPanel) qrPanel.style.display = "none";
                 if (toggleBtn) toggleBtn.textContent = "🔲 Visualizza QR";
                 startLiveQrCamera(true);
             } else {
-                // Passa da Telecamera a QR Code (spegne la camera e mostra il QR d'invito)
                 qrModalViewMode = "qr";
                 stopCameraScanner();
                 if (videoWrapper) videoWrapper.style.display = "none";
@@ -3298,9 +3322,6 @@
             }
 
             try {
-                // Richiede esclusivamente la fotocamera posteriore (environment) all'apertura.
-                // Sui PC dotati solo di webcam frontale rifiuta subito senza accendere la spia della webcam,
-                // mostrando automaticamente il QR Code + il tasto "📷 Visualizza Telecamera".
                 const constraints = forceAnyCamera
                     ? { video: true }
                     : { video: { facingMode: { exact: "environment" } } };
@@ -3431,7 +3452,6 @@
                 Boolean(authData.requires_passkey_setup)
             );
 
-            // Se è 1° Accesso o Aggiungi Dispositivo, NON entrare nella Console finché la Passkey non è registrata e salvata!
             if (isOnboardingOrPairing) {
                 sessionStorage.setItem("orbis_session_token", sessionToken);
                 sessionStorage.setItem("orbis_session_mode", sessionMode);
@@ -3634,15 +3654,21 @@
                 return;
             }
 
-            const rowsHtml = cachedModHistory.map(item => {
+            const rowsHtml = cachedModHistory.map((item, idx) => {
                 const canRestore = Boolean(item.commit_sha);
+                const isInitial = item.id === "init" || item.kind === "init";
+                const titleText = item.short_title || (isInitial ? "Versione Iniziale" : `Modifica #${cachedModHistory.length - idx}`);
+                const titlePrefix = isInitial ? "📌 " : "";
                 return `
-                    <div class="mini-log-row">
+                    <div class="mini-log-row ${isInitial ? "init-row" : ""}">
                         <div class="mini-log-main">
-                            <div class="mini-log-desc">${escapeHtml(item.summary || "Aggiornamento sito")}</div>
+                            <div class="mini-log-desc">${titlePrefix}${escapeHtml(titleText)}</div>
                             <div class="mini-log-meta">📅 ${escapeHtml(item.timestamp || "")}</div>
                         </div>
-                        ${canRestore ? `<button type="button" class="btn-restore-rev" data-restore-sha="${escapeHtml(item.commit_sha)}" data-restore-time="${escapeHtml(item.timestamp || "")}">⏪ Ripristina</button>` : ""}
+                        <div class="history-row-actions">
+                            <button type="button" class="btn-info-rev" title="Dettagli modifica" data-info-idx="${idx}">ℹ️</button>
+                            ${canRestore ? `<button type="button" class="btn-restore-rev" data-restore-sha="${escapeHtml(item.commit_sha)}" data-restore-time="${escapeHtml(item.timestamp || "")}" data-restore-title="${escapeHtml(titleText)}">⏪ Ripristina</button>` : ""}
+                        </div>
                     </div>
                 `;
             }).join("");
@@ -3651,15 +3677,35 @@
         }
 
         document.getElementById("mini-log-list").addEventListener("click", (e) => {
+            const infoBtn = e.target.closest("button[data-info-idx]");
+            if (infoBtn) {
+                const idx = parseInt(infoBtn.dataset.infoIdx, 10);
+                const item = cachedModHistory[idx];
+                if (item) {
+                    const isInitial = item.id === "init" || item.kind === "init";
+                    const titleLabel = item.short_title || (isInitial ? "Versione Iniziale" : "Dettagli Modifica");
+                    const pagesStr = Array.isArray(item.pages) && item.pages.length > 0
+                        ? `\n\nFile coinvolti: ${item.pages.join(", ")}`
+                        : "";
+                    showGlassModal({
+                        title: `ℹ️ ${titleLabel}`,
+                        message: `Data: ${item.timestamp || "N/D"}\n\nRiepilogo intervento:\n${item.summary || "Nessun dettaglio aggiuntivo."}${pagesStr}`,
+                        confirmText: "Chiudi"
+                    });
+                }
+                return;
+            }
+
             const btn = e.target.closest("button[data-restore-sha]");
             if (!btn) return;
-            triggerHistoricalRestore(btn.dataset.restoreSha, btn.dataset.restoreTime || "");
+            triggerHistoricalRestore(btn.dataset.restoreSha, btn.dataset.restoreTime || "", btn.dataset.restoreTitle || "");
         });
 
-        async function triggerHistoricalRestore(commitSha, timestampLabel) {
+        async function triggerHistoricalRestore(commitSha, timestampLabel, titleLabel = "") {
+            const labelRef = titleLabel ? `${titleLabel} (${timestampLabel})` : timestampLabel;
             const confirmed = await showGlassModal({
                 title: "⏪ Ripristino Versione Precedente",
-                message: `Vuoi riportare il sito esattamente allo stato salvato il ${timestampLabel}?\nVerrà consumato 1 ripristino mensile (${cachedRollbackInfo.count}/${cachedRollbackInfo.limit}).`,
+                message: `Vuoi riportare il sito esattamente allo stato «${labelRef}»?\nVerrà consumato 1 ripristino mensile (${cachedRollbackInfo.count}/${cachedRollbackInfo.limit}).`,
                 confirmText: "Sì, Ripristina Versione",
                 cancelText: "Annulla",
                 isDanger: true
@@ -3752,9 +3798,15 @@
                     if (!canAudit) {
                         teleAudit.innerText = "🔒 Gold / Pro";
                         teleAudit.className = "tele-val text-amber";
+                    } else if (data.audit_needs_redo || data.audit_label === "Rifare") {
+                        teleAudit.innerText = "🟡 Rifare";
+                        teleAudit.className = "tele-val text-amber";
+                    } else if (data.audit_done) {
+                        teleAudit.innerText = "🟢 Eseguito";
+                        teleAudit.className = "tele-val text-emerald";
                     } else {
-                        teleAudit.innerText = data.audit_done ? "🟢 Eseguito" : "🔴 Da fare";
-                        teleAudit.className = `tele-val ${data.audit_done ? "text-emerald" : "text-rose"}`;
+                        teleAudit.innerText = "🔴 Da fare";
+                        teleAudit.className = "tele-val text-rose";
                     }
 
                     if (data.last_audit_summary && canAudit) {
@@ -3901,11 +3953,14 @@
         /* ============================================================== */
         function onEditModeChange(mode) {
             const guidedWrapper = document.getElementById("guided-section-wrapper");
+            const pillsWrapper = document.getElementById("action-pills-wrapper");
             if (mode === "guided") {
                 guidedWrapper.style.display = "block";
+                pillsWrapper.style.display = "block";
                 renderSubMarkersPreview();
             } else {
                 guidedWrapper.style.display = "none";
+                pillsWrapper.style.display = "none";
                 document.getElementById("submarkers-box").style.display = "none";
             }
         }
@@ -3984,15 +4039,11 @@
 
         function toggleActionPill(el) {
             el.classList.toggle("selected");
-            const selected = document.querySelectorAll("#action-pills-grid .action-pill.selected");
-            if (selected.length === 0) {
-                el.classList.add("selected");
-            }
         }
 
         function getSelectedActionTypes() {
             const pills = Array.from(document.querySelectorAll("#action-pills-grid .action-pill.selected"));
-            return pills.map(p => p.getAttribute("data-val")).join(", ") || "Modifica Aperta";
+            return pills.map(p => p.getAttribute("data-val")).join(", ");
         }
 
         function handleDualPhotoSelection(activeInput, otherInputId, labelElementId) {
@@ -4042,7 +4093,8 @@
                 submitBtn.innerHTML = "<span>⏳ Applicazione modifiche al sito...</span>";
 
                 const editMode = document.getElementById("edit_mode_select").value;
-                const targetSection = editMode === "guided"
+                const isGuided = (editMode === "guided");
+                const targetSection = isGuided
                     ? (document.getElementById("target_section").value || "AUTO")
                     : "AUTO";
 
@@ -4050,7 +4102,14 @@
                 formData.append("site_id", selectedSiteId);
                 formData.append("target_page", "index.html");
                 formData.append("target_section", targetSection);
-                formData.append("action_types", getSelectedActionTypes());
+
+                if (isGuided) {
+                    const selectedTypes = getSelectedActionTypes();
+                    if (selectedTypes) {
+                        formData.append("action_types", selectedTypes);
+                    }
+                }
+
                 formData.append("instruction", document.getElementById("instruction_text").value);
                 if (actionProof) formData.append("action_proof", actionProof);
 
@@ -4073,6 +4132,8 @@
                     document.getElementById("image_input_gallery").value = "";
                     document.getElementById("image_input_camera").value = "";
                     document.getElementById("chosen-file-label").innerText = "";
+                    document.querySelectorAll("#action-pills-grid .action-pill.selected").forEach(p => p.classList.remove("selected"));
+
                     await Promise.all([
                         fetchUserStatus(),
                         loadSiteSections("index.html")
