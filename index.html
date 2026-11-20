@@ -341,34 +341,6 @@
             flex-shrink: 0;
         }
 
-        /* Ottimizzazione compatta SOLO su smartphone affinché il titolo stia su una riga */
-        @media (max-width: 600px) {
-            .brand-header {
-                padding: 10px 10px;
-                gap: 6px;
-            }
-            .brand-titles h1 {
-                font-size: 12px;
-                letter-spacing: -0.25px;
-            }
-            .header-right-actions {
-                gap: 4px;
-            }
-            .tier-badge {
-                font-size: 9px;
-                padding: 4px 7px;
-                letter-spacing: 0.4px;
-            }
-            .btn-header-icon {
-                padding: 5px 6px;
-                font-size: 11px;
-            }
-            .btn-logout {
-                padding: 5px 7px;
-                font-size: 11.5px;
-            }
-        }
-
         .tier-badge {
             font-size: 10px;
             font-weight: 800;
@@ -651,14 +623,14 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .hub-card {
             background: var(--surface-glass);
             border: 1px solid var(--surface-glass-border);
             border-radius: 16px;
-            padding: 16px 14px;
+            padding: 16px 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -720,6 +692,7 @@
         .hub-card span {
             font-size: 11px;
             color: var(--text-muted);
+            white-space: nowrap;
         }
 
         /* Sezioni Espandibili (Drawers) */
@@ -1475,9 +1448,9 @@
         /* Mirino Fotocamera Quadrato 1:1 Pulito */
         .scanner-video-box {
             width: 100%;
-            max-width: 280px;
+            max-width: 260px;
             aspect-ratio: 1 / 1;
-            margin: 0 auto 12px auto;
+            margin: 0 auto 10px auto;
             border-radius: 16px;
             overflow: hidden;
             background: #000;
@@ -1492,18 +1465,20 @@
             display: block;
         }
 
-        /* Box QR di Invito mostrato su PC */
+        /* Box QR di Invito mostrato su PC o su richiesta */
         .host-invite-qr-panel {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.32);
+            border: 1px solid rgba(59, 130, 246, 0.28);
             text-align: center;
         }
 
         /* Footer Istituzionale */
         .app-footer {
             margin-top: auto;
-            padding-top: 22px;
+            padding-top: 18px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             text-align: center;
             font-size: 11.5px;
@@ -1518,6 +1493,74 @@
 
         .app-footer a:hover {
             text-decoration: underline;
+        }
+
+        /* Ottimizzazione compatta SOLO su smartphone:
+           - Titolo sempre su una riga
+           - Sottotitoli card su una riga
+           - Spaziatura verticale calibrata affinché il footer sia subito visibile */
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            .brand-header {
+                padding: 10px 10px;
+                gap: 6px;
+                margin-bottom: 10px;
+            }
+            .brand-titles h1 {
+                font-size: 12px;
+                letter-spacing: -0.25px;
+            }
+            .header-right-actions {
+                gap: 4px;
+            }
+            .tier-badge {
+                font-size: 9px;
+                padding: 4px 7px;
+                letter-spacing: 0.4px;
+            }
+            .btn-header-icon {
+                padding: 5px 6px;
+                font-size: 11px;
+            }
+            .btn-logout {
+                padding: 5px 7px;
+                font-size: 11.5px;
+            }
+            .site-switcher-bar {
+                margin-bottom: 10px;
+                padding: 8px 10px;
+            }
+            .telemetry-card {
+                padding: 11px 12px;
+                margin-bottom: 12px;
+            }
+            .telemetry-grid {
+                margin-bottom: 9px;
+            }
+            .hub-grid {
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .hub-card {
+                padding: 13px 8px;
+            }
+            .hub-icon-wrapper {
+                width: 38px;
+                height: 38px;
+                font-size: 19px;
+                margin-bottom: 8px;
+            }
+            .hub-card span {
+                font-size: 10px;
+                letter-spacing: -0.15px;
+            }
+            .app-footer {
+                margin-top: 6px;
+                padding-top: 12px;
+                font-size: 11px;
+            }
         }
     </style>
 </head>
@@ -1565,7 +1608,7 @@
                     <div class="qr-stage-box">
                         <div class="qr-status-pill" id="qr-status-pill">⏳ In attesa di scansione...</div>
                         <p id="qr-mode-desc" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4; margin-bottom: 4px;">
-                            Inquadra questo QR dal dispositivo già connesso oppure inserisci il codice rapido qui sotto. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.
+                            Inquadra questo QR dal dispositivo già connesso oppure inserisci il codice rapido monouso riportato qui sotto. Il dispositivo resterà connesso <b>fino a che la finestra dell'applicazione è aperta</b>; nel momento in cui la si chiude il dispositivo non viene più riconosciuto.
                         </p>
 
                         <div class="qr-svg-frame" id="qr-svg-container"></div>
@@ -1716,7 +1759,7 @@
                 <div class="hub-card" id="card-hub-edit" onclick="openDrawer('edit')">
                     <div class="hub-icon-wrapper">✏️</div>
                     <h3>Editor Sezioni</h3>
-                    <span>Patch mirate al volo</span>
+                    <span>Modifica il tuo sito</span>
                 </div>
 
                 <!-- Card 3 (Basso-Sinistra): Diagnostica IA (Piani Gold e Pro) -->
@@ -1724,7 +1767,7 @@
                     <div id="lock-audit" class="card-lock" style="display: none;">GOLD</div>
                     <div class="hub-icon-wrapper">🛡️</div>
                     <h3>Diagnostica IA</h3>
-                    <span>Check salute codice</span>
+                    <span>Check salute quotidiano</span>
                 </div>
 
                 <!-- Card 4 (Basso-Destra): Gestione Store (Solo Piano Pro) -->
@@ -2208,6 +2251,7 @@
         let activeScannerStream = null;
         let pendingExternalQrParam = "";
         let pendingPairInviteCode = "";
+        let qrModalViewMode = "qr";
 
         /* ============================================================== */
         /* 0. GENERATORE QR CODE SVG NATIVO (VERSION 4-L • 33x33 CRISP)   */
@@ -2994,9 +3038,9 @@
 
             const descEl = document.getElementById("qr-mode-desc");
             if (mode === "temp_login") {
-                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso oppure inserisci il codice rapido qui sotto. La sessione resterà attiva <b>solo finché questa finestra è aperta</b>.';
+                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso oppure inserisci il codice rapido monouso riportato qui sotto. Il dispositivo resterà connesso <b>fino a che la finestra dell\'applicazione è aperta</b>; nel momento in cui la si chiude il dispositivo non viene più riconosciuto.';
             } else {
-                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso oppure inserisci il codice rapido qui sotto per <b>associare permanentemente</b> questo dispositivo (Max 5 dispositivi).';
+                descEl.innerHTML = 'Inquadra questo QR dal dispositivo già connesso oppure inserisci il codice rapido monouso qui sotto per <b>associare permanentemente</b> questo dispositivo (Max 5 dispositivi).';
             }
             initQrAuthSession();
         }
@@ -3114,24 +3158,18 @@
         });
 
         /* ============================================================== */
-        /* 4. SCANNER QR (SOLO CAMERA POSTERIORE) & QR INVITO BIDIREZIONALE*/
+        /* 4. SCANNER QR & QR INVITO BIDIREZIONALE (SWITCH TELECAMERA/QR) */
         /* ============================================================== */
         async function openQrScannerModal() {
             const extraHtml = `
                 <div class="scanner-video-box" id="qr-video-wrapper" style="display:none;">
                     <video id="qr-scanner-video" playsinline muted></video>
                 </div>
-                <div id="qr-scanner-hint" style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px; text-align:center;">
-                    Verifica fotocamera posteriore...
-                </div>
-                <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
-                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Inserisci il Codice Rapido a 8 caratteri del nuovo dispositivo:</label>
-                    <input type="text" id="manual-qr-input" placeholder="Es: A1B2-C3D4" style="text-transform:uppercase; font-family:monospace; letter-spacing:1.5px; font-weight:700;">
-                </div>
+
                 <div id="host-invite-qr-panel" class="host-invite-qr-panel" style="display:none;">
-                    <div style="font-size:11.5px; color:#93c5fd; font-weight:700; margin-bottom:4px;">📷 Oppure inquadra questo QR dal nuovo telefono</div>
-                    <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">Apri la fotocamera del telefono e inquadra il codice qui sotto per avviare subito la registrazione:</div>
-                    <div class="qr-svg-frame" id="host-invite-qr-svg" style="min-width:168px; min-height:168px; padding:10px;"></div>
+                    <div style="font-size:11.5px; color:#93c5fd; font-weight:700; margin-bottom:4px;">📷 Inquadra questo QR dal nuovo telefono</div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">Apri la fotocamera del nuovo dispositivo e inquadra il codice qui sotto per avviare subito l'associazione:</div>
+                    <div class="qr-svg-frame" id="host-invite-qr-svg" style="min-width:172px; min-height:172px; padding:10px;"></div>
                     <div>
                         <div class="qr-short-code-box" style="margin-bottom:4px;">
                             <div class="qr-short-code-label">Codice Invito Alternativo</div>
@@ -3139,19 +3177,31 @@
                         </div>
                     </div>
                 </div>
-                <div style="text-align:center; margin-top:8px;">
-                    <button type="button" id="btn-enable-fallback-cam" class="small-icon-btn" style="display:none;" onclick="startLiveQrCamera(true)">📷 Attiva Fotocamera</button>
+
+                <div id="qr-scanner-hint" style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px; text-align:center;">
+                    Preparazione collegamento dispositivo...
+                </div>
+
+                <div style="text-align:center; margin-bottom:12px;">
+                    <button type="button" id="btn-toggle-qr-cam-mode" class="small-icon-btn" style="display:none; border-color:rgba(59,130,246,0.45); color:#93c5fd;" onclick="toggleQrModalViewMode()">📷 Visualizza Telecamera</button>
+                </div>
+
+                <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
+                    <label for="manual-qr-input" style="font-size:11px; color:var(--text-muted);">Oppure inserisci il Codice Rapido a 8 caratteri del nuovo dispositivo:</label>
+                    <input type="text" id="manual-qr-input" placeholder="Es: A1B2-C3D4" style="text-transform:uppercase; font-family:monospace; letter-spacing:1.5px; font-weight:700;">
                 </div>
             `;
 
             const modalPromise = showGlassModal({
                 title: "➕📱 Collega Nuovo Dispositivo",
-                message: "Inserisci il Codice Rapido mostrato sul nuovo dispositivo oppure inquadra il QR Code.",
+                message: "Associa un altro smartphone, tablet o PC al tuo account.",
                 confirmText: "✅ Autorizza Codice",
                 cancelText: "Annulla",
                 extraHtml
             });
 
+            // Prova ad aprire la fotocamera posteriore (su smartphone/tablet si apre subito;
+            // su PC rifiuta silenziosamente senza accendere la webcam e attiva subito il QR Code).
             startLiveQrCamera(false);
 
             const confirmedManual = await modalPromise;
@@ -3163,6 +3213,29 @@
             }
         }
 
+        function toggleQrModalViewMode() {
+            const videoWrapper = document.getElementById("qr-video-wrapper");
+            const qrPanel = document.getElementById("host-invite-qr-panel");
+            const toggleBtn = document.getElementById("btn-toggle-qr-cam-mode");
+            const hintEl = document.getElementById("qr-scanner-hint");
+
+            if (qrModalViewMode === "qr") {
+                // Passa da QR Code a Telecamera (su PC chiede autorizzazione per attivare la webcam al posto del QR)
+                qrModalViewMode = "camera";
+                if (qrPanel) qrPanel.style.display = "none";
+                if (toggleBtn) toggleBtn.textContent = "🔲 Visualizza QR";
+                startLiveQrCamera(true);
+            } else {
+                // Passa da Telecamera a QR Code (spegne la camera e mostra il QR d'invito)
+                qrModalViewMode = "qr";
+                stopCameraScanner();
+                if (videoWrapper) videoWrapper.style.display = "none";
+                if (toggleBtn) toggleBtn.textContent = "📷 Visualizza Telecamera";
+                if (hintEl) hintEl.textContent = "Inquadra il QR Code dal nuovo telefono oppure inserisci il codice qui sotto.";
+                renderHostInviteQrOnPc();
+            }
+        }
+
         async function renderHostInviteQrOnPc() {
             const panel = document.getElementById("host-invite-qr-panel");
             const svgBox = document.getElementById("host-invite-qr-svg");
@@ -3170,14 +3243,15 @@
             if (!panel || !svgBox || !codeBox) return;
 
             panel.style.display = "block";
-            svgBox.innerHTML = '<div style="color:#060911; font-size:11px; font-weight:700;">Generazione QR...</div>';
+            codeBox.textContent = "---- ----";
+            svgBox.innerHTML = '<div style="color:#060911; font-size:11.5px; font-weight:700; padding:12px;">Generazione QR...</div>';
 
             try {
                 const actionProof = await obtainActionProof();
                 const res = await apiFetch("/api/v1/auth/qr/create-invite", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ action_proof: actionProof })
+                    body: JSON.stringify({ action_proof: actionProof || null })
                 });
                 const data = await parseApiJson(res);
                 if (data.status === "success" && data.short_code) {
@@ -3185,33 +3259,48 @@
                     const qrContent = (new TextEncoder().encode(pairUrl).length <= 78)
                         ? pairUrl
                         : `ORBIS_PAIR:${data.short_code}`;
-                    svgBox.innerHTML = OrbisQrSvg.generateSvg(qrContent, 152);
+                    svgBox.innerHTML = OrbisQrSvg.generateSvg(qrContent, 156);
                     codeBox.textContent = formatShortCodeDisplay(data.short_code);
                 } else {
-                    panel.style.display = "none";
+                    svgBox.innerHTML = `
+                        <div style="color:#060911; font-size:11px; padding:10px; line-height:1.4;">
+                            <div style="font-weight:700; margin-bottom:6px;">${escapeHtml(data.message || "Impossibile generare il QR")}</div>
+                            <button type="button" class="small-icon-btn" style="background:#1d4ed8; color:#fff; border:none;" onclick="renderHostInviteQrOnPc()">🔄 Riprova QR</button>
+                        </div>
+                    `;
                 }
-            } catch (_) {
-                panel.style.display = "none";
+            } catch (err) {
+                svgBox.innerHTML = `
+                    <div style="color:#060911; font-size:11px; padding:10px; line-height:1.4;">
+                        <div style="font-weight:700; margin-bottom:6px;">Conferma richiesta per generare il QR</div>
+                        <button type="button" class="small-icon-btn" style="background:#1d4ed8; color:#fff; border:none;" onclick="renderHostInviteQrOnPc()">👆 Genera QR Invito</button>
+                    </div>
+                `;
             }
         }
 
         async function startLiveQrCamera(forceAnyCamera = false) {
             const videoWrapper = document.getElementById("qr-video-wrapper");
+            const qrPanel = document.getElementById("host-invite-qr-panel");
             const videoEl = document.getElementById("qr-scanner-video");
             const hintEl = document.getElementById("qr-scanner-hint");
-            const manualCamBtn = document.getElementById("btn-enable-fallback-cam");
+            const toggleBtn = document.getElementById("btn-toggle-qr-cam-mode");
             const codeInput = document.getElementById("manual-qr-input");
 
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                if (hintEl) hintEl.textContent = "Digita il Codice Rapido a 8 caratteri oppure inquadra il QR dal nuovo telefono.";
+                qrModalViewMode = "qr";
+                if (videoWrapper) videoWrapper.style.display = "none";
+                if (toggleBtn) toggleBtn.style.display = "none";
+                if (hintEl) hintEl.textContent = "Inquadra questo QR dal nuovo telefono oppure digita il Codice Rapido.";
                 if (codeInput) codeInput.focus();
                 renderHostInviteQrOnPc();
                 return;
             }
 
             try {
-                // Richiede esclusivamente la fotocamera posteriore (environment).
-                // Sui PC dotati solo di webcam frontale, il browser rifiuta subito senza accendere la spia della webcam.
+                // Richiede esclusivamente la fotocamera posteriore (environment) all'apertura.
+                // Sui PC dotati solo di webcam frontale rifiuta subito senza accendere la spia della webcam,
+                // mostrando automaticamente il QR Code + il tasto "📷 Visualizza Telecamera".
                 const constraints = forceAnyCamera
                     ? { video: true }
                     : { video: { facingMode: { exact: "environment" } } };
@@ -3221,16 +3310,22 @@
                     stopCameraScanner();
                     return;
                 }
+                qrModalViewMode = "camera";
+                if (qrPanel) qrPanel.style.display = "none";
                 videoEl.srcObject = activeScannerStream;
                 await videoEl.play();
                 videoWrapper.style.display = "block";
-                if (manualCamBtn) manualCamBtn.style.display = "none";
+
+                if (toggleBtn) {
+                    toggleBtn.style.display = "inline-block";
+                    toggleBtn.textContent = "🔲 Visualizza QR";
+                }
 
                 if ("BarcodeDetector" in window) {
-                    if (hintEl) hintEl.textContent = "Inquadra il QR Code oppure digita il Codice Rapido qui sotto";
+                    if (hintEl) hintEl.textContent = "Inquadra il QR Code dell'altro dispositivo oppure usa il Codice Rapido";
                     const detector = new BarcodeDetector({ formats: ["qr_code"] });
                     const scanLoop = async () => {
-                        if (!activeScannerStream) return;
+                        if (!activeScannerStream || qrModalViewMode !== "camera") return;
                         try {
                             const codes = await detector.detect(videoEl);
                             if (codes && codes.length > 0 && codes[0].rawValue) {
@@ -3243,23 +3338,24 @@
                                 }
                             }
                         } catch (_) {}
-                        if (activeScannerStream) requestAnimationFrame(scanLoop);
+                        if (activeScannerStream && qrModalViewMode === "camera") requestAnimationFrame(scanLoop);
                     };
                     requestAnimationFrame(scanLoop);
                 } else {
-                    if (hintEl) hintEl.textContent = "Inserisci il Codice Rapido a 8 caratteri mostrato sull'altro dispositivo.";
+                    if (hintEl) hintEl.textContent = "Inserisci il Codice Rapido a 8 caratteri oppure premi 'Visualizza QR'.";
                 }
             } catch (_) {
-                if (hintEl) {
-                    hintEl.textContent = "Digita il Codice Rapido del nuovo dispositivo oppure inquadra il QR qui sotto dal telefono.";
+                qrModalViewMode = "qr";
+                if (videoWrapper) videoWrapper.style.display = "none";
+                if (toggleBtn) {
+                    toggleBtn.style.display = "inline-block";
+                    toggleBtn.textContent = "📷 Visualizza Telecamera";
                 }
-                if (manualCamBtn && !forceAnyCamera) {
-                    manualCamBtn.style.display = "inline-block";
+                if (hintEl) {
+                    hintEl.textContent = "Inquadra il QR Code dal nuovo telefono oppure inserisci il Codice Rapido.";
                 }
                 if (codeInput) codeInput.focus();
-                if (!forceAnyCamera) {
-                    renderHostInviteQrOnPc();
-                }
+                renderHostInviteQrOnPc();
             }
         }
 
