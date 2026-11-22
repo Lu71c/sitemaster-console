@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#060911">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SiteMaster Orbis">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-512.png">
     <title>SiteMaster Console Orbis — The Orbis Project</title>
     <style>
         :root {
@@ -2247,14 +2255,15 @@
         const DEFAULT_HEADERS = { "ngrok-skip-browser-warning": "true" };
         const MAX_IMAGE_BYTES = 12 * 1024 * 1024;
 
-        function readStoredAuth(key) {
-            return sessionStorage.getItem(key) || localStorage.getItem(key) || "";
-        }
+        // Pulizia preventiva di eventuali vecchi token di sessione salvati in localStorage:
+        // la sessione operativa ora vive SOLO in sessionStorage (si chiude alla chiusura della finestra/app).
+        localStorage.removeItem("orbis_session_token");
+        localStorage.removeItem("orbis_session_mode");
 
-        let sessionMode = readStoredAuth("orbis_session_mode") || "persistent";
-        let sessionToken = readStoredAuth("orbis_session_token");
-        let currentUserId = readStoredAuth("orbis_user_id");
-        let selectedSiteId = readStoredAuth("orbis_selected_site_id");
+        let sessionMode = sessionStorage.getItem("orbis_session_mode") || "persistent";
+        let sessionToken = sessionStorage.getItem("orbis_session_token") || "";
+        let currentUserId = sessionStorage.getItem("orbis_user_id") || localStorage.getItem("orbis_user_id") || "";
+        let selectedSiteId = sessionStorage.getItem("orbis_selected_site_id") || localStorage.getItem("orbis_selected_site_id") || "";
         let userSites = [];
 
         let currentDomain = "";
@@ -2730,13 +2739,17 @@
                     if (verData.token) {
                         sessionToken = verData.token;
                         sessionMode = "persistent";
-                        sessionStorage.removeItem("orbis_session_token");
-                        sessionStorage.removeItem("orbis_session_mode");
-                        localStorage.setItem("orbis_session_token", sessionToken);
-                        localStorage.setItem("orbis_session_mode", "persistent");
+                        // Sessione operativa solo in sessionStorage; vincolo dispositivo permanente in localStorage
+                        localStorage.removeItem("orbis_session_token");
+                        localStorage.removeItem("orbis_session_mode");
+                        sessionStorage.setItem("orbis_session_token", sessionToken);
+                        sessionStorage.setItem("orbis_session_mode", "persistent");
                         localStorage.setItem("orbis_device_authorized", "1");
                         localStorage.setItem("orbis_bound_cred_id", credential.id);
-                        if (currentUserId) localStorage.setItem("orbis_user_id", currentUserId);
+                        if (currentUserId) {
+                            sessionStorage.setItem("orbis_user_id", currentUserId);
+                            localStorage.setItem("orbis_user_id", currentUserId);
+                        }
                     }
                     if (verData.action_proof) {
                         cachedActionProof = { token: verData.action_proof, expiresAt: Date.now() + 50000 };
@@ -2887,14 +2900,6 @@
         }
 
         async function loginWithPasskey() {
-            if (localStorage.getItem("orbis_device_authorized") !== "1") {
-                await showGlassModal({
-                    title: "🔒 Dispositivo Non Associato",
-                    message: "Questo dispositivo non è ancora registrato sull'account.\nUsa 'Accesso QR → Aggiungi Dispositivo' da un dispositivo già autorizzato oppure '1° Accesso'."
-                });
-                return;
-            }
-
             if (!window.PublicKeyCredential) {
                 await showGlassModal({
                     title: "❌ Passkey Non Supportata",
@@ -2902,6 +2907,9 @@
                 });
                 return;
             }
+
+            const wasLocallyAuthorized = localStorage.getItem("orbis_device_authorized") === "1";
+
             try {
                 const optRes = await fetch(`${API_BASE_URL}/api/v1/auth/passkey/assertion-options`, {
                     method: "POST",
@@ -2928,7 +2936,7 @@
 
                 const assertion = await navigator.credentials.get({ publicKey: pubKey });
                 const boundCredId = localStorage.getItem("orbis_bound_cred_id") || "";
-                if (boundCredId && assertion.id !== boundCredId) {
+                if (wasLocallyAuthorized && boundCredId && assertion.id !== boundCredId) {
                     await showGlassModal({
                         title: "🛑 Chiave di Altro Dispositivo",
                         message: "Hai selezionato una Passkey appartenente a un altro dispositivo sincronizzato sul cloud. Associa prima questo dispositivo tramite 'Accesso QR → Aggiungi Dispositivo'."
@@ -2958,20 +2966,28 @@
                 });
                 const verData = await parseApiJson(verRes);
                 if (verData.status === "success") {
+                    // Riassocia e conferma il dispositivo in localStorage in modo permanente
+                    localStorage.setItem("orbis_device_authorized", "1");
                     localStorage.setItem("orbis_bound_cred_id", assertion.id);
                     completeAuthSuccess(verData);
                 } else {
-                    localStorage.removeItem("orbis_device_authorized");
-                    localStorage.removeItem("orbis_bound_cred_id");
+                    const msgLower = (verData.message || "").toLowerCase();
+                    if (msgLower.includes("non riconosciuto") || msgLower.includes("revocata")) {
+                        localStorage.removeItem("orbis_device_authorized");
+                        localStorage.removeItem("orbis_bound_cred_id");
+                    }
                     await showGlassModal({
                         title: "🛑 Accesso Negato",
                         message: verData.message || "Dispositivo non riconosciuto o chiave revocata."
                     });
                 }
             } catch (err) {
+                const fallbackMsg = wasLocallyAuthorized
+                    ? "Verifica Passkey annullata o non riuscita. Tocca nuovamente 'Entra con Passkey Biometrica / PIN'."
+                    : "Nessuna Passkey trovata su questo dispositivo oppure verifica annullata.\nSe è un nuovo dispositivo, usa 'Accesso QR → Aggiungi Dispositivo' da un dispositivo già autorizzato oppure '1° Accesso'.";
                 await showGlassModal({
-                    title: "⚠️ Verifica Annullata",
-                    message: err.message || "Verifica Passkey annullata o non riuscita."
+                    title: wasLocallyAuthorized ? "⚠️ Verifica Annullata" : "🔒 Dispositivo Non Associato",
+                    message: fallbackMsg
                 });
             }
         }
@@ -3436,7 +3452,7 @@
         }
 
         /* ============================================================== */
-        /* 5. GESTIONE SESSIONE (BLOCCO PRE-PASSKEY) & API FETCH          */
+        /* 5. GESTIONE SESSIONE SINGOLA (APP BANCARIA) & API FETCH        */
         /* ============================================================== */
         function completeAuthSuccess(authData) {
             stopQrPolling();
@@ -3460,25 +3476,29 @@
                 return;
             }
 
-            const isVolatile = (sessionMode === "volatile");
-            const storage = isVolatile ? sessionStorage : localStorage;
+            // Il token di sessione vive SOLO in sessionStorage:
+            // alla chiusura della finestra/app viene distrutta la sessione,
+            // mentre il dispositivo resta associato in localStorage per rientrare con un tocco di Passkey.
+            localStorage.removeItem("orbis_session_token");
+            localStorage.removeItem("orbis_session_mode");
+            sessionStorage.setItem("orbis_session_token", sessionToken);
+            sessionStorage.setItem("orbis_session_mode", sessionMode);
 
+            const isVolatile = (sessionMode === "volatile");
             if (isVolatile) {
-                localStorage.removeItem("orbis_session_token");
-                localStorage.removeItem("orbis_session_mode");
+                if (currentUserId) sessionStorage.setItem("orbis_user_id", currentUserId);
             } else {
-                sessionStorage.removeItem("orbis_session_token");
-                sessionStorage.removeItem("orbis_session_mode");
+                localStorage.setItem("orbis_device_authorized", "1");
+                if (currentUserId) {
+                    sessionStorage.setItem("orbis_user_id", currentUserId);
+                    localStorage.setItem("orbis_user_id", currentUserId);
+                }
             }
 
-            storage.setItem("orbis_session_token", sessionToken);
-            storage.setItem("orbis_session_mode", sessionMode);
-            if (currentUserId) storage.setItem("orbis_user_id", currentUserId);
-
             if (authData.action_proof) {
-                const ttl = sessionMode === "volatile" ? 14000000 : 45000;
+                const ttl = isVolatile ? 14000000 : 45000;
                 cachedActionProof = { token: authData.action_proof, expiresAt: Date.now() + ttl };
-                if (sessionMode === "volatile") {
+                if (isVolatile) {
                     sessionStorage.setItem("orbis_delegated_proof", authData.action_proof);
                 }
             }
@@ -3487,7 +3507,10 @@
                 const stillValid = userSites.some(s => s.site_id === selectedSiteId);
                 if (!stillValid) {
                     selectedSiteId = userSites[0].site_id;
-                    storage.setItem("orbis_selected_site_id", selectedSiteId);
+                }
+                sessionStorage.setItem("orbis_selected_site_id", selectedSiteId);
+                if (!isVolatile) {
+                    localStorage.setItem("orbis_selected_site_id", selectedSiteId);
                 }
             }
 
@@ -3510,11 +3533,14 @@
             if (clearDeviceBinding) {
                 localStorage.removeItem("orbis_device_authorized");
                 localStorage.removeItem("orbis_bound_cred_id");
+                localStorage.removeItem("orbis_user_id");
+                localStorage.removeItem("orbis_selected_site_id");
             }
             sessionStorage.clear();
             document.getElementById("volatile-session-banner").style.display = "none";
             document.getElementById("console-screen").style.display = "none";
             document.getElementById("auth-screen").style.display = "flex";
+            switchAuthTab("passkey");
             if (reasonMessage) {
                 showGlassModal({
                     title: "🔒 Accesso Richiesto",
@@ -3531,13 +3557,29 @@
             };
             const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
             if (res.status === 401) {
-                let reason = "Sessione scaduta o dispositivo rimosso dall'account. Effettua nuovamente l'accesso.";
+                const errCodeHeader = (res.headers.get("X-Error-Code") || "").toUpperCase();
+                let detailText = "";
                 try {
                     const j = await res.json();
-                    if (j && j.detail) reason = j.detail;
+                    if (j && j.detail) detailText = String(j.detail);
                 } catch (_) {}
-                logoutSession(reason, true);
-                throw new Error(reason);
+
+                const isDeviceRevoked = (
+                    errCodeHeader === "DEVICE_REVOKED" ||
+                    detailText === "DEVICE_REVOKED" ||
+                    detailText.toLowerCase().includes("rimosso") ||
+                    detailText.toLowerCase().includes("revocato")
+                );
+
+                if (isDeviceRevoked) {
+                    const reason = "Questo dispositivo è stato disconnesso o rimosso dall'account.";
+                    logoutSession(reason, true);
+                    throw new Error(reason);
+                } else {
+                    const reason = "Sessione scaduta per sicurezza. Tocca 'Entra con Passkey Biometrica / PIN' per rientrare.";
+                    logoutSession(reason, false);
+                    throw new Error(reason);
+                }
             }
             if (res.status === 403) {
                 if (sessionMode !== "volatile") {
@@ -3596,8 +3638,10 @@
                     if (userSites.length > 0) {
                         if (!userSites.some(s => s.site_id === selectedSiteId)) {
                             selectedSiteId = userSites[0].site_id;
-                            const storage = (sessionMode === "volatile" || sessionMode === "onboarding") ? sessionStorage : localStorage;
-                            storage.setItem("orbis_selected_site_id", selectedSiteId);
+                        }
+                        sessionStorage.setItem("orbis_selected_site_id", selectedSiteId);
+                        if (sessionMode === "persistent") {
+                            localStorage.setItem("orbis_selected_site_id", selectedSiteId);
                         }
 
                         switcherSelect.innerHTML = "";
@@ -3620,8 +3664,10 @@
 
         async function onSwitchSite(newSiteId) {
             selectedSiteId = newSiteId;
-            const storage = (sessionMode === "volatile" || sessionMode === "onboarding") ? sessionStorage : localStorage;
-            storage.setItem("orbis_selected_site_id", selectedSiteId);
+            sessionStorage.setItem("orbis_selected_site_id", selectedSiteId);
+            if (sessionMode === "persistent") {
+                localStorage.setItem("orbis_selected_site_id", selectedSiteId);
+            }
             closeAllDrawers();
             await Promise.all([
                 fetchUserStatus(),
@@ -4803,9 +4849,13 @@
         }
 
         /* ============================================================== */
-        /* 11. AVVIO APPLICAZIONE & RILEVAZIONE QR DA FOTOCAMERA ESTERNA  */
+        /* 11. AVVIO APPLICAZIONE, SERVICE WORKER PWA & RILEVAZIONE QR    */
         /* ============================================================== */
         window.addEventListener("DOMContentLoaded", () => {
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("./sw.js").catch(() => {});
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             const qrFromUrl = urlParams.get("qr");
             const pairFromUrl = urlParams.get("pair");
@@ -4830,11 +4880,7 @@
             }
 
             if (sessionToken) {
-                if (sessionMode === "persistent" && localStorage.getItem("orbis_device_authorized") !== "1") {
-                    logoutSession("", true);
-                } else {
-                    enterConsoleMode(false);
-                }
+                enterConsoleMode(false);
             } else if (pendingExternalQrParam) {
                 showGlassModal({
                     title: "📷 Richiesta Autorizzazione Dispositivo",
