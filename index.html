@@ -63,7 +63,7 @@
             flex-direction: column;
         }
 
-        /* Espansione armoniosa su Tablet e PC */
+        /* Espansione armoniosa su Tablet */
         @media (min-width: 768px) {
             body {
                 padding: 28px 32px;
@@ -98,6 +98,26 @@
             }
             .hub-card {
                 padding: 22px 18px !important;
+            }
+        }
+
+        /* Ottimizzazione Desktop (PC): sfrutta gli spazi laterali e dispone le 4 card su un'unica riga */
+        @media (min-width: 960px) {
+            .app-container {
+                max-width: 1120px;
+            }
+            .auth-card {
+                max-width: 560px;
+                margin: 0 auto;
+                width: 100%;
+            }
+            .hub-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+            }
+            .hub-card span {
+                white-space: normal;
+                line-height: 1.3;
             }
         }
 
@@ -487,7 +507,7 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .tele-item {
@@ -514,8 +534,21 @@
         .text-rose { color: #fb7185; }
         .text-amber { color: #fbbf24; }
 
+        .visits-summary-strip {
+            padding: 8px 10px;
+            border-radius: 9px;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            margin-bottom: 12px;
+        }
+
         .progress-wrapper {
-            margin-top: 8px;
+            margin-top: 4px;
         }
 
         .progress-meta {
@@ -540,18 +573,6 @@
             background: linear-gradient(90deg, var(--primary-blue), var(--primary-royal));
             border-radius: 10px;
             transition: width 0.4s ease;
-        }
-
-        .visits-summary-strip {
-            margin-top: 10px;
-            padding: 8px 10px;
-            border-radius: 9px;
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11px;
         }
 
         /* Macchina del Tempo GitHub (Cronologia Modifiche & Ripristino) */
@@ -805,7 +826,7 @@
             font-size: 12px;
             color: var(--text-muted);
             margin-bottom: 16px;
-            line-height: 1.4;
+            line-height: 1.45;
         }
 
         /* Form Styling & Selettori */
@@ -1068,7 +1089,19 @@
             margin-top: 12px;
         }
 
-        /* Audit Summary, Full Report & Prompt Correttivo */
+        /* Audit Already Done Banner & Summary */
+        .audit-already-done-box {
+            display: none;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 12.5px;
+            color: #a7f3d0;
+            line-height: 1.45;
+            margin-bottom: 12px;
+        }
+
         .audit-summary-card {
             background: rgba(0, 0, 0, 0.35);
             border: 1px solid rgba(59, 130, 246, 0.28);
@@ -1149,16 +1182,18 @@
         .rollback-desc {
             font-size: 12px;
             color: var(--text-muted);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
-        .site-preview-link {
-            display: inline-block;
+        .incognito-verify-note {
             font-size: 12px;
-            color: var(--primary-deep-accent);
-            text-decoration: underline;
+            color: #e2e8f0;
+            background: rgba(29, 78, 216, 0.16);
+            border: 1px solid rgba(59, 130, 246, 0.32);
+            border-radius: 10px;
+            padding: 9px 12px;
             margin-bottom: 14px;
-            font-weight: 600;
+            line-height: 1.45;
         }
 
         .action-split {
@@ -1201,8 +1236,8 @@
 
         .analytics-metrics-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
             margin-bottom: 14px;
         }
 
@@ -1210,12 +1245,12 @@
             background: rgba(0, 0, 0, 0.32);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 12px;
-            padding: 12px;
+            padding: 11px 8px;
             text-align: center;
         }
 
         .analytics-stat-num {
-            font-size: 22px;
+            font-size: clamp(18px, 4vw, 22px);
             font-weight: 800;
             color: var(--primary-deep-accent);
             margin-top: 4px;
@@ -1238,6 +1273,20 @@
             margin-bottom: 8px;
         }
 
+        .product-legend-bar {
+            font-size: 11px;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 7px 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         .metric-list-row {
             display: flex;
             justify-content: space-between;
@@ -1258,17 +1307,6 @@
             border-radius: 12px;
             font-size: 11px;
             white-space: nowrap;
-        }
-
-        .privacy-badge {
-            font-size: 11px;
-            color: #a7f3d0;
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            padding: 8px 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            line-height: 1.4;
         }
 
         /* Modulo Store Intelligente & 2 Sub-Tabs (Catalogo + Regole) */
@@ -1418,7 +1456,7 @@
             padding: 12px 14px;
             border-radius: 10px;
             font-size: 13px;
-            line-height: 1.4;
+            line-height: 1.45;
             margin-bottom: 16px;
             white-space: pre-wrap;
         }
@@ -1525,6 +1563,41 @@
             text-align: center;
         }
 
+        /* Voce Installazione App (PWA) compatta in basso */
+        .pwa-install-strip {
+            margin-top: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-pwa-install {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            background: rgba(29, 78, 216, 0.14);
+            color: #93c5fd;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-pwa-install:hover {
+            background: rgba(29, 78, 216, 0.26);
+            border-color: rgba(59, 130, 246, 0.55);
+        }
+
+        .btn-pwa-install.installed {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.1);
+            color: #6ee7b7;
+        }
+
         /* Footer Istituzionale */
         .app-footer {
             margin-top: auto;
@@ -1584,7 +1657,12 @@
                 margin-bottom: 12px;
             }
             .telemetry-grid {
-                margin-bottom: 9px;
+                margin-bottom: 8px;
+            }
+            .visits-summary-strip {
+                font-size: 10.5px;
+                padding: 7px 9px;
+                margin-bottom: 10px;
             }
             .hub-grid {
                 gap: 10px;
@@ -1746,8 +1824,9 @@
                 </button>
             </div>
 
-            <!-- Barra Telemetria, Quote Mensili & Cronologia GitHub -->
+            <!-- Barra Telemetria, Accessi Sito Web, Quote & Cronologia GitHub -->
             <div class="telemetry-card">
+                <!-- 3 Riquadri Scuro: Sito Web, Diagnostica, Dispositivi -->
                 <div class="telemetry-grid">
                     <div class="tele-item">
                         <div class="tele-label">Sito Web</div>
@@ -1763,7 +1842,13 @@
                     </div>
                 </div>
 
-                <!-- Contatore 1: Modifiche AI Mensili -->
+                <!-- Riquadro Scuro Accessi Sito Web (subito sotto i 3 riquadri scuri) -->
+                <div class="visits-summary-strip">
+                    <span style="color: var(--text-muted); font-weight: 600;">🌐 Accessi Sito Web</span>
+                    <span id="tele-visits-summary" style="color: #e2e8f0; font-weight: 700;">Oggi: <span style="color:#34d399;">0</span> • Mese: <span style="color:#60a5fa;">0</span> • Anno: <span style="color:#fbbf24;">0</span></span>
+                </div>
+
+                <!-- Riga Chiara 1: Modifiche AI Mensili -->
                 <div class="progress-wrapper">
                     <div class="progress-meta">
                         <span>Modifiche AI Mensili</span>
@@ -1774,13 +1859,7 @@
                     </div>
                 </div>
 
-                <!-- Contatore 2: Accessi Sito Web (Oggi e Mese, Illimitati) -->
-                <div class="visits-summary-strip">
-                    <span style="color: var(--text-muted); font-weight: 600;">🌐 Accessi Sito Web</span>
-                    <span id="tele-visits-summary" style="color: #e2e8f0; font-weight: 700;">Oggi: <span style="color:#34d399;">0</span> • Mese: <span style="color:#60a5fa;">0</span></span>
-                </div>
-
-                <!-- Macchina del Tempo GitHub: Cronologia Modifiche & Ripristino -->
+                <!-- Riga Chiara 2: Cronologia Modifiche & Ripristino -->
                 <div class="mini-log-toggle" onclick="toggleMiniAuditLog()">
                     <span>🕒 Cronologia Modifiche &amp; Ripristino</span>
                     <span id="mini-log-arrow">▼ Mostra</span>
@@ -1788,23 +1867,23 @@
                 <div class="mini-log-list" id="mini-log-list"></div>
             </div>
 
-            <!-- Hub a 4 Card (Ordine: Statistiche, Editor, Diagnostica, Store) -->
+            <!-- Hub a 4 Card (2x2 su Mobile, 1 riga orizzontale su Desktop) -->
             <div class="hub-grid">
-                <!-- Card 1 (Alto-Sinistra): Statistiche Sito & Prodotti (Tutti i piani) -->
+                <!-- Card 1: Statistiche Sito e Prodotti (Tutti i piani) -->
                 <div class="hub-card" id="card-hub-analytics" onclick="openDrawer('analytics')">
                     <div class="hub-icon-wrapper">📊</div>
-                    <h3>Statistiche Sito</h3>
-                    <span>Visite, clic e prodotti</span>
+                    <h3>Statistiche Sito e Prodotti</h3>
+                    <span>Visite, clic e vendite</span>
                 </div>
 
-                <!-- Card 2 (Alto-Destra): Editor Sezioni (Tutti i piani) -->
+                <!-- Card 2: Personalizza il tuo Sito (Tutti i piani) -->
                 <div class="hub-card" id="card-hub-edit" onclick="openDrawer('edit')">
                     <div class="hub-icon-wrapper">✏️</div>
-                    <h3>Editor Sezioni</h3>
-                    <span>Modifica il tuo sito</span>
+                    <h3>Personalizza il tuo Sito</h3>
+                    <span>Modifica testi, foto e stile</span>
                 </div>
 
-                <!-- Card 3 (Basso-Sinistra): Diagnostica IA (Piani Gold e Pro) -->
+                <!-- Card 3: Diagnostica IA (Piani Gold e Pro) -->
                 <div class="hub-card" id="card-hub-audit" onclick="openDrawer('audit')">
                     <div id="lock-audit" class="card-lock" style="display: none;">GOLD</div>
                     <div class="hub-icon-wrapper">🛡️</div>
@@ -1812,7 +1891,7 @@
                     <span>Check salute quotidiano</span>
                 </div>
 
-                <!-- Card 4 (Basso-Destra): Gestione Store (Solo Piano Pro) -->
+                <!-- Card 4: Gestione Store (Solo Piano Pro) -->
                 <div class="hub-card" id="card-hub-store" onclick="openDrawer('store')">
                     <div id="lock-store" class="card-lock" style="display: none;">PRO</div>
                     <div class="hub-icon-wrapper">🛍️</div>
@@ -1822,14 +1901,14 @@
             </div>
 
             <!-- ============================================================== -->
-            <!-- DRAWER 1: STATISTICHE SITO & PRODOTTI (TUTTI I PIANI)          -->
+            <!-- DRAWER 1: STATISTICHE SITO E PRODOTTI (TUTTI I PIANI)          -->
             <!-- ============================================================== -->
             <div id="drawer-analytics" class="panel-drawer">
                 <div class="drawer-header-bar">
-                    <div class="drawer-title">📊 Statistiche Sito &amp; Prodotti</div>
+                    <div class="drawer-title">📊 Statistiche Sito e Prodotti</div>
                     <button type="button" class="btn-drawer-close-x" title="Chiudi" onclick="closeAllDrawers()">✕</button>
                 </div>
-                <p class="drawer-sub">Metriche anonime di navigazione, interazioni e rendimento prodotti a zero cookie e zero IP.</p>
+                <p class="drawer-sub">Tieni d'occhio le visite, le interazioni dei clienti e i prodotti più apprezzati della tua vetrina.</p>
 
                 <div id="analytics-unlocked-content">
                     <div class="analytics-toolbar">
@@ -1846,11 +1925,10 @@
                             <div class="tele-label">Accessi Mese</div>
                             <div class="analytics-stat-num" id="stat-views-month">0</div>
                         </div>
-                    </div>
-
-                    <div class="analytics-block">
-                        <div class="analytics-block-title">📄 Pagine Visitate</div>
-                        <div id="analytics-pages-list"></div>
+                        <div class="analytics-stat-box">
+                            <div class="tele-label">Accessi Anno</div>
+                            <div class="analytics-stat-num" id="stat-views-year">0</div>
+                        </div>
                     </div>
 
                     <div class="analytics-block">
@@ -1880,8 +1958,13 @@
                             </div>
                         </div>
 
+                        <div class="product-legend-bar">
+                            <span><b>👆 Clic:</b> interesse / apertura / carrello</span>
+                            <span><b>🛒 Acquisti:</b> ordini confermati al checkout</span>
+                        </div>
+
                         <div class="analytics-block">
-                            <div class="analytics-block-title">🏆 Top Prodotti (Clic &amp; Carrello)</div>
+                            <div class="analytics-block-title">🏆 Top Prodotti (Clic e Acquisti)</div>
                             <div id="st-top-products-list"></div>
                         </div>
 
@@ -1895,10 +1978,6 @@
                             <div id="st-zero-products-list"></div>
                         </div>
                     </div>
-
-                    <div class="privacy-badge">
-                        🔒 <b>Garanzia Legale:</b> Rilevazione eseguita senza memorizzare indirizzi IP né rilasciare cookie. Nessun banner di consenso richiesto.
-                    </div>
                 </div>
 
                 <div id="analytics-error-content" style="display: none; text-align: center; padding: 18px 8px;">
@@ -1910,14 +1989,14 @@
             </div>
 
             <!-- ============================================================== -->
-            <!-- DRAWER 2: EDITOR SEZIONI (MODIFICA INTELLIGENTE / GUIDATA)     -->
+            <!-- DRAWER 2: PERSONALIZZA IL TUO SITO (INTELLIGENTE / GUIDATA)    -->
             <!-- ============================================================== -->
             <div id="drawer-edit" class="panel-drawer">
                 <div class="drawer-header-bar">
-                    <div class="drawer-title">✏️ Editor Sezioni</div>
+                    <div class="drawer-title">✏️ Personalizza il tuo Sito</div>
                     <button type="button" class="btn-drawer-close-x" title="Chiudi" onclick="closeAllDrawers()">✕</button>
                 </div>
-                <p class="drawer-sub">Scegli se lasciare agire l'intelligenza artificiale sull'intero sito oppure selezionare una singola sezione.</p>
+                <p class="drawer-sub">Con la <b>Modifica Intelligente</b> scrivi un comando libero e l'IA aggiorna tutto da sola; usa invece la <b>Modifica Guidata</b> per intervenire su una singola sezione senza toccare il resto.</p>
 
                 <form id="editor-form">
                     <div class="form-row">
@@ -1986,9 +2065,13 @@
                     <div class="drawer-title">🛡️ Diagnostica IA Quotidiana</div>
                     <button type="button" class="btn-drawer-close-x" title="Chiudi" onclick="closeAllDrawers()">✕</button>
                 </div>
-                <p class="drawer-sub">Ispezione strutturale completa su HTML, CSS, JavaScript e immagini con verifica di sicurezza e reattività &lt;150ms.</p>
+                <p class="drawer-sub">Avvia un controllo approfondito su ogni riga del tuo sito per verificare l'assenza di intrusioni o attacchi hacker, link interrotti e problemi di visualizzazione su smartphone, tablet e computer.</p>
 
                 <div id="audit-unlocked-content">
+                    <div class="audit-already-done-box" id="audit-already-done-box">
+                        ✅ <b>Controllo quotidiano già completato oggi:</b> l'intero sito è stato analizzato ed è in stato ottimale. Puoi consultare qui sotto l'esito o aprire il report tecnico completo.
+                    </div>
+
                     <button type="button" class="btn-glow-primary" id="btn-run-audit" onclick="triggerDailyAudit()">
                         <span>Avvia Scansione Strutturale</span>
                     </button>
@@ -2209,7 +2292,9 @@
             <div id="rollback-box">
                 <div class="rollback-title">🚀 Modifica Pubblicata con Successo!</div>
                 <div class="rollback-desc">Verifica subito il risultato online. Se non convalidi, il sistema ripristina in automatico dopo 30 minuti.</div>
-                <a href="#" id="site-preview-btn" class="site-preview-link" target="_blank" rel="noopener">🌐 Apri il tuo sito (Bypass Cache)</a>
+                <div class="incognito-verify-note">
+                    🕵️ <b>Verifica in Modalità Incognito:</b> Apri il tuo sito (<span id="rollback-domain-label" style="color:#93c5fd; font-weight:700;"></span>) in <b>Navigazione Incognito / Privata</b> per vedere subito le modifiche reali senza cache.
+                </div>
                 <div class="action-split">
                     <button type="button" class="btn-action-confirm" onclick="triggerConfirm()">✅ Convalida</button>
                     <button type="button" class="btn-action-rollback" onclick="triggerRollback()">❌ Rollback (5s)</button>
@@ -2218,6 +2303,13 @@
 
             <!-- Notifiche Dinamiche -->
             <div id="notification-box"></div>
+
+            <!-- Voce Compatta Installazione App (PWA) -->
+            <div class="pwa-install-strip" id="pwa-install-strip">
+                <button type="button" class="btn-pwa-install" id="btn-pwa-install" onclick="handlePwaInstallClick()">
+                    <span>📲 Installa App sul Dispositivo</span>
+                </button>
+            </div>
         </div>
 
         <!-- Footer -->
@@ -2274,6 +2366,7 @@
         let renderedHistoryList = [];
         let cachedRollbackInfo = { count: 0, limit: 20 };
         let currentAuditFixPrompt = "";
+        let isTodayAuditDone = false;
 
         let activeQrMode = "temp_login";
         let activeQrToken = "";
@@ -2283,6 +2376,8 @@
         let pendingExternalQrParam = "";
         let pendingPairInviteCode = "";
         let qrModalViewMode = "qr";
+
+        let deferredInstallPrompt = null;
 
         /* ============================================================== */
         /* 0. GENERATORE QR CODE SVG NATIVO (VERSION 4-L • 33x33 CRISP)   */
@@ -3672,11 +3767,12 @@
         /* ============================================================== */
         /* 6. TELEMETRIA, STATO SITO & MACCHINA DEL TEMPO GITHUB          */
         /* ============================================================== */
-        function activateRollbackBanner(busterParam = "") {
-            const previewBtn = document.getElementById("site-preview-btn");
+        function activateRollbackBanner() {
+            const domainEl = document.getElementById("rollback-domain-label");
             const baseUrl = normalizeSiteUrl(currentDomain);
-            const buster = busterParam || `?v=${Date.now()}`;
-            previewBtn.href = baseUrl !== "#" ? `${baseUrl}${buster}` : "#";
+            if (domainEl) {
+                domainEl.textContent = baseUrl !== "#" ? baseUrl : "il tuo dominio";
+            }
             document.getElementById("rollback-box").style.display = "block";
         }
 
@@ -3824,6 +3920,8 @@
             const fullEl = document.getElementById("audit-report-content");
             const fixBox = document.getElementById("audit-fix-box");
             const fixTextEl = document.getElementById("audit-fix-prompt-text");
+            const btnRunAudit = document.getElementById("btn-run-audit");
+            const alreadyDoneBox = document.getElementById("audit-already-done-box");
 
             currentAuditFixPrompt = (fixPrompt || "").trim();
             summaryEl.innerText = summaryText || reportText;
@@ -3831,7 +3929,16 @@
             fullEl.style.display = "none";
             document.getElementById("btn-toggle-full-audit").innerText = "📄 Mostra Report Tecnico Completo";
 
-            if (currentAuditFixPrompt && !summaryText.includes("🟢")) {
+            const isOptimal = summaryText.includes("🟢");
+            if (isTodayAuditDone && isOptimal) {
+                btnRunAudit.style.display = "none";
+                alreadyDoneBox.style.display = "block";
+            } else {
+                btnRunAudit.style.display = "flex";
+                alreadyDoneBox.style.display = "none";
+            }
+
+            if (currentAuditFixPrompt && !isOptimal) {
                 fixTextEl.innerText = currentAuditFixPrompt;
                 fixBox.style.display = "block";
             } else {
@@ -3864,6 +3971,7 @@
 
                     const canAudit = Boolean(data.modules_unlocked?.daily_audit);
                     const canStore = Boolean(data.modules_unlocked?.store_manager);
+                    isTodayAuditDone = Boolean(data.audit_done);
 
                     const teleAudit = document.getElementById("tele-audit");
                     if (!canAudit) {
@@ -3884,6 +3992,8 @@
                         renderAuditResultsBox(data.last_audit_summary, data.last_audit_report || "", data.last_audit_fix_prompt || "");
                     } else {
                         document.getElementById("audit-report-container").style.display = "none";
+                        document.getElementById("btn-run-audit").style.display = "flex";
+                        document.getElementById("audit-already-done-box").style.display = "none";
                     }
 
                     const count = data.mod_count || 0;
@@ -3894,9 +4004,10 @@
 
                     const viewsToday = data.stats_views_today || 0;
                     const viewsMonth = data.stats_views_month || 0;
+                    const viewsYear = data.stats_views_year ?? viewsMonth;
                     const visitsSummaryEl = document.getElementById("tele-visits-summary");
                     if (visitsSummaryEl) {
-                        visitsSummaryEl.innerHTML = `Oggi: <span style="color:#34d399;">${formatNumberIt(viewsToday)}</span> • Mese: <span style="color:#60a5fa;">${formatNumberIt(viewsMonth)}</span>`;
+                        visitsSummaryEl.innerHTML = `Oggi: <span style="color:#34d399;">${formatNumberIt(viewsToday)}</span> • Mese: <span style="color:#60a5fa;">${formatNumberIt(viewsMonth)}</span> • Anno: <span style="color:#fbbf24;">${formatNumberIt(viewsYear)}</span>`;
                     }
 
                     cachedModHistory = data.mod_history || [];
@@ -3978,6 +4089,7 @@
                 const data = await parseApiJson(res);
 
                 if (data.status === "success") {
+                    isTodayAuditDone = true;
                     renderAuditResultsBox(data.summary || data.details, data.details || "", data.fix_prompt || "");
                     fetchUserStatus();
                 } else {
@@ -4021,7 +4133,7 @@
         }
 
         /* ============================================================== */
-        /* 8. DRAWER 2: EDITOR SEZIONI (INTELLIGENTE VS GUIDATA)          */
+        /* 8. DRAWER 2: PERSONALIZZA IL TUO SITO (INTELLIGENTE VS GUIDATA)*/
         /* ============================================================== */
         function onEditModeChange(mode) {
             const guidedWrapper = document.getElementById("guided-section-wrapper");
@@ -4162,7 +4274,7 @@
 
             try {
                 const actionProof = await obtainActionProof();
-                submitBtn.innerHTML = "<span>⏳ Applicazione modifiche al sito...</span>";
+                submitBtn.innerHTML = "<span>⏳ Sto applicando le modifiche...</span>";
 
                 const editMode = document.getElementById("edit_mode_select").value;
                 const isGuided = (editMode === "guided");
@@ -4197,8 +4309,12 @@
                 const data = await parseApiJson(res);
 
                 if (data.status === "success") {
-                    showNotification(`✅ ${data.message}`, true);
-                    activateRollbackBanner(data.cache_buster_param);
+                    let successMsg = `✅ ${data.message}`;
+                    if (!successMsg.includes("Diagnostica IA")) {
+                        successMsg += `\n\n🛡️ Diagnostica IA sbloccata: la scansione quotidiana è stata riaperta per permetterti di ricontrollare il sito. Se dovesse rilevare qualche anomalia, ti basterà copiare il suggerimento correttivo e incollarlo qui.`;
+                    }
+                    showNotification(successMsg, true);
+                    activateRollbackBanner();
 
                     document.getElementById("instruction_text").value = "";
                     document.getElementById("image_input_gallery").value = "";
@@ -4274,7 +4390,7 @@
         }
 
         /* ============================================================== */
-        /* 9. DRAWER 1: STATISTICHE SITO & PRODOTTI (UNIFICATE)           */
+        /* 9. DRAWER 1: STATISTICHE SITO E PRODOTTI (UNIFICATE)           */
         /* ============================================================== */
         async function loadAnalytics() {
             const unlocked = document.getElementById("analytics-unlocked-content");
@@ -4295,15 +4411,16 @@
                 if (data.status === "success") {
                     const viewsToday = data.views_today || 0;
                     const viewsMonth = data.views_month || 0;
+                    const viewsYear = data.views_year ?? viewsMonth;
                     document.getElementById("stat-views-today").innerText = formatNumberIt(viewsToday);
                     document.getElementById("stat-views-month").innerText = formatNumberIt(viewsMonth);
+                    document.getElementById("stat-views-year").innerText = formatNumberIt(viewsYear);
 
                     const visitsSummaryEl = document.getElementById("tele-visits-summary");
                     if (visitsSummaryEl) {
-                        visitsSummaryEl.innerHTML = `Oggi: <span style="color:#34d399;">${formatNumberIt(viewsToday)}</span> • Mese: <span style="color:#60a5fa;">${formatNumberIt(viewsMonth)}</span>`;
+                        visitsSummaryEl.innerHTML = `Oggi: <span style="color:#34d399;">${formatNumberIt(viewsToday)}</span> • Mese: <span style="color:#60a5fa;">${formatNumberIt(viewsMonth)}</span> • Anno: <span style="color:#fbbf24;">${formatNumberIt(viewsYear)}</span>`;
                     }
 
-                    renderKeyValueMetricList("analytics-pages-list", data.pages || {}, "Nessuna pagina ancora registrata");
                     renderKeyValueMetricList("analytics-sections-list", data.sections || {}, "Nessuna sezione rilevata (>2s)");
 
                     const tracksContainer = document.getElementById("analytics-tracks-list");
@@ -4724,7 +4841,7 @@
                 const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    activateRollbackBanner(data.cache_buster_param);
+                    activateRollbackBanner();
                     closeStoreItemForm();
                     await Promise.all([
                         loadStoreCatalog(),
@@ -4759,7 +4876,7 @@
                 const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    activateRollbackBanner(data.cache_buster_param);
+                    activateRollbackBanner();
                     await Promise.all([
                         loadStoreCatalog(),
                         fetchUserStatus()
@@ -4785,7 +4902,7 @@
                 const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    activateRollbackBanner(data.cache_buster_param);
+                    activateRollbackBanner();
                     await Promise.all([
                         loadStoreCatalog(),
                         fetchUserStatus()
@@ -4819,7 +4936,7 @@
                 const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    activateRollbackBanner(data.cache_buster_param);
+                    activateRollbackBanner();
                     await Promise.all([
                         loadStoreCatalog(),
                         fetchUserStatus()
@@ -4851,7 +4968,7 @@
                 const data = await parseApiJson(res);
                 if (data.status === "success") {
                     showNotification(`✅ ${data.message}`, true);
-                    activateRollbackBanner(data.cache_buster_param);
+                    activateRollbackBanner();
                     await Promise.all([
                         loadStoreCatalog(),
                         fetchUserStatus()
@@ -4876,12 +4993,66 @@
         }
 
         /* ============================================================== */
-        /* 11. AVVIO APPLICAZIONE, SERVICE WORKER PWA & RILEVAZIONE QR    */
+        /* 11. INSTALLAZIONE APP NATIVA (PWA) & AVVIO APPLICAZIONE        */
         /* ============================================================== */
+        function isRunningAsInstalledApp() {
+            return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+        }
+
+        function updatePwaInstallButtonState() {
+            const btn = document.getElementById("btn-pwa-install");
+            if (!btn) return;
+            if (isRunningAsInstalledApp()) {
+                btn.classList.add("installed");
+                btn.innerHTML = "<span>✅ Stai già utilizzando l'app installata</span>";
+            } else {
+                btn.classList.remove("installed");
+                btn.innerHTML = "<span>📲 Installa App sul Dispositivo</span>";
+            }
+        }
+
+        window.addEventListener("beforeinstallprompt", (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            updatePwaInstallButtonState();
+        });
+
+        window.addEventListener("appinstalled", () => {
+            deferredInstallPrompt = null;
+            updatePwaInstallButtonState();
+        });
+
+        async function handlePwaInstallClick() {
+            if (isRunningAsInstalledApp()) {
+                showNotification("✅ Stai già utilizzando l'app installata.", true);
+                return;
+            }
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                const choiceResult = await deferredInstallPrompt.userChoice;
+                if (choiceResult && choiceResult.outcome === "accepted") {
+                    deferredInstallPrompt = null;
+                    updatePwaInstallButtonState();
+                }
+                return;
+            }
+            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const installInstructions = isIos
+                ? "Su iPhone o iPad (Safari): tocca il tasto Condividi in basso e seleziona «Aggiungi alla schermata Home» per installare l'app."
+                : "Per installare l'app sul dispositivo: apri il menu del browser (⋮ in alto a destra) e seleziona «Installa app» oppure «Aggiungi a schermata Home».";
+            await showGlassModal({
+                title: "📲 Installa SiteMaster Console",
+                message: installInstructions,
+                confirmText: "Ho capito"
+            });
+        }
+
         window.addEventListener("DOMContentLoaded", () => {
             if ("serviceWorker" in navigator) {
                 navigator.serviceWorker.register("./sw.js").catch(() => {});
             }
+
+            updatePwaInstallButtonState();
 
             const urlParams = new URLSearchParams(window.location.search);
             const qrFromUrl = urlParams.get("qr");
